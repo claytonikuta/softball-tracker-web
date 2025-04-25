@@ -12,7 +12,7 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 15px;
-  border-bottom: 1px solid #aaa;
+  border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
 }
 
@@ -68,7 +68,7 @@
 .innings-display th,
 .innings-display td {
   padding: 2px; /* Even smaller padding on mobile */
-  border: 1px solid #aaa;
+  border: 1px solid #ddd;
   font-size: 10px; /* Smaller font on mobile */
 }
 
