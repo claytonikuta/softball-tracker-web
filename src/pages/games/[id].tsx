@@ -134,7 +134,13 @@ export default function GameDetail() {
 
       <div className={styles.gameContainer}>
         <GameProvider initialData={gameData}>
-          <LineupProvider initialData={(gameData && gameData.players) || []}>
+          <LineupProvider
+            initialData={
+              gameData && gameData.players && Array.isArray(gameData.players)
+                ? gameData.players
+                : []
+            }
+          >
             <GameTracker />
           </LineupProvider>
         </GameProvider>
