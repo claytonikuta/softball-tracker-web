@@ -48,11 +48,13 @@ const PlayerList: React.FC<PlayerListProps> = ({
     }
   };
 
+  const safePlayersList = Array.isArray(players) ? players : [];
+
   return (
     <div className={styles["player-list"]}>
       <h3>{title}</h3>
 
-      {players.length === 0 ? (
+      {safePlayersList.length === 0 ? (
         <p className={styles["no-players"]}>No players added yet</p>
       ) : (
         <DndContext
@@ -61,11 +63,11 @@ const PlayerList: React.FC<PlayerListProps> = ({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={players.map((player) => player.id)}
+            items={safePlayersList.map((player) => player.id)}
             strategy={verticalListSortingStrategy}
           >
             <div className={styles["players-container"]}>
-              {players.map((player) => (
+              {safePlayersList.map((player) => (
                 <SortablePlayerItem key={player.id} player={player} />
               ))}
             </div>

@@ -51,10 +51,15 @@ const GameTracker: React.FC = () => {
   useEffect(() => {
     console.log("Cleanup effect running");
 
+    // Ensure arrays are valid before spreading
+    if (!Array.isArray(greenLineup) || !Array.isArray(orangeLineup)) {
+      console.warn("Lineup arrays not ready yet");
+      return;
+    }
+
     // All available players
     const allPlayers = [...greenLineup, ...orangeLineup];
     const allPlayerIds = allPlayers.map((p) => p.id);
-
     console.log("Current player IDs in lineup:", allPlayerIds);
 
     // Clean up current batter if removed
@@ -146,6 +151,12 @@ const GameTracker: React.FC = () => {
     setInTheHoleBatter,
     setRunnersOnBase,
   ]);
+
+  const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
+
+  if (!lineupReady) {
+    return <div className={styles["loading"]}>Loading lineup data...</div>;
+  }
 
   return (
     <div className={styles["game-tracker"]}>

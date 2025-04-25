@@ -128,29 +128,33 @@ const RunnersList: React.FC = () => {
     setSelectedRunner(null);
   };
 
+  const safeRunners = Array.isArray(runnersOnBase) ? runnersOnBase : [];
+
   return (
     <>
       <div className={styles["runners-list"]}>
         <h3>Runners On Base</h3>
-        {runnersOnBase.length === 0 ? (
-          <p className={styles["no-runners"]}>No runners on base</p>
-        ) : (
+        {Array.isArray(runnersOnBase) && runnersOnBase.length > 0 ? (
           <div className={styles["runners-container"]}>
             {runnersOnBase.map((runner) => (
               <div
-                key={runner.id}
+                key={runner?.id || `runner-${Math.random()}`}
                 className={styles["runner-item"]}
                 onClick={() => handleRunnerClick(runner)}
               >
-                <div className={styles["runner-name"]}>{runner.name}</div>
+                <div className={styles["runner-name"]}>
+                  {runner?.name || "Unknown"}
+                </div>
                 <div className={styles["runner-details"]}>
                   <span className={styles["runner-base"]}>
-                    {getBaseName(runner.baseIndex)}
+                    {getBaseName(runner?.baseIndex || 0)}
                   </span>
                 </div>
               </div>
             ))}
           </div>
+        ) : (
+          <p className={styles["no-runners"]}>No runners on base</p>
         )}
       </div>
 
