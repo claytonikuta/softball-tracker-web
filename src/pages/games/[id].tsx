@@ -20,6 +20,9 @@ export default function GameDetail() {
   const { id } = router.query;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isEditingDate, setIsEditingDate] = useState(false);
+  const [editedDate, setEditedDate] = useState("");
+
   interface GameData {
     home_team_name: string;
     away_team_name: string;
@@ -37,9 +40,13 @@ export default function GameDetail() {
         if (!response.ok) {
           throw new Error("Failed to fetch game data");
         }
-
         const data = await response.json();
         setGameData(data.game);
+
+        // Set the edited date when we get game data
+        if (data.game && data.game.date) {
+          setEditedDate(new Date(data.game.date).toISOString().split("T")[0]);
+        }
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -76,8 +83,52 @@ export default function GameDetail() {
             `${gameData.home_team_name} vs ${gameData.away_team_name}`}
         </h1>
 
-        <span className={styles.date}>
-          {gameData && new Date(gameData.date).toLocaleDateString()}
+        <span className={styles.date} onClick={() => setIsEditingDate(true)}>
+          {isEditingDate ? (
+            <div className={styles.dateEditor}>
+              <input
+                type="date"
+                value={editedDate}
+                onChange={(e) => setEditedDate(e.target.value)}
+              />
+              <button
+                onClick={async () => {
+                  try {
+                    // Update game data with new date
+                    const response = await fetch(`/api/games/${id}`, {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        ...gameData,
+                        date: editedDate,
+                      }),
+                    });
+
+                    if (!response.ok) {
+                      throw new Error("Failed to update date");
+                    }
+
+                    // Update local state
+                    setGameData(
+                      gameData ? { ...gameData, date: editedDate } : null
+                    );
+                    setIsEditingDate(false);
+                  } catch (error) {
+                    console.error("Error updating date:", error);
+                    alert("Failed to update date");
+                  }
+                }}
+              >
+                Save
+              </button>
+              <button onClick={() => setIsEditingDate(false)}>Cancel</button>
+            </div>
+          ) : (
+            <>
+              {gameData && new Date(gameData.date).toLocaleDateString()}
+              <span className={styles.editHint}> (click to edit)</span>
+            </>
+          )}
         </span>
       </header>
 

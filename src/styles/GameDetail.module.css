@@ -1,0 +1,38 @@
+.date {
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.editHint {
+  font-size: 0.8rem;
+  color: #999;
+  font-style: italic;
+}
+
+.dateEditor {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.dateEditor input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dateEditor button {
+  padding: 5px 10px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.dateEditor button:last-child {
+  background-color: #999;
+}

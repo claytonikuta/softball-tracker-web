@@ -8,6 +8,10 @@ export default function NewGame() {
   const [awayTeam, setAwayTeam] = useState("Opponent");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [gameDate, setGameDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,6 +26,7 @@ export default function NewGame() {
         body: JSON.stringify({
           home_team_name: homeTeam,
           away_team_name: awayTeam,
+          date: gameDate, // Add this line to include the date
         }),
       });
 
@@ -51,6 +56,17 @@ export default function NewGame() {
       {error && <div className={styles.error}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label htmlFor="gameDate">Game Date:</label>
+          <input
+            type="date"
+            id="gameDate"
+            value={gameDate}
+            onChange={(e) => setGameDate(e.target.value)}
+            className={styles.input}
+          />
+        </div>
+
         <div className={styles.formGroup}>
           <label htmlFor="homeTeam">Home Team</label>
           <input

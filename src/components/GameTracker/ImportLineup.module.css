@@ -1,0 +1,48 @@
+.importLineup {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.importLineup h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #495057;
+}
+
+.selectContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gameSelect {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.importButton {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.importButton:hover {
+  background-color: #218838;
+}
+
+.importButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}

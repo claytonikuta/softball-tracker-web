@@ -7,6 +7,7 @@ import { Runner, RunnerOnBase } from "../../types/Player";
 import Modal from "../shared/Modal";
 import Button from "../shared/Button";
 import styles from "./LineupManager.module.css";
+import ImportLineup from "../GameTracker/ImportLineup";
 
 const LineupManager: React.FC = () => {
   const {
@@ -72,6 +73,8 @@ const LineupManager: React.FC = () => {
   return (
     <div className={styles["lineup-manager"]}>
       <h2>Lineup Manager</h2>
+
+      <ImportLineup />
 
       <div className={styles["lineup-actions"]}>
         <div className={styles["action-buttons"]}>
