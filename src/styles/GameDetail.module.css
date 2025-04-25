@@ -36,3 +36,7 @@
 .dateEditor button:last-child {
   background-color: #999;
 }
+
+.gameContainer {
+  padding: 5px 10px;
+}

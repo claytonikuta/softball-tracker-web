@@ -202,7 +202,7 @@ export const LineupProvider: React.FC<{
             group_name: player.group, // This maps to the database field
             runs: player.runs || 0,
             outs: player.outs || 0,
-            position: player.group === "green" ? "Green Group" : "Orange Group",
+            position: player.group === "green" ? 1 : 2,
           };
         }
       );
