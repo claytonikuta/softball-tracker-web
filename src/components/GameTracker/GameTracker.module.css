@@ -24,6 +24,12 @@
   gap: 20px;
 }
 
+.lineup-section {
+  margin-top: 30px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
 @media (max-width: 768px) {
   .game-tracker-container {
     grid-template-columns: 1fr;
