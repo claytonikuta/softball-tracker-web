@@ -90,25 +90,62 @@ export const LineupProvider: React.FC<{
     if (tempOrangeLineup.length > 0) setOrangeLineup(tempOrangeLineup);
   }, [initialData]);
 
-  const addPlayer = (player: Player) => {
-    // Add to appropriate lineup
-    if (player.group === "green") {
-      setGreenLineup((prev) => [...prev, player]);
-    } else {
-      setOrangeLineup((prev) => [...prev, player]);
+  const addPlayer = async (player: Player) => {
+    try {
+      // First add to UI state for immediate feedback
+      if (player.group === "green") {
+        setGreenLineup((prev) => [...prev, player]);
+      } else {
+        setOrangeLineup((prev) => [...prev, player]);
+      }
+
+      // Extract game ID from URL
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/\/games\/(\d+)/);
+      if (!gameIdMatch || !gameIdMatch[1]) return;
+
+      // Send to API
+      const response = await fetch(`/api/games/${gameIdMatch[1]}/player`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: player.name,
+          group_name: player.group,
+          runs: player.runs || 0,
+          outs: player.outs || 0,
+          position: player.group === "green" ? 1 : 2,
+        }),
+      });
+
+      if (response.ok) {
+        const savedPlayer = await response.json();
+
+        // Update the player in state with the real database ID
+        const updateWithDbId = (prev: Player[]) =>
+          prev.map((p) =>
+            p.id === player.id ? { ...p, id: String(savedPlayer.id) } : p
+          );
+
+        if (player.group === "green") {
+          setGreenLineup(updateWithDbId);
+        } else {
+          setOrangeLineup(updateWithDbId);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving player:", error);
     }
   };
 
-  const updatePlayer = (id: string, updatedPlayer: Player) => {
-    // IMPORTANT: Extract just the base ID without any timestamps
+  const updatePlayer = async (id: string, updatedPlayer: Player) => {
+    // Extract base ID (without timestamps)
     const baseId = id.includes("-") ? id.split("-")[0] : id;
-
     console.log(`Updating player with base ID: ${baseId}`);
 
-    // Use the updatedPlayer object, but ensure it keeps its original simple ID
+    // Update the UI first
     const playerToUpdate = {
       ...updatedPlayer,
-      id: baseId, // Ensure we preserve the original ID
+      id: baseId,
     };
 
     if (playerToUpdate.group === "green") {
@@ -120,18 +157,39 @@ export const LineupProvider: React.FC<{
         prev.map((player) => (player.id === baseId ? playerToUpdate : player))
       );
     }
+
+    // Skip API call for non-database players
+    const numericId = parseInt(baseId);
+    if (isNaN(numericId)) return;
+
+    try {
+      // Extract game ID
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/\/games\/(\d+)/);
+      if (!gameIdMatch || !gameIdMatch[1]) return;
+
+      // Send update request
+      await fetch(`/api/games/${gameIdMatch[1]}/player`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: numericId,
+          name: updatedPlayer.name,
+          group_name: updatedPlayer.group,
+          runs: updatedPlayer.runs || 0,
+          outs: updatedPlayer.outs || 0,
+          position: updatedPlayer.group === "green" ? 1 : 2,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating player:", error);
+    }
   };
 
-  const removePlayer = (id: string) => {
+  const removePlayer = async (id: string) => {
     console.log(`Attempting to remove player with ID: ${id}`);
 
-    // First check if this is a database-persisted player (has numeric ID)
-    const numericId = parseInt(id);
-    if (!isNaN(numericId)) {
-      setDeletedPlayerIds((prev) => [...prev, numericId]);
-    }
-
-    // Remove from UI as before
+    // First remove from UI for immediate feedback
     setGreenLineup((prev) => {
       const newLineup = prev.filter((p) => p.id !== id);
       console.log(
@@ -147,6 +205,27 @@ export const LineupProvider: React.FC<{
       );
       return newLineup;
     });
+
+    // Only call API if this is a database player (has numeric ID)
+    const numericId = parseInt(id);
+    if (!isNaN(numericId)) {
+      try {
+        // Extract game ID
+        const path = window.location.pathname;
+        const gameIdMatch = path.match(/\/games\/(\d+)/);
+        if (!gameIdMatch || !gameIdMatch[1]) return;
+
+        // Send delete request
+        await fetch(
+          `/api/games/${gameIdMatch[1]}/player?playerId=${numericId}`,
+          {
+            method: "DELETE",
+          }
+        );
+      } catch (error) {
+        console.error("Error deleting player:", error);
+      }
+    }
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {

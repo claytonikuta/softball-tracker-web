@@ -12,7 +12,7 @@ import LineupManager from "../LineupManager/LineupManager";
 import SafeRender from "../shared/SafeRender";
 
 const GameTracker: React.FC = () => {
-  const { greenLineup, orangeLineup, saveLineupToDatabase } = useLineup();
+  const { greenLineup, orangeLineup } = useLineup();
   const [isSaving, setIsSaving] = useState(false);
   const {
     currentBatter,
@@ -169,19 +169,20 @@ const GameTracker: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // Skip if no ID or no players
-    if (!id || (greenLineup.length === 0 && orangeLineup.length === 0)) return;
-
-    // Skip if already saving
-    if (isSaving) return;
+    if (!id || isSaving) return;
 
     // Create a string representation of current state to compare
-    const currentState = JSON.stringify({ greenLineup, orangeLineup });
+    const gameState = JSON.stringify({
+      currentBatter,
+      onDeckBatter,
+      inTheHoleBatter,
+      runnersOnBase,
+    });
 
-    // Skip if state hasn't changed since last save
-    if (currentState === lastSavedStateRef.current) return;
+    // Skip if state hasn't changed
+    if (gameState === lastSavedStateRef.current) return;
 
-    // Clear any pending save timeout
+    // Clear any pending save
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
@@ -189,29 +190,49 @@ const GameTracker: React.FC = () => {
     // Set a new timeout for 800ms
     saveTimeoutRef.current = setTimeout(() => {
       setIsSaving(true);
-      console.log("Debounced save triggered");
+      console.log("Debounced game state save triggered");
 
       const gameId = Array.isArray(id) ? id[0] : id;
 
-      saveLineupToDatabase(gameId)
+      // Only save game-related data, not players
+      fetch(`/api/games/${gameId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          current_inning: 1,
+          is_home_team_batting: true,
+          runners: runnersOnBase.map((runner) => ({
+            player_id: runner.id,
+            base_index: runner.baseIndex,
+          })),
+        }),
+      })
         .then(() => {
-          lastSavedStateRef.current = currentState;
+          lastSavedStateRef.current = gameState;
           setIsSaving(false);
+          saveTimeoutRef.current = null;
         })
         .catch(() => {
           setIsSaving(false);
+          saveTimeoutRef.current = null;
         });
+    }, 800);
 
-      saveTimeoutRef.current = null;
-    }, 800); // Wait 800ms of inactivity before saving
-
-    // Cleanup on unmount
     return () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [greenLineup, orangeLineup, id, saveLineupToDatabase, isSaving]);
+  }, [
+    id,
+    isSaving,
+    currentBatter,
+    onDeckBatter,
+    inTheHoleBatter,
+    runnersOnBase,
+  ]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
 
