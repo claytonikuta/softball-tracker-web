@@ -35,7 +35,6 @@ export const LineupProvider: React.FC<{
   const [lastGreenIndex, setLastGreenIndex] = useState<number>(0);
   const [lastOrangeIndex, setLastOrangeIndex] = useState<number>(0);
   const [deletedPlayerIds, setDeletedPlayerIds] = useState<number[]>([]);
-  const [, setIsSaving] = useState(false);
 
   // Initialize lineups from initialData if provided
   useEffect(() => {
@@ -98,26 +97,6 @@ export const LineupProvider: React.FC<{
     } else {
       setOrangeLineup((prev) => [...prev, player]);
     }
-
-    // Extract game ID from URL and force an immediate save
-    const path = window.location.pathname;
-    const gameIdMatch = path.match(/\/games\/(\d+)/);
-    if (gameIdMatch && gameIdMatch[1]) {
-      // Disable the debounced save in GameTracker temporarily
-      setIsSaving(true);
-
-      // Wait for state updates to complete, then save
-      setTimeout(async () => {
-        try {
-          await saveLineupToDatabase(gameIdMatch[1]);
-          // Re-enable debounced saves after a short delay
-          setTimeout(() => setIsSaving(false), 500);
-        } catch (error) {
-          console.error("Error saving lineup after player addition:", error);
-          setIsSaving(false);
-        }
-      }, 100);
-    }
   };
 
   const updatePlayer = (id: string, updatedPlayer: Player) => {
@@ -168,26 +147,6 @@ export const LineupProvider: React.FC<{
       );
       return newLineup;
     });
-
-    // Extract game ID from URL and force an immediate save
-    const path = window.location.pathname;
-    const gameIdMatch = path.match(/\/games\/(\d+)/);
-    if (gameIdMatch && gameIdMatch[1]) {
-      // Disable the debounced save in GameTracker temporarily
-      setIsSaving(true);
-
-      // Wait for state updates to complete, then save
-      setTimeout(async () => {
-        try {
-          await saveLineupToDatabase(gameIdMatch[1]);
-          // Re-enable debounced saves after a short delay
-          setTimeout(() => setIsSaving(false), 500);
-        } catch (error) {
-          console.error("Error saving lineup after player removal:", error);
-          setIsSaving(false);
-        }
-      }, 100);
-    }
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {
