@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Button from "../shared/Button";
+// import Button from "../shared/Button";
 import styles from "./PlayerForm.module.css";
 
 interface PlayerFormProps {
@@ -27,22 +27,18 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ onAddPlayer, onCancel }) => {
 
   return (
     <form className={styles["player-form"]} onSubmit={handleSubmit}>
-      <div className={styles["form-field"]}>
-        <label htmlFor="player-name">Player Name</label>
+      <div className={styles["form-row"]}>
         <input
-          id="player-name"
           type="text"
+          placeholder="Player Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter player name"
+          className={styles["name-input"]}
           required
         />
-      </div>
 
-      <div className={styles["form-field"]}>
-        <label className={styles["group-label"]}>Group</label>
-        <div className={styles["radio-group"]}>
-          <label className={styles["radio-container green-group"]}>
+        <div className={styles["group-selector"]}>
+          <label>
             <input
               type="radio"
               name="group"
@@ -50,11 +46,9 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ onAddPlayer, onCancel }) => {
               checked={group === "green"}
               onChange={() => setGroup("green")}
             />
-            <span className={styles["radio-custom"]}></span>
-            <span className={styles["radio-label"]}>Green Group</span>
+            <span className={styles["green-group"]}>Green</span>
           </label>
-
-          <label className={styles["radio-container orange-group"]}>
+          <label>
             <input
               type="radio"
               name="group"
@@ -62,24 +56,26 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ onAddPlayer, onCancel }) => {
               checked={group === "orange"}
               onChange={() => setGroup("orange")}
             />
-            <span className={styles["radio-custom"]}></span>
-            <span className={styles["radio-label"]}>Orange Group</span>
+            <span className={styles["orange-group"]}>Orange</span>
           </label>
         </div>
       </div>
 
       <div className={styles["form-actions"]}>
-        <Button
-          onClick={() =>
-            handleSubmit(new Event("submit") as unknown as React.FormEvent)
-          }
+        <button
+          type="submit"
           className={styles["add-button"]}
+          disabled={name.trim() === ""}
         >
           Add Player
-        </Button>
-        <Button onClick={onCancel} className={styles["cancel-button"]}>
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className={styles["cancel-button"]}
+        >
           Cancel
-        </Button>
+        </button>
       </div>
     </form>
   );

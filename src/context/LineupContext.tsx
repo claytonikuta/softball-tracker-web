@@ -183,17 +183,31 @@ export const LineupProvider: React.FC<{
     if (!gameId) return;
 
     try {
-      // Combine both lineups and format for the API
+      // Fix ID handling for new players
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
-        (player) => ({
-          id: player.id.includes("-") ? player.id.split("-")[0] : player.id,
-          name: player.name,
-          group_name: player.group,
-          runs: player.runs,
-          outs: player.outs,
-          position: player.group === "green" ? "Green Group" : "Orange Group",
-        })
+        (player) => {
+          // Check if this is a new player (string ID) or existing DB player (numeric ID)
+          const isNewPlayer = isNaN(Number(player.id.split("-")[0]));
+
+          return {
+            // Only include ID for existing database players
+            ...(isNewPlayer
+              ? {}
+              : {
+                  id: player.id.includes("-")
+                    ? player.id.split("-")[0]
+                    : player.id,
+                }),
+            name: player.name,
+            group_name: player.group,
+            runs: player.runs,
+            outs: player.outs,
+            position: player.group === "green" ? "Green Group" : "Orange Group",
+          };
+        }
       );
+
+      console.log("Sending player data to server:", formattedPlayers);
 
       // Send to the API
       const response = await fetch(`/api/games/${gameId}`, {
@@ -206,8 +220,9 @@ export const LineupProvider: React.FC<{
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.message || "Failed to save lineup");
       }
 

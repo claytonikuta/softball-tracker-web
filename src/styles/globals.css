@@ -18,7 +18,7 @@
 .dark-mode {
   /* Dark mode colors */
   --bg-color: #1a1a1a;
-  --text-color: #f0f0f0;
+  --text-color: #333;
   --card-bg: #2d2d2d;
   --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   --border-color: #444;
