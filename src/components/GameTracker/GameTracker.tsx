@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CurrentBatter from "./CurrentBatter";
 import OnDeckDisplay from "./OnDeckDisplay";
 import InTheHoleDisplay from "./InTheHoleDisplay";
@@ -26,6 +26,8 @@ const GameTracker: React.FC = () => {
     setLastGreenIndex,
     setLastOrangeIndex,
   } = useGameContext();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedStateRef = useRef<string>("");
 
   const { id } = useParams();
 
@@ -167,24 +169,48 @@ const GameTracker: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (
-      id &&
-      (greenLineup.length > 0 || orangeLineup.length > 0) &&
-      !isSaving
-    ) {
+    // Skip if no ID or no players
+    if (!id || (greenLineup.length === 0 && orangeLineup.length === 0)) return;
+
+    // Skip if already saving
+    if (isSaving) return;
+
+    // Create a string representation of current state to compare
+    const currentState = JSON.stringify({ greenLineup, orangeLineup });
+
+    // Skip if state hasn't changed since last save
+    if (currentState === lastSavedStateRef.current) return;
+
+    // Clear any pending save timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set a new timeout for 800ms
+    saveTimeoutRef.current = setTimeout(() => {
       setIsSaving(true);
-      console.log("Auto-save triggered by lineup change");
+      console.log("Debounced save triggered");
 
       const gameId = Array.isArray(id) ? id[0] : id;
 
       saveLineupToDatabase(gameId)
         .then(() => {
+          lastSavedStateRef.current = currentState;
           setIsSaving(false);
         })
         .catch(() => {
           setIsSaving(false);
         });
-    }
+
+      saveTimeoutRef.current = null;
+    }, 800); // Wait 800ms of inactivity before saving
+
+    // Cleanup on unmount
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [greenLineup, orangeLineup, id, saveLineupToDatabase, isSaving]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
