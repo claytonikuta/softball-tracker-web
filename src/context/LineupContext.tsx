@@ -186,25 +186,41 @@ export const LineupProvider: React.FC<{
       // Format players correctly for the API
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
         (player) => {
-          const isNewPlayer =
-            !player.id || isNaN(Number(player.id.toString().split("-")[0]));
-
-          return {
-            // Only include ID for existing players, and make sure it's properly formatted
-            ...(isNewPlayer
-              ? {}
-              : {
-                  id: player.id.toString().includes("-")
-                    ? player.id.toString().split("-")[0]
-                    : player.id,
-                }),
+          // For brand new players, don't try to include an ID at all
+          const playerData = {
+            id:
+              player.id && !player.id.includes("17")
+                ? Number(player.id)
+                : undefined,
             name: player.name,
-            group_name: player.group, // This maps to the database field
-            runs: player.runs || 0,
-            outs: player.outs || 0,
+            group_name: player.group,
+            runs: Number(player.runs || 0),
+            outs: Number(player.outs || 0),
             position: player.group === "green" ? 1 : 2,
+            game_id: gameId,
           };
+
+          // Only include ID for existing database players (not timestamp IDs)
+          if (player.id && !player.id.includes("17")) {
+            playerData.id = Number(player.id);
+          }
+
+          console.log("Formatted player:", playerData);
+          return playerData;
         }
+      );
+
+      console.log(
+        "Complete payload:",
+        JSON.stringify(
+          {
+            current_inning: 1,
+            is_home_team_batting: true,
+            players: formattedPlayers,
+          },
+          null,
+          2
+        )
       );
 
       console.log("Sending player data to server:", formattedPlayers);
