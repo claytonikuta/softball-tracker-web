@@ -91,10 +91,19 @@ export const LineupProvider: React.FC<{
   }, [initialData]);
 
   const addPlayer = (player: Player) => {
+    // Add to appropriate lineup
     if (player.group === "green") {
       setGreenLineup((prev) => [...prev, player]);
     } else {
       setOrangeLineup((prev) => [...prev, player]);
+    }
+
+    // If we have a game ID from URL or props, save the lineup
+    const path = window.location.pathname;
+    const gameIdMatch = path.match(/\/games\/(\d+)/);
+    if (gameIdMatch && gameIdMatch[1]) {
+      // Wait a bit for state to update, then save
+      setTimeout(() => saveLineupToDatabase(gameIdMatch[1]), 100);
     }
   };
 
