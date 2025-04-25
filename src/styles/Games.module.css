@@ -159,6 +159,21 @@
   margin-top: 20px;
 }
 
+/* Add these new classes */
+.modalDeleteButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modalDeleteButton:hover {
+  background-color: #c82333;
+}
+
 @media (min-width: 768px) {
   .modalActions {
     flex-direction: row;

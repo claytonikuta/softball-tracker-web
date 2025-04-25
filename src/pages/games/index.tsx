@@ -146,7 +146,7 @@ export default function GamesList() {
             <div className={styles.modalActions}>
               <Button
                 onClick={handleDeleteGame}
-                className={styles.deleteButton}
+                className={styles.modalDeleteButton}
               >
                 Yes, Delete Game
               </Button>
