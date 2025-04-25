@@ -193,26 +193,39 @@ export const LineupProvider: React.FC<{
 
   const saveLineupToDatabase = async (gameId: string | number) => {
     try {
-      // Format players as before
+      // Debug the lineup before formatting
+      console.log(
+        "Raw lineup before formatting:",
+        JSON.stringify([...greenLineup, ...orangeLineup], null, 2)
+      );
+
+      // Format players - completely rewritten
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
         (player) => {
-          // Check if this is a timestamp-generated ID (longer than 10 chars)
-          const isNewPlayer = player.id.toString().length > 10;
+          // Check if this should have an ID first
+          const numericId = parseInt(player.id);
+          const shouldIncludeId = !isNaN(numericId) && player.id.length < 10;
 
+          // Create the object with conditional ID property using spread
           return {
-            // Only exclude ID if it's a new player
-            ...(isNewPlayer ? {} : { id: player.id }),
             name: player.name,
             group_name: player.group,
             runs: player.runs || 0,
             outs: player.outs || 0,
             position: player.group === "green" ? 1 : 2,
             game_id: gameId,
+            ...(shouldIncludeId ? { id: numericId } : {}),
           };
         }
       );
 
-      // Log the formatted data
+      // Debug the formatted players
+      console.log(
+        "Formatted players:",
+        formattedPlayers.length,
+        formattedPlayers
+      );
+
       console.log(
         "Complete payload:",
         JSON.stringify(
