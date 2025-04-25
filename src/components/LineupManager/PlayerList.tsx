@@ -48,33 +48,40 @@ const PlayerList: React.FC<PlayerListProps> = ({
     }
   };
 
+  // Make sure players is an array and has items before using SortableContext
   const safePlayersList = Array.isArray(players) ? players : [];
-  const safePlayerIds = safePlayersList.map((player) =>
-    player && player.id ? player.id : `placeholder-${Math.random()}`
-  );
 
   return (
     <div className={styles["player-list"]}>
       <h3>{title}</h3>
 
-      {safePlayersList.length === 0 ? (
+      {!safePlayersList.length ? (
         <p className={styles["no-players"]}>No players added yet</p>
       ) : (
+        // Only render DndContext when we have players
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext
-            items={safePlayerIds}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className={styles["players-container"]}>
-              {safePlayersList.map((player) => (
-                <SortablePlayerItem key={player.id} player={player} />
-              ))}
-            </div>
-          </SortableContext>
+          {/* Only create SortableContext when we have safe player IDs */}
+          {safePlayersList.length > 0 && (
+            <SortableContext
+              items={safePlayersList.map(
+                (player) => player?.id || `player-${Math.random()}`
+              )}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className={styles["players-container"]}>
+                {safePlayersList.map((player) => (
+                  <SortablePlayerItem
+                    key={player?.id || `player-${Math.random()}`}
+                    player={player}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          )}
         </DndContext>
       )}
     </div>
