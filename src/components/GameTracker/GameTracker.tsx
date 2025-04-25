@@ -14,7 +14,6 @@ import SafeRender from "../shared/SafeRender";
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup, saveLineupToDatabase } = useLineup();
   const [isSaving, setIsSaving] = useState(false);
-  const [lastSaveTime, setLastSaveTime] = useState(0);
   const {
     currentBatter,
     onDeckBatter,
@@ -171,8 +170,7 @@ const GameTracker: React.FC = () => {
     if (
       id &&
       (greenLineup.length > 0 || orangeLineup.length > 0) &&
-      !isSaving &&
-      Date.now() - lastSaveTime > 3000
+      !isSaving
     ) {
       setIsSaving(true);
       console.log("Auto-save triggered by lineup change");
@@ -181,21 +179,13 @@ const GameTracker: React.FC = () => {
 
       saveLineupToDatabase(gameId)
         .then(() => {
-          setLastSaveTime(Date.now());
-          setTimeout(() => setIsSaving(false), 1000);
+          setIsSaving(false);
         })
         .catch(() => {
           setIsSaving(false);
         });
     }
-  }, [
-    greenLineup,
-    orangeLineup,
-    id,
-    saveLineupToDatabase,
-    isSaving,
-    lastSaveTime,
-  ]);
+  }, [greenLineup, orangeLineup, id, saveLineupToDatabase, isSaving]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
 

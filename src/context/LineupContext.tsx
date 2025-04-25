@@ -35,6 +35,8 @@ export const LineupProvider: React.FC<{
   const [lastGreenIndex, setLastGreenIndex] = useState<number>(0);
   const [lastOrangeIndex, setLastOrangeIndex] = useState<number>(0);
   const [deletedPlayerIds, setDeletedPlayerIds] = useState<number[]>([]);
+  const [pendingChanges, setPendingChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize lineups from initialData if provided
   useEffect(() => {
@@ -163,6 +165,7 @@ export const LineupProvider: React.FC<{
       // Wait a bit longer for state to update since we have two setStates
       setTimeout(() => saveLineupToDatabase(gameIdMatch[1]), 200);
     }
+    setPendingChanges(true);
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {
@@ -199,78 +202,101 @@ export const LineupProvider: React.FC<{
     return lineup[nextIndex];
   };
 
-  const saveLineupToDatabase = async (gameId: string | number) => {
-    try {
-      // Debug the lineup before formatting
-      console.log(
-        "Raw lineup before formatting:",
-        JSON.stringify([...greenLineup, ...orangeLineup], null, 2)
-      );
+  const saveLineupToDatabase = React.useCallback(
+    async (gameId: string | number) => {
+      try {
+        // Debug the lineup before formatting
+        console.log(
+          "Raw lineup before formatting:",
+          JSON.stringify([...greenLineup, ...orangeLineup], null, 2)
+        );
 
-      // Format players - completely rewritten
-      const formattedPlayers = [...greenLineup, ...orangeLineup].map(
-        (player) => {
-          // Check if this should have an ID first
-          const numericId = parseInt(player.id);
-          const shouldIncludeId = !isNaN(numericId) && player.id.length < 10;
+        // Format players - completely rewritten
+        const formattedPlayers = [...greenLineup, ...orangeLineup].map(
+          (player) => {
+            // Check if this should have an ID first
+            const numericId = parseInt(player.id);
+            const shouldIncludeId = !isNaN(numericId) && player.id.length < 10;
 
-          // Create the object with conditional ID property using spread
-          return {
-            name: player.name,
-            group_name: player.group,
-            runs: player.runs || 0,
-            outs: player.outs || 0,
-            position: player.group === "green" ? 1 : 2,
-            game_id: gameId,
-            ...(shouldIncludeId ? { id: numericId } : {}),
-          };
-        }
-      );
+            // Create the object with conditional ID property using spread
+            return {
+              name: player.name,
+              group_name: player.group,
+              runs: player.runs || 0,
+              outs: player.outs || 0,
+              position: player.group === "green" ? 1 : 2,
+              game_id: gameId,
+              ...(shouldIncludeId ? { id: numericId } : {}),
+            };
+          }
+        );
 
-      // Debug the formatted players
-      console.log(
-        "Formatted players:",
-        formattedPlayers.length,
-        formattedPlayers
-      );
+        // Debug the formatted players
+        console.log(
+          "Formatted players:",
+          formattedPlayers.length,
+          formattedPlayers
+        );
 
-      console.log(
-        "Complete payload:",
-        JSON.stringify(
-          {
+        console.log(
+          "Complete payload:",
+          JSON.stringify(
+            {
+              current_inning: 1,
+              is_home_team_batting: true,
+              players: formattedPlayers,
+              deleted_player_ids: deletedPlayerIds,
+            },
+            null,
+            2
+          )
+        );
+
+        const response = await fetch(`/api/games/${gameId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             current_inning: 1,
             is_home_team_batting: true,
             players: formattedPlayers,
-            deleted_player_ids: deletedPlayerIds,
-          },
-          null,
-          2
-        )
-      );
+            deleted_player_ids: deletedPlayerIds, // Add this line
+          }),
+        });
 
-      const response = await fetch(`/api/games/${gameId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          current_inning: 1,
-          is_home_team_batting: true,
-          players: formattedPlayers,
-          deleted_player_ids: deletedPlayerIds, // Add this line
-        }),
-      });
+        // Clear the deleted players array after successful save
+        if (response.ok) {
+          setDeletedPlayerIds([]);
+        }
+      } catch {}
+    },
+    [greenLineup, orangeLineup, deletedPlayerIds]
+  );
 
-      // Clear the deleted players array after successful save
-      if (response.ok) {
-        setDeletedPlayerIds([]);
+  useEffect(() => {
+    if (pendingChanges && !isSaving) {
+      // Get game ID from URL
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/\/games\/(\d+)/);
+
+      if (gameIdMatch && gameIdMatch[1]) {
+        setIsSaving(true);
+        const timer = setTimeout(() => {
+          saveLineupToDatabase(gameIdMatch[1])
+            .then(() => {
+              setPendingChanges(false);
+              setIsSaving(false);
+            })
+            .catch(() => {
+              setIsSaving(false);
+            });
+        }, 300);
+
+        return () => clearTimeout(timer);
       }
-
-      // Rest of your existing code
-    } catch {
-      // Existing error handling
     }
-  };
+  }, [pendingChanges, isSaving, saveLineupToDatabase]);
 
   return (
     <LineupContext.Provider
