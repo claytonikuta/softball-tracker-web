@@ -1,0 +1,65 @@
+.runners-list {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  border: 2px solid #ffc107;
+}
+
+.runners-list h3 {
+  margin-top: 0;
+  color: #ffc107;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.runner-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin-bottom: 8px;
+  /* Better touch behavior */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.runner-item:active {
+  background-color: #f8f8f8;
+}
+
+.base-options,
+.outcome-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+/* Stack all buttons for better mobile experience */
+.base-button,
+.run-button,
+.out-button {
+  width: 100%;
+  min-height: 44px; /* Ensure good touch target size */
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .base-options,
+  .outcome-options {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .base-button,
+  .run-button,
+  .out-button {
+    width: auto;
+    min-height: auto;
+  }
+}

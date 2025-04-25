@@ -1,0 +1,94 @@
+.player-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-bottom: 8px;
+  /* Prevent text selection when tapping */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.player-group {
+  font-size: 14px;
+  color: #666;
+}
+
+.player-stats {
+  display: flex;
+  gap: 15px;
+  margin-top: 4px;
+}
+
+/* Ensure buttons have space in mobile view */
+.edit-player-btn,
+.remove-player-btn {
+  width: 36px !important; /* Override inline styles */
+  height: 36px !important;
+  font-size: 18px !important;
+}
+
+.counter-control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+
+.counter-value {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 30px;
+  text-align: center;
+}
+
+.edit-player-form {
+  padding: 15px;
+}
+
+.edit-stat {
+  margin-bottom: 20px;
+}
+
+.edit-stat h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .player-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .player-stats {
+    margin-top: 0;
+  }
+
+  .edit-player-btn,
+  .remove-player-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
+}

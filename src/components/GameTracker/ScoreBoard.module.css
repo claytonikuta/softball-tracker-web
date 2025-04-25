@@ -1,0 +1,126 @@
+.scoreboard {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #17a2b8;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.scoreboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.scoreboard h3 {
+  margin: 0;
+  color: #17a2b8;
+  text-align: center;
+}
+
+.inning-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.current-inning {
+  font-weight: bold;
+  font-size: 18px;
+  min-width: 25px;
+  text-align: center;
+}
+
+.current-inning-col {
+  background-color: rgba(23, 162, 184, 0.3);
+  font-weight: bold;
+  position: relative;
+}
+
+.toggle-team-btn {
+  background-color: #6c757d;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.innings-display {
+  margin-bottom: 15px;
+  overflow-x: auto; /* Already good */
+  -webkit-overflow-scrolling: touch;
+  width: 100%; /* Make sure it doesn't push container wider */
+  max-width: 100%; /* Ensure it doesn't overflow */
+}
+
+.innings-display table {
+  width: 100%;
+  min-width: 320px; /* Reduce to smallest common mobile width */
+  border-collapse: collapse;
+  text-align: center;
+}
+
+/* Make cells as compact as possible on mobile */
+.innings-display th,
+.innings-display td {
+  padding: 2px; /* Even smaller padding on mobile */
+  border: 1px solid #ddd;
+  font-size: 10px; /* Smaller font on mobile */
+}
+
+.team-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.team-section {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Update the score-control class to better use horizontal space */
+.score-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.score-control span {
+  font-size: 16px;
+  min-width: 90px; /* Ensure consistent width for the labels */
+}
+
+/* Update the score-buttons to always be horizontal */
+.score-buttons {
+  display: flex;
+  gap: 5px;
+  flex-direction: row; /* Always horizontal */
+}
+
+/* Make buttons a bit bigger on mobile for better touch targets */
+.small-btn {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+@media (min-width: 768px) {
+  .innings-display table {
+    min-width: 450px;
+  }
+
+  .innings-display th,
+  .innings-display td {
+    padding: 6px;
+    font-size: 14px;
+  }
+}

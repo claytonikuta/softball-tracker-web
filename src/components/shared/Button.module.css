@@ -1,0 +1,54 @@
+.btn {
+  border: none;
+  color: white;
+  padding: 12px 16px; /* Increased padding for better touch targets */
+  border-radius: 6px; /* Slightly rounded corners */
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  font-size: 16px; /* Larger font size for mobile */
+  display: inline-block;
+  text-align: center;
+  touch-action: manipulation; /* Improves touch behavior */
+  -webkit-tap-highlight-color: transparent; /* Removes tap highlight on iOS */
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  opacity: 0.7; /* Visual feedback on press */
+  transform: scale(0.98); /* Subtle push effect */
+}
+
+.btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Small buttons for the scoreboard */
+.small-btn {
+  width: 36px; /* Larger touch target */
+  height: 36px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .small-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,31 @@
+.game-tracker {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-tracker h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.game-tracker-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.batter-info,
+.game-status {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .game-tracker-container {
+    grid-template-columns: 1fr;
+  }
+}
