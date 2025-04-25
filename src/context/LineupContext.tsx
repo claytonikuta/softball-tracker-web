@@ -219,15 +219,7 @@ export const LineupProvider: React.FC<{
         body: JSON.stringify({
           current_inning: 1,
           is_home_team_batting: true,
-          players: [
-            {
-              name: "Test Player",
-              group_name: "green",
-              runs: 0,
-              outs: 0,
-              position: 1,
-            },
-          ],
+          players: formattedPlayers,
         }),
       });
 
