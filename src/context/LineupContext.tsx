@@ -5,6 +5,7 @@ interface PlayerData {
   id: number;
   name: string;
   position: string;
+  group_name?: string;
 }
 
 interface LineupContextType {
@@ -26,7 +27,7 @@ const LineupContext = createContext<LineupContextType | undefined>(undefined);
 
 export const LineupProvider: React.FC<{
   children: React.ReactNode;
-  initialData?: PlayerData[];
+  initialData?: PlayerData[] | { players: PlayerData[] };
 }> = ({ children, initialData }) => {
   const [greenLineup, setGreenLineup] = useState<Player[]>([]);
   const [orangeLineup, setOrangeLineup] = useState<Player[]>([]);
@@ -35,37 +36,56 @@ export const LineupProvider: React.FC<{
 
   // Initialize lineups from initialData if provided
   useEffect(() => {
-    if (initialData && Array.isArray(initialData) && initialData.length > 0) {
-      console.log("Initializing lineup with data:", initialData);
+    console.log("LineupProvider initialData:", initialData);
 
-      // Process the player data safely
-      const tempGreenLineup: Player[] = [];
-      const tempOrangeLineup: Player[] = [];
+    // Defensive check - make sure we have valid data to work with
+    if (!initialData) return;
 
-      initialData.forEach((playerData) => {
-        // Only process valid player data
-        if (playerData && playerData.name) {
-          const player: Player = {
-            id: String(playerData.id || Date.now()),
-            name: playerData.name,
-            group: playerData.position?.toLowerCase().includes("green")
-              ? "green"
-              : "orange",
-            runs: 0,
-            outs: 0,
-          };
+    // Handle both array and object with players property
+    const playersArray = Array.isArray(initialData)
+      ? initialData
+      : "players" in initialData && Array.isArray(initialData.players)
+      ? initialData.players
+      : null;
 
-          if (player.group === "green") {
-            tempGreenLineup.push(player);
-          } else {
-            tempOrangeLineup.push(player);
-          }
-        }
-      });
-
-      if (tempGreenLineup.length > 0) setGreenLineup(tempGreenLineup);
-      if (tempOrangeLineup.length > 0) setOrangeLineup(tempOrangeLineup);
+    if (!playersArray) {
+      console.warn("No valid players array found in initialData:", initialData);
+      return;
     }
+
+    // Process the players safely
+    const tempGreenLineup: Player[] = [];
+    const tempOrangeLineup: Player[] = [];
+
+    playersArray.forEach((playerData: PlayerData) => {
+      if (!playerData) return;
+
+      try {
+        const player: Player = {
+          id: String(playerData.id || Date.now() + Math.random()),
+          name: playerData.name || "Unknown Player",
+          group: (playerData.group_name || playerData.position || "")
+            .toLowerCase()
+            .includes("green")
+            ? "green"
+            : "orange",
+          runs: 0,
+          outs: 0,
+        };
+
+        if (player.group === "green") {
+          tempGreenLineup.push(player);
+        } else {
+          tempOrangeLineup.push(player);
+        }
+      } catch (error) {
+        console.error("Error processing player data:", error);
+      }
+    });
+
+    // Update state if we have players
+    if (tempGreenLineup.length > 0) setGreenLineup(tempGreenLineup);
+    if (tempOrangeLineup.length > 0) setOrangeLineup(tempOrangeLineup);
   }, [initialData]);
 
   const addPlayer = (player: Player) => {
