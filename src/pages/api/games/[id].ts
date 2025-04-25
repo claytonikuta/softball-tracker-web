@@ -91,6 +91,18 @@ export default async function handler(
         }
       }
 
+      // Delete players
+      if (
+        req.body.deleted_player_ids &&
+        Array.isArray(req.body.deleted_player_ids)
+      ) {
+        for (const playerId of req.body.deleted_player_ids) {
+          await sql`
+      DELETE FROM players WHERE id = ${playerId} AND game_id = ${id}
+    `;
+        }
+      }
+
       // Update players
       if (players && Array.isArray(players)) {
         for (const player of players) {
