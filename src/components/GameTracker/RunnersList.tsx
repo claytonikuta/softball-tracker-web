@@ -134,9 +134,11 @@ const RunnersList: React.FC = () => {
     <>
       <div className={styles["runners-list"]}>
         <h3>Runners On Base</h3>
-        {Array.isArray(runnersOnBase) && runnersOnBase.length > 0 ? (
+        {safeRunners.length === 0 ? (
+          <p className={styles["no-runners"]}>No runners on base</p>
+        ) : (
           <div className={styles["runners-container"]}>
-            {runnersOnBase.map((runner) => (
+            {safeRunners.map((runner) => (
               <div
                 key={runner?.id || `runner-${Math.random()}`}
                 className={styles["runner-item"]}
@@ -153,8 +155,6 @@ const RunnersList: React.FC = () => {
               </div>
             ))}
           </div>
-        ) : (
-          <p className={styles["no-runners"]}>No runners on base</p>
         )}
       </div>
 
