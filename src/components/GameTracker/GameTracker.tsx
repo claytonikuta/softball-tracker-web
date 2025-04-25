@@ -14,6 +14,7 @@ import SafeRender from "../shared/SafeRender";
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup, saveLineupToDatabase } = useLineup();
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSaveTime, setLastSaveTime] = useState(0);
   const {
     currentBatter,
     onDeckBatter,
@@ -166,35 +167,35 @@ const GameTracker: React.FC = () => {
     setRunnersOnBase,
   ]);
 
-  // Then modify the useEffect:
   useEffect(() => {
     if (
       id &&
       (greenLineup.length > 0 || orangeLineup.length > 0) &&
-      !isSaving
+      !isSaving &&
+      Date.now() - lastSaveTime > 3000
     ) {
       setIsSaving(true);
-      const timer = setTimeout(() => {
-        if (typeof id === "string" || typeof id === "number") {
-          saveLineupToDatabase(id)
-            .then(() => {
-              // Add a delay before allowing another save
-              setTimeout(() => setIsSaving(false), 2000);
-            })
-            .catch(() => {
-              setIsSaving(false);
-            });
-        } else {
-          console.warn("Invalid game ID:", id);
-          setIsSaving(false);
-        }
-      }, 1000);
+      console.log("Auto-save triggered by lineup change");
 
-      return () => {
-        clearTimeout(timer);
-      };
+      const gameId = Array.isArray(id) ? id[0] : id;
+
+      saveLineupToDatabase(gameId)
+        .then(() => {
+          setLastSaveTime(Date.now());
+          setTimeout(() => setIsSaving(false), 1000);
+        })
+        .catch(() => {
+          setIsSaving(false);
+        });
     }
-  }, [greenLineup, orangeLineup, id, saveLineupToDatabase, isSaving]);
+  }, [
+    greenLineup,
+    orangeLineup,
+    id,
+    saveLineupToDatabase,
+    isSaving,
+    lastSaveTime,
+  ]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
 

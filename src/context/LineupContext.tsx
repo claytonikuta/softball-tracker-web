@@ -155,6 +155,14 @@ export const LineupProvider: React.FC<{
       );
       return newLineup;
     });
+
+    // Add explicit save after state updates (similar to addPlayer)
+    const path = window.location.pathname;
+    const gameIdMatch = path.match(/\/games\/(\d+)/);
+    if (gameIdMatch && gameIdMatch[1]) {
+      // Wait a bit longer for state to update since we have two setStates
+      setTimeout(() => saveLineupToDatabase(gameIdMatch[1]), 200);
+    }
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {
