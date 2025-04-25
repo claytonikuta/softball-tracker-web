@@ -46,7 +46,8 @@
   gap: 5px;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 0; /* Remove border radius from handle */
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
   align-self: stretch; /* Make handle stretch to full height */
 }
 

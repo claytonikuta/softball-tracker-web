@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CurrentBatter from "./CurrentBatter";
 import OnDeckDisplay from "./OnDeckDisplay";
 import InTheHoleDisplay from "./InTheHoleDisplay";
@@ -13,6 +13,7 @@ import SafeRender from "../shared/SafeRender";
 
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup, saveLineupToDatabase } = useLineup();
+  const [isSaving, setIsSaving] = useState(false);
   const {
     currentBatter,
     onDeckBatter,
@@ -165,19 +166,35 @@ const GameTracker: React.FC = () => {
     setRunnersOnBase,
   ]);
 
+  // Then modify the useEffect:
   useEffect(() => {
-    if (id && (greenLineup.length > 0 || orangeLineup.length > 0)) {
+    if (
+      id &&
+      (greenLineup.length > 0 || orangeLineup.length > 0) &&
+      !isSaving
+    ) {
+      setIsSaving(true);
       const timer = setTimeout(() => {
         if (typeof id === "string" || typeof id === "number") {
-          saveLineupToDatabase(id);
+          saveLineupToDatabase(id)
+            .then(() => {
+              // Add a delay before allowing another save
+              setTimeout(() => setIsSaving(false), 2000);
+            })
+            .catch(() => {
+              setIsSaving(false);
+            });
         } else {
           console.warn("Invalid game ID:", id);
+          setIsSaving(false);
         }
       }, 1000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
-  }, [greenLineup, orangeLineup, id, saveLineupToDatabase]);
+  }, [greenLineup, orangeLineup, id, saveLineupToDatabase, isSaving]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
 

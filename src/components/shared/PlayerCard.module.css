@@ -7,8 +7,6 @@
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin-bottom: 8px;
-  /* Prevent text selection when tapping */
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
