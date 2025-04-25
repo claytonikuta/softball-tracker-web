@@ -210,16 +210,24 @@ export const LineupProvider: React.FC<{
       console.log("Sending player data to server:", formattedPlayers);
 
       // Need to send the other required fields along with players
+      // In the saveLineupToDatabase function
       const response = await fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          // Send current state as a minimal update
-          current_inning: 1, // Include this from your game state
-          is_home_team_batting: true, // Include this from your game state
-          players: formattedPlayers,
+          current_inning: 1,
+          is_home_team_batting: true,
+          players: [
+            {
+              name: "Test Player",
+              group_name: "green",
+              runs: 0,
+              outs: 0,
+              position: 1,
+            },
+          ],
         }),
       });
 

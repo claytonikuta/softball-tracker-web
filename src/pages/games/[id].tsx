@@ -74,7 +74,7 @@ export default function GameDetail() {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
+      <header className={styles.gameHeader}>
         <Link href="/games">
           <a className={styles.backLink}>← Back to Games</a>
         </Link>
