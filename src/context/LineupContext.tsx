@@ -105,7 +105,7 @@ export const LineupProvider: React.FC<{
       if (!gameIdMatch || !gameIdMatch[1]) return;
 
       // Send to API
-      const response = await fetch(`/api/games/${gameIdMatch[1]}/player`, {
+      const response = await fetch(`/api/games/${gameIdMatch[1]}/players`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -169,7 +169,7 @@ export const LineupProvider: React.FC<{
       if (!gameIdMatch || !gameIdMatch[1]) return;
 
       // Send update request
-      await fetch(`/api/games/${gameIdMatch[1]}/player`, {
+      await fetch(`/api/games/${gameIdMatch[1]}/players`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -217,7 +217,7 @@ export const LineupProvider: React.FC<{
 
         // Send delete request
         await fetch(
-          `/api/games/${gameIdMatch[1]}/player?playerId=${numericId}`,
+          `/api/games/${gameIdMatch[1]}/players?playerId=${numericId}`,
           {
             method: "DELETE",
           }
