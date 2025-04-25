@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import styles from "./Layout.module.css";
+import styles from "./layout.module.css";
 
 type LayoutProps = {
   children: ReactNode;
