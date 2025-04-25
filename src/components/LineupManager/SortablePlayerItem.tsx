@@ -69,8 +69,15 @@ const SortablePlayerItem: React.FC<SortablePlayerItemProps> = ({ player }) => {
 
   return (
     <div ref={setNodeRef} style={style} className={styles["sortable-item"]}>
-      {/* The card itself has the drag handlers */}
-      <div className={styles["card-content"]} {...attributes} {...listeners}>
+      {/* NEW: Drag handle on the left side */}
+      <div className={styles["drag-handle"]} {...attributes} {...listeners}>
+        <div className={styles["handle-line"]}></div>
+        <div className={styles["handle-line"]}></div>
+        <div className={styles["handle-line"]}></div>
+      </div>
+
+      {/* The card itself no longer has drag handlers */}
+      <div className={styles["card-content"]}>
         <PlayerCard player={player} dragHandleProps={undefined} />
       </div>
 

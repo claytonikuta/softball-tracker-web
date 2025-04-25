@@ -25,6 +25,61 @@
   gap: 12px;
 }
 
+.sortable-item {
+  display: flex;
+  position: relative;
+  touch-action: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.drag-handle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  background-color: #f0f0f0;
+  cursor: grab;
+  padding: 8px 0;
+  gap: 5px;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 8px 0 0 8px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background-color: #e0e0e0;
+}
+
+.handle-line {
+  width: 20px;
+  height: 3px;
+  background-color: #888;
+  border-radius: 2px;
+}
+
+.card-content {
+  flex: 1;
+  touch-action: auto;
+}
+
+/* For dark mode support */
+@media (prefers-color-scheme: dark) {
+  .drag-handle {
+    background-color: #333;
+  }
+
+  .handle-line {
+    background-color: #aaa;
+  }
+
+  .drag-handle:active {
+    background-color: #444;
+  }
+}
+
 /* For larger screens */
 @media (min-width: 768px) {
   .modal-actions {
