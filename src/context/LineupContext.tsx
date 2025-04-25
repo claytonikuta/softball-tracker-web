@@ -100,13 +100,7 @@ export const LineupProvider: React.FC<{
       setOrangeLineup((prev) => [...prev, player]);
     }
 
-    // If we have a game ID from URL or props, save the lineup
-    const path = window.location.pathname;
-    const gameIdMatch = path.match(/\/games\/(\d+)/);
-    if (gameIdMatch && gameIdMatch[1]) {
-      // Wait a bit for state to update, then save
-      setTimeout(() => saveLineupToDatabase(gameIdMatch[1]), 100);
-    }
+    setPendingChanges(true);
   };
 
   const updatePlayer = (id: string, updatedPlayer: Player) => {
@@ -158,13 +152,6 @@ export const LineupProvider: React.FC<{
       return newLineup;
     });
 
-    // Add explicit save after state updates (similar to addPlayer)
-    const path = window.location.pathname;
-    const gameIdMatch = path.match(/\/games\/(\d+)/);
-    if (gameIdMatch && gameIdMatch[1]) {
-      // Wait a bit longer for state to update since we have two setStates
-      setTimeout(() => saveLineupToDatabase(gameIdMatch[1]), 200);
-    }
     setPendingChanges(true);
   };
 
