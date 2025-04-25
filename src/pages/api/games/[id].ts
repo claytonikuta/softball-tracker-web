@@ -147,6 +147,23 @@ export default async function handler(
     }
   }
 
+  if (req.method === "DELETE") {
+    try {
+      // Delete related records first (foreign key constraints)
+      await sql`DELETE FROM runners WHERE game_id = ${id}`;
+      await sql`DELETE FROM players WHERE game_id = ${id}`;
+      await sql`DELETE FROM innings WHERE game_id = ${id}`;
+
+      // Delete the game itself
+      await sql`DELETE FROM games WHERE id = ${id}`;
+
+      return res.status(200).json({ message: "Game deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting game:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   // Method not allowed
   return res.status(405).json({ message: "Method not allowed" });
 }

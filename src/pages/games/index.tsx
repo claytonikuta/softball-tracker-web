@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "../../styles/Games.module.css";
+import Modal from "../../components/shared/Modal";
+import Button from "../../components/shared/Button";
 
 interface Game {
   id: number;
@@ -16,6 +18,7 @@ export default function GamesList() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,6 +45,27 @@ export default function GamesList() {
 
     fetchGames();
   }, []);
+
+  const handleDeleteGame = async () => {
+    if (!gameToDelete) return;
+
+    try {
+      const response = await fetch(`/api/games/${gameToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete game");
+      }
+
+      // Remove the game from the list without reloading the page
+      setGames(games.filter((game) => game.id !== gameToDelete.id));
+      setGameToDelete(null);
+    } catch (error) {
+      console.error("Error deleting game:", error);
+      alert("Failed to delete game");
+    }
+  };
 
   const handleLogout = () => {
     document.cookie = "auth_token=; path=/; max-age=0";
@@ -74,25 +98,67 @@ export default function GamesList() {
               </div>
             ) : (
               games.map((game) => (
-                <Link href={`/games/${game.id}`} key={game.id}>
-                  <a className={styles.gameCard}>
-                    <div className={styles.gameDate}>
-                      {new Date(game.date).toLocaleDateString()}
-                    </div>
-                    <div className={styles.teams}>
-                      <span>{game.home_team_name}</span>
-                      <span>vs</span>
-                      <span>{game.away_team_name}</span>
-                    </div>
-                    <div className={styles.inning}>
-                      Inning: {game.current_inning}
-                    </div>
-                  </a>
-                </Link>
+                <div key={game.id} className={styles.gameCard}>
+                  <Link href={`/games/${game.id}`}>
+                    <a>
+                      <div className={styles.gameDate}>
+                        {new Date(game.date).toLocaleDateString()}
+                      </div>
+                      <div className={styles.teams}>
+                        <span>{game.home_team_name}</span>
+                        <span>vs</span>
+                        <span>{game.away_team_name}</span>
+                      </div>
+                      <div className={styles.inning}>
+                        Inning: {game.current_inning}
+                      </div>
+                    </a>
+                  </Link>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGameToDelete(game);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               ))
             )}
           </div>
         </>
+      )}
+
+      {gameToDelete && (
+        <Modal
+          isOpen={!!gameToDelete}
+          onClose={() => setGameToDelete(null)}
+          title="Delete Game"
+        >
+          <div className={styles.deleteConfirmation}>
+            <p>
+              Are you sure you want to delete the game between
+              <strong> {gameToDelete.home_team_name}</strong> and
+              <strong> {gameToDelete.away_team_name}</strong>?
+            </p>
+            <p>This action cannot be undone.</p>
+            <div className={styles.modalActions}>
+              <Button
+                onClick={handleDeleteGame}
+                className={styles.deleteButton}
+              >
+                Yes, Delete Game
+              </Button>
+              <Button
+                onClick={() => setGameToDelete(null)}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );
