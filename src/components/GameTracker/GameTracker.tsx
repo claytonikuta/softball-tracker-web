@@ -7,6 +7,7 @@ import Scoreboard from "./ScoreBoard";
 import { useLineup } from "../../context/LineupContext";
 import { useGameContext } from "../../context/GameContext";
 import styles from "./GameTracker.module.css";
+import LineupManager from "../LineupManager/LineupManager";
 
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup } = useLineup();
@@ -161,6 +162,9 @@ const GameTracker: React.FC = () => {
         <div className={styles["game-status"]}>
           <RunnersList />
         </div>
+      </div>
+      <div className={styles["lineup-section"]}>
+        <LineupManager />
       </div>
     </div>
   );
