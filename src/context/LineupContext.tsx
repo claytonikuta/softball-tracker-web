@@ -21,6 +21,7 @@ interface LineupContextType {
   lastOrangeIndex: number;
   setLastGreenIndex: (index: number) => void;
   setLastOrangeIndex: (index: number) => void;
+  saveLineupToDatabase: (gameId: string | number) => Promise<void>;
 }
 
 const LineupContext = createContext<LineupContextType | undefined>(undefined);
@@ -178,6 +179,44 @@ export const LineupProvider: React.FC<{
     return lineup[nextIndex];
   };
 
+  const saveLineupToDatabase = async (gameId: string | number) => {
+    if (!gameId) return;
+
+    try {
+      // Combine both lineups and format for the API
+      const formattedPlayers = [...greenLineup, ...orangeLineup].map(
+        (player) => ({
+          id: player.id.includes("-") ? player.id.split("-")[0] : player.id,
+          name: player.name,
+          group_name: player.group,
+          runs: player.runs,
+          outs: player.outs,
+          position: player.group === "green" ? "Green Group" : "Orange Group",
+        })
+      );
+
+      // Send to the API
+      const response = await fetch(`/api/games/${gameId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          players: formattedPlayers,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Failed to save lineup");
+      }
+
+      console.log("Lineup saved to database successfully");
+    } catch (error) {
+      console.error("Error saving lineup:", error);
+    }
+  };
+
   return (
     <LineupContext.Provider
       value={{
@@ -193,6 +232,7 @@ export const LineupProvider: React.FC<{
         lastOrangeIndex,
         setLastGreenIndex,
         setLastOrangeIndex,
+        saveLineupToDatabase,
       }}
     >
       {children}

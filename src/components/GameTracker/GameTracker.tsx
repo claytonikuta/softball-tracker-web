@@ -6,12 +6,13 @@ import RunnersList from "./RunnersList";
 import Scoreboard from "./ScoreBoard";
 import { useLineup } from "../../context/LineupContext";
 import { useGameContext } from "../../context/GameContext";
+import { useParams } from "next/navigation";
 import styles from "./GameTracker.module.css";
 import LineupManager from "../LineupManager/LineupManager";
 import SafeRender from "../shared/SafeRender";
 
 const GameTracker: React.FC = () => {
-  const { greenLineup, orangeLineup } = useLineup();
+  const { greenLineup, orangeLineup, saveLineupToDatabase } = useLineup();
   const {
     currentBatter,
     onDeckBatter,
@@ -24,6 +25,8 @@ const GameTracker: React.FC = () => {
     setLastGreenIndex,
     setLastOrangeIndex,
   } = useGameContext();
+
+  const { id } = useParams();
 
   useEffect(() => {
     if (greenLineup.length > 0 && orangeLineup.length > 0 && !currentBatter) {
@@ -161,6 +164,20 @@ const GameTracker: React.FC = () => {
     setInTheHoleBatter,
     setRunnersOnBase,
   ]);
+
+  useEffect(() => {
+    if (id && (greenLineup.length > 0 || orangeLineup.length > 0)) {
+      const timer = setTimeout(() => {
+        if (typeof id === "string" || typeof id === "number") {
+          saveLineupToDatabase(id);
+        } else {
+          console.warn("Invalid game ID:", id);
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [greenLineup, orangeLineup, id, saveLineupToDatabase]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
 
