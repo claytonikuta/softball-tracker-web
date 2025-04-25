@@ -196,14 +196,17 @@ export const LineupProvider: React.FC<{
       // Format players as before
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
         (player) => {
-          // Format player data correctly for the database
+          // Check if this is a timestamp-generated ID (longer than 10 chars)
+          const isNewPlayer = player.id.toString().length > 10;
+
           return {
-            id: player.id.toString().includes("17") ? undefined : player.id,
+            // Only exclude ID if it's a new player
+            ...(isNewPlayer ? {} : { id: player.id }),
             name: player.name,
-            group_name: player.group, // Changed from group to group_name
+            group_name: player.group,
             runs: player.runs || 0,
             outs: player.outs || 0,
-            position: player.group === "green" ? 1 : 2, // Add position field
+            position: player.group === "green" ? 1 : 2,
             game_id: gameId,
           };
         }
