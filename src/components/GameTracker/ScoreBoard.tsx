@@ -105,7 +105,9 @@ const Scoreboard: React.FC = () => {
                 <th
                   key={index + 1}
                   className={
-                    currentInning === index + 1 ? "current-inning-col" : ""
+                    currentInning === index + 1
+                      ? styles["current-inning-col"]
+                      : ""
                   }
                 >
                   {index + 1}
@@ -121,7 +123,9 @@ const Scoreboard: React.FC = () => {
                 <td
                   key={index + 1}
                   className={
-                    currentInning === index + 1 ? "current-inning-col" : ""
+                    currentInning === index + 1
+                      ? styles["current-inning-col"]
+                      : ""
                   }
                 >
                   {inning.runs}
@@ -135,7 +139,9 @@ const Scoreboard: React.FC = () => {
                 <td
                   key={index + 1}
                   className={
-                    currentInning === index + 1 ? "current-inning-col" : ""
+                    currentInning === index + 1
+                      ? styles["current-inning-col"]
+                      : ""
                   }
                 >
                   {inning.runs}

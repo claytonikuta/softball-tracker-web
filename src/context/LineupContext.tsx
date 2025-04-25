@@ -183,25 +183,25 @@ export const LineupProvider: React.FC<{
     if (!gameId) return;
 
     try {
-      // Fix ID handling for new players
+      // Format players correctly for the API
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
         (player) => {
-          // Check if this is a new player (string ID) or existing DB player (numeric ID)
-          const isNewPlayer = isNaN(Number(player.id.split("-")[0]));
+          const isNewPlayer =
+            !player.id || isNaN(Number(player.id.toString().split("-")[0]));
 
           return {
-            // Only include ID for existing database players
+            // Only include ID for existing players, and make sure it's properly formatted
             ...(isNewPlayer
               ? {}
               : {
-                  id: player.id.includes("-")
-                    ? player.id.split("-")[0]
+                  id: player.id.toString().includes("-")
+                    ? player.id.toString().split("-")[0]
                     : player.id,
                 }),
             name: player.name,
-            group_name: player.group,
-            runs: player.runs,
-            outs: player.outs,
+            group_name: player.group, // This maps to the database field
+            runs: player.runs || 0,
+            outs: player.outs || 0,
             position: player.group === "green" ? "Green Group" : "Orange Group",
           };
         }
@@ -209,20 +209,22 @@ export const LineupProvider: React.FC<{
 
       console.log("Sending player data to server:", formattedPlayers);
 
-      // Send to the API
+      // Need to send the other required fields along with players
       const response = await fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          // Send current state as a minimal update
+          current_inning: 1, // Include this from your game state
+          is_home_team_batting: true, // Include this from your game state
           players: formattedPlayers,
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.message || "Failed to save lineup");
       }
 
