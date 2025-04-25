@@ -8,6 +8,7 @@ import { useLineup } from "../../context/LineupContext";
 import { useGameContext } from "../../context/GameContext";
 import styles from "./GameTracker.module.css";
 import LineupManager from "../LineupManager/LineupManager";
+import SafeRender from "../shared/SafeRender";
 
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup } = useLineup();
@@ -46,6 +47,15 @@ const GameTracker: React.FC = () => {
     setLastGreenIndex,
     setLastOrangeIndex,
   ]);
+
+  console.log("GameTracker render - props:", {
+    greenLineup,
+    orangeLineup,
+    runnersOnBase,
+    currentBatter,
+    onDeckBatter,
+    inTheHoleBatter,
+  });
 
   // Clean up removed players
   useEffect(() => {
@@ -162,20 +172,33 @@ const GameTracker: React.FC = () => {
     <div className={styles["game-tracker"]}>
       <h2>Game Tracker</h2>
 
-      <Scoreboard />
+      <SafeRender>
+        <Scoreboard />
+      </SafeRender>
 
       <div className={styles["game-tracker-container"]}>
         <div className={styles["batter-info"]}>
-          <CurrentBatter />
-          <OnDeckDisplay />
-          <InTheHoleDisplay />
+          <SafeRender>
+            <CurrentBatter />
+          </SafeRender>
+          <SafeRender>
+            <OnDeckDisplay />
+          </SafeRender>
+          <SafeRender>
+            <InTheHoleDisplay />
+          </SafeRender>
         </div>
         <div className={styles["game-status"]}>
-          <RunnersList />
+          <SafeRender>
+            <RunnersList />
+          </SafeRender>
         </div>
       </div>
+
       <div className={styles["lineup-section"]}>
-        <LineupManager />
+        <SafeRender>
+          <LineupManager />
+        </SafeRender>
       </div>
     </div>
   );

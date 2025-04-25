@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { GameProvider } from "../../context/GameContext";
 import { LineupProvider } from "../../context/LineupContext";
 import styles from "../../styles/GameDetail.module.css";
+import SafeRender from "@/components/shared/SafeRender";
 
 // Dynamically import the GameTracker to avoid SSR issues
 const GameTracker = dynamic(
@@ -133,21 +134,20 @@ export default function GameDetail() {
       </header>
 
       <div className={styles.gameContainer}>
-        {gameData ? (
+        <SafeRender>
           <GameProvider initialData={gameData}>
             <LineupProvider
+              // Ensure we always have a valid array, even as an empty one
               initialData={
-                gameData.players && Array.isArray(gameData.players)
-                  ? gameData.players
+                gameData?.players?.length
+                  ? JSON.parse(JSON.stringify(gameData.players))
                   : []
               }
             >
               <GameTracker />
             </LineupProvider>
           </GameProvider>
-        ) : (
-          <div className={styles.loading}>Loading game data...</div>
-        )}
+        </SafeRender>
       </div>
     </div>
   );

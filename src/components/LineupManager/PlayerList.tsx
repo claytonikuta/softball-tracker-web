@@ -49,6 +49,9 @@ const PlayerList: React.FC<PlayerListProps> = ({
   };
 
   const safePlayersList = Array.isArray(players) ? players : [];
+  const safePlayerIds = safePlayersList.map((player) =>
+    player && player.id ? player.id : `placeholder-${Math.random()}`
+  );
 
   return (
     <div className={styles["player-list"]}>
@@ -63,7 +66,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={safePlayersList.map((player) => player.id)}
+            items={safePlayerIds}
             strategy={verticalListSortingStrategy}
           >
             <div className={styles["players-container"]}>
