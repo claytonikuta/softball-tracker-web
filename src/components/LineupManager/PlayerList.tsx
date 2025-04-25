@@ -28,6 +28,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
   players,
   onReorder,
 }) => {
+  // Move ALL hooks to the top before any conditional logic
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -35,12 +36,15 @@ const PlayerList: React.FC<PlayerListProps> = ({
     })
   );
 
+  // Safe handler with additional checks
   const handleDragEnd = (event: DragEndEvent) => {
+    if (!Array.isArray(players)) return; // Ensure players is an array before proceeding
     const { active, over } = event;
+    if (!over || !active || !active.id || !over.id) return;
 
-    if (over && active.id !== over.id) {
-      const oldIndex = players.findIndex((player) => player.id === active.id);
-      const newIndex = players.findIndex((player) => player.id === over.id);
+    if (active.id !== over.id) {
+      const oldIndex = players.findIndex((player) => player?.id === active.id);
+      const newIndex = players.findIndex((player) => player?.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
         onReorder(oldIndex, newIndex);
@@ -48,15 +52,23 @@ const PlayerList: React.FC<PlayerListProps> = ({
     }
   };
 
-  // Make sure players is an array and has items before using SortableContext
-  const safePlayersList = Array.isArray(players) ? players : [];
+  // Make sure players is an array and has items
+  const isPlayersArray = Array.isArray(players);
+  const safePlayersList = isPlayersArray ? players : [];
+
+  // After all hooks, we can check and warn
+  if (!isPlayersArray) {
+    console.warn(`PlayerList "${title}" received non-array players:`, players);
+  }
 
   return (
     <div className={styles["player-list"]}>
       <h3>{title}</h3>
 
-      {!safePlayersList.length ? (
-        <p className={styles["no-players"]}>No players added yet</p>
+      {!isPlayersArray || safePlayersList.length === 0 ? (
+        <p className={styles["no-players"]}>
+          {!isPlayersArray ? "No players available" : "No players added yet"}
+        </p>
       ) : (
         // Only render DndContext when we have players
         <DndContext
@@ -64,24 +76,21 @@ const PlayerList: React.FC<PlayerListProps> = ({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          {/* Only create SortableContext when we have safe player IDs */}
-          {safePlayersList.length > 0 && (
-            <SortableContext
-              items={safePlayersList.map(
-                (player) => player?.id || `player-${Math.random()}`
-              )}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className={styles["players-container"]}>
-                {safePlayersList.map((player) => (
-                  <SortablePlayerItem
-                    key={player?.id || `player-${Math.random()}`}
-                    player={player}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          )}
+          <SortableContext
+            items={safePlayersList.map(
+              (player) => player?.id || `player-${Math.random()}`
+            )}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className={styles["players-container"]}>
+              {safePlayersList.map((player) => (
+                <SortablePlayerItem
+                  key={player?.id || `player-${Math.random()}`}
+                  player={player}
+                />
+              ))}
+            </div>
+          </SortableContext>
         </DndContext>
       )}
     </div>

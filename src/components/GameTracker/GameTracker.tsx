@@ -196,8 +196,12 @@ const GameTracker: React.FC = () => {
       </div>
 
       <div className={styles["lineup-section"]}>
-        <SafeRender>
-          <LineupManager />
+        <SafeRender fallback={<div>Error loading lineup manager</div>}>
+          {Array.isArray(greenLineup) && Array.isArray(orangeLineup) ? (
+            <LineupManager />
+          ) : (
+            <div>Waiting for lineup data to be available...</div>
+          )}
         </SafeRender>
       </div>
     </div>

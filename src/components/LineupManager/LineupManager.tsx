@@ -17,16 +17,29 @@ const LineupManager: React.FC = () => {
     reorderGreenLineup,
     reorderOrangeLineup,
   } = useLineup();
-
   const { setRunnersOnBase } = useGameContext();
 
   const [showForm, setShowForm] = useState(false);
   const [showPlaceRunnerModal, setShowPlaceRunnerModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Runner | null>(null);
-  const [selectedBase, setSelectedBase] = useState<number>(0); // 0=first, 1=second, 2=third
+  const [selectedBase, setSelectedBase] = useState<number>(0);
 
-  // Combined player list for the runner placement modal
-  const allPlayers = [...greenLineup, ...orangeLineup];
+  // Safety check - if any of these aren't arrays, handle it gracefully
+  if (!Array.isArray(greenLineup) || !Array.isArray(orangeLineup)) {
+    console.warn("LineupManager received non-array lineup data");
+    return (
+      <div className={styles["lineup-manager"]}>
+        <h2>Lineup Manager</h2>
+        <p>Loading lineup data...</p>
+      </div>
+    );
+  }
+
+  // Safe list of all players - defensive coding
+  const allPlayers =
+    Array.isArray(greenLineup) && Array.isArray(orangeLineup)
+      ? [...greenLineup, ...orangeLineup]
+      : [];
 
   const handleAddPlayer = (player: {
     name: string;
@@ -132,12 +145,19 @@ const LineupManager: React.FC = () => {
               }}
             >
               <option value="">-- Select Player --</option>
-              {allPlayers.map((player) => (
-                <option key={player.id} value={player.id}>
-                  {player.name} ({player.group === "green" ? "Green" : "Orange"}
-                  )
-                </option>
-              ))}
+              {Array.isArray(allPlayers) && allPlayers.length > 0 ? (
+                allPlayers.map((player) => (
+                  <option
+                    key={player?.id || `player-${Math.random()}`}
+                    value={player?.id || ""}
+                  >
+                    {player?.name || "Unknown"} (
+                    {player?.group === "green" ? "Green" : "Orange"})
+                  </option>
+                ))
+              ) : (
+                <option value="">No players available</option>
+              )}
             </select>
           </div>
 
