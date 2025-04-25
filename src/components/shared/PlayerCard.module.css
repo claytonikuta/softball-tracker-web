@@ -49,15 +49,15 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-  justify-content: flex-start;
-  margin: 10px 0;
+  gap: 16px; /* Increased from 10px for more space between buttons and number */
+  justify-content: center; /* Center the controls for better alignment */
+  margin: 15px 0; /* Increased vertical margin */
 }
 
 .counter-value {
   font-size: 20px;
   font-weight: bold;
-  min-width: 30px;
+  min-width: 40px; /* Increased from 30px to give the number more room */
   text-align: center;
 }
 
@@ -66,9 +66,15 @@
 }
 
 .edit-stat {
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Increased from 20px to add more space between stat controls */
 }
 
+.modal-actions {
+  margin-top: 30px; /* Increased top margin to separate from the last counter */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .edit-stat h4 {
   margin-top: 0;
   margin-bottom: 10px;
@@ -79,6 +85,11 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
+  }
+
+  .modal-actions {
+    flex-direction: row;
+    justify-content: center;
   }
 
   .player-stats {

@@ -30,7 +30,16 @@ const PlayerList: React.FC<PlayerListProps> = ({
 }) => {
   // Move ALL hooks to the top before any conditional logic
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      // Add activation constraints
+      activationConstraint: {
+        // Set a distance threshold to distinguish between tap and drag
+        distance: 8, // 8px movement before drag starts
+        // Add a delay to prevent accidental drags
+        delay: 100, // 100ms delay before drag starts
+        tolerance: 5, // 5px tolerance for movement
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
