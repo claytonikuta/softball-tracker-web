@@ -29,8 +29,10 @@
   display: flex;
   position: relative;
   touch-action: none;
-  border-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .drag-handle {
@@ -41,11 +43,11 @@
   width: 36px;
   background-color: #f0f0f0;
   cursor: grab;
-  padding: 8px 0;
   gap: 5px;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 8px 0 0 8px;
+  border-radius: 0; /* Remove border radius from handle */
+  align-self: stretch; /* Make handle stretch to full height */
 }
 
 .drag-handle:active {
@@ -63,6 +65,12 @@
 .card-content {
   flex: 1;
   touch-action: auto;
+}
+
+.card-content .player-card {
+  border-radius: 0; /* Remove inner card border radius */
+  box-shadow: none; /* Remove shadow from inner card */
+  margin-bottom: 0; /* Remove margin from inner card */
 }
 
 /* For dark mode support */

@@ -186,15 +186,21 @@ export const LineupProvider: React.FC<{
     try {
       // Format players as before
       const formattedPlayers = [...greenLineup, ...orangeLineup].map(
-        (player) => ({
-          id: player.id,
-          name: player.name,
-          group: player.group,
-          runs: player.runs,
-          outs: player.outs,
-        })
+        (player) => {
+          // Format player data correctly for the database
+          return {
+            id: player.id.toString().includes("17") ? undefined : player.id,
+            name: player.name,
+            group_name: player.group, // Changed from group to group_name
+            runs: player.runs || 0,
+            outs: player.outs || 0,
+            position: player.group === "green" ? 1 : 2, // Add position field
+            game_id: gameId,
+          };
+        }
       );
 
+      // Log the formatted data
       console.log(
         "Complete payload:",
         JSON.stringify(
@@ -202,7 +208,7 @@ export const LineupProvider: React.FC<{
             current_inning: 1,
             is_home_team_batting: true,
             players: formattedPlayers,
-            deleted_player_ids: deletedPlayerIds, // Add this line
+            deleted_player_ids: deletedPlayerIds,
           },
           null,
           2
