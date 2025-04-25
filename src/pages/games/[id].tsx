@@ -134,11 +134,9 @@ export default function GameDetail() {
 
       <div className={styles.gameContainer}>
         <GameProvider initialData={gameData}>
-          {gameData && (
-            <LineupProvider initialData={gameData.players}>
-              <GameTracker />
-            </LineupProvider>
-          )}
+          <LineupProvider initialData={(gameData && gameData.players) || []}>
+            <GameTracker />
+          </LineupProvider>
         </GameProvider>
       </div>
     </div>

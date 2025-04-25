@@ -93,6 +93,10 @@ export const GameProvider: React.FC<{
   useEffect(() => {
     if (initialData) {
       console.log("Initializing game with data:", initialData);
+      if (initialData.home_team_name) {
+      }
+      if (initialData.players && Array.isArray(initialData.players)) {
+      }
     }
   }, [initialData]);
 

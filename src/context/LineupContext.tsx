@@ -35,34 +35,36 @@ export const LineupProvider: React.FC<{
 
   // Initialize lineups from initialData if provided
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
+    if (initialData && Array.isArray(initialData) && initialData.length > 0) {
       console.log("Initializing lineup with data:", initialData);
 
-      // Convert the initialData to Player objects and separate by group
-      // This is an example - adjust the group assignment logic as needed
+      // Process the player data safely
       const tempGreenLineup: Player[] = [];
       const tempOrangeLineup: Player[] = [];
 
-      initialData.forEach((playerData, index) => {
-        const player: Player = {
-          id: String(playerData.id), // Convert number to string
-          name: playerData.name,
-          // Determine group based on position or some other logic
-          // This is just an example approach - adjust as needed
-          group: index % 2 === 0 ? "green" : "orange",
-          runs: 0,
-          outs: 0,
-        };
+      initialData.forEach((playerData) => {
+        // Only process valid player data
+        if (playerData && playerData.name) {
+          const player: Player = {
+            id: String(playerData.id || Date.now()),
+            name: playerData.name,
+            group: playerData.position?.toLowerCase().includes("green")
+              ? "green"
+              : "orange",
+            runs: 0,
+            outs: 0,
+          };
 
-        if (player.group === "green") {
-          tempGreenLineup.push(player);
-        } else {
-          tempOrangeLineup.push(player);
+          if (player.group === "green") {
+            tempGreenLineup.push(player);
+          } else {
+            tempOrangeLineup.push(player);
+          }
         }
       });
 
-      setGreenLineup(tempGreenLineup);
-      setOrangeLineup(tempOrangeLineup);
+      if (tempGreenLineup.length > 0) setGreenLineup(tempGreenLineup);
+      if (tempOrangeLineup.length > 0) setOrangeLineup(tempOrangeLineup);
     }
   }, [initialData]);
 
