@@ -50,36 +50,55 @@
   margin-bottom: 15px;
 }
 
+.field-status-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
 /* Mobile layout (default) */
 @media (max-width: 767px) {
   .batter-section {
-    grid-template-columns: 1.5fr 1fr; /* Wider current batter */
-    grid-template-rows: minmax(70px, auto) minmax(70px, auto); /* Fixed heights */
-    grid-gap: 8px; /* Reduced gap */
-    min-height: 0; /* Remove min-height */
-    max-height: none; /* Remove max-height */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    min-height: 220px; /* Set a minimum height */
+    max-height: 300px; /* Limit maximum height */
   }
 
   .current-batter-container {
     grid-column: 1;
     grid-row: 1 / span 2;
-    height: auto;
   }
 
   .on-deck-container {
     grid-column: 2;
     grid-row: 1;
-    height: auto; /* Let content determine height */
-    max-height: none; /* Remove height constraints */
-    margin-bottom: 2px;
+    max-height: 110px; /* Force maximum height */
+    height: 100%;
+    overflow: hidden;
   }
 
   .in-the-hole-container {
     grid-column: 2;
     grid-row: 2;
-    height: auto; /* Let content determine height */
-    max-height: none; /* Remove height constraints */
-    margin-top: 2px;
+    max-height: 110px; /* Force maximum height */
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .field-status-container {
+    grid-template-columns: 2fr 1fr; /* 2/3 to 1/3 ratio */
+  }
+
+  .runners-container {
+    grid-column: 1;
+  }
+
+  .field-diagram-container {
+    grid-column: 2;
+    display: flex;
+    align-items: center; /* Center vertically */
   }
 }
 
