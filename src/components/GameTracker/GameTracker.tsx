@@ -251,15 +251,17 @@ const GameTracker: React.FC = () => {
 
       <div className={styles["game-tracker-container"]}>
         <div className={styles["batter-info"]}>
-          <SafeRender>
-            <CurrentBatter />
-          </SafeRender>
-          <SafeRender>
-            <OnDeckDisplay />
-          </SafeRender>
-          <SafeRender>
-            <InTheHoleDisplay />
-          </SafeRender>
+          <div className={styles["batter-section"]}>
+            <div className={styles["current-batter-container"]}>
+              <CurrentBatter />
+            </div>
+            <div className={styles["on-deck-container"]}>
+              <OnDeckDisplay />
+            </div>
+            <div className={styles["in-the-hole-container"]}>
+              <InTheHoleDisplay />
+            </div>
+          </div>
         </div>
         <div className={styles["game-status"]}>
           <SafeRender>
