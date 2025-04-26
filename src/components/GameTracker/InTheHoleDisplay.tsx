@@ -5,25 +5,24 @@ import styles from "./InTheHoleDisplay.module.css";
 const InTheHoleDisplay: React.FC = () => {
   const { inTheHoleBatter } = useGameContext();
 
+  if (!inTheHoleBatter) {
+    return (
+      <div className={styles["in-the-hole-display"]}>
+        <h3>In The Hole</h3>
+        <div className={styles["in-the-hole-name"]}>None</div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["in-the-hole-display"]}>
       <h3>In The Hole</h3>
-      {inTheHoleBatter ? (
-        <div className={styles["in-the-hole-card"]}>
-          <div className={styles["in-the-hole-name"]}>
-            {inTheHoleBatter.name}
-          </div>
-          <div className={styles["in-the-hole-group"]}>
-            Group: {inTheHoleBatter.group === "green" ? "Green" : "Orange"}
-          </div>
-          <div className={styles["in-the-hole-stats"]}>
-            <span>Runs: {inTheHoleBatter.runs}</span>
-            <span>Outs: {inTheHoleBatter.outs}</span>
-          </div>
-        </div>
-      ) : (
-        <p className={styles["no-batter"]}>No batter in the hole</p>
-      )}
+      <div className={styles["in-the-hole-name"]}>{inTheHoleBatter.name}</div>
+      <div className={styles["in-the-hole-group"]}>{inTheHoleBatter.group}</div>
+      <div className={styles["in-the-hole-stats"]}>
+        <span>R: {inTheHoleBatter.runs || 0}</span>
+        <span>O: {inTheHoleBatter.outs || 0}</span>
+      </div>
     </div>
   );
 };
