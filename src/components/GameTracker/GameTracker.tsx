@@ -4,6 +4,7 @@ import OnDeckDisplay from "./OnDeckDisplay";
 import InTheHoleDisplay from "./InTheHoleDisplay";
 import RunnersList from "./RunnersList";
 import Scoreboard from "./ScoreBoard";
+import FieldDiamond from "./FieldDiamond";
 import { useLineup } from "../../context/LineupContext";
 import { useGameContext } from "../../context/GameContext";
 import { useParams } from "next/navigation";
@@ -263,6 +264,7 @@ const GameTracker: React.FC = () => {
         <div className={styles["game-status"]}>
           <SafeRender>
             <RunnersList />
+            <FieldDiamond />
           </SafeRender>
         </div>
       </div>

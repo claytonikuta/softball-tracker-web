@@ -49,6 +49,76 @@
   margin: 0;
 }
 
+.runner-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.base-button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.backward-button {
+  background-color: #6c757d;
+}
+
+.backward-button:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.forward-button {
+  background-color: #17a2b8;
+}
+
+.out-button {
+  background-color: #dc3545;
+  width: auto;
+  min-width: 50px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.runner-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.runner-base {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+.run-modal-content {
+  text-align: center;
+  padding: 15px;
+}
+
+.run-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.yes-button {
+  background-color: #28a745;
+}
+
+.no-button {
+  background-color: #6c757d;
+}
+
 @media (min-width: 768px) {
   .base-options,
   .outcome-options {
