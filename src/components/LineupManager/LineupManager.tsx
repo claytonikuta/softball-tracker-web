@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PlayerForm from "./PlayerForm";
 import PlayerList from "./PlayerList";
+import ImportLineup from "./ImportLineup";
 import { useLineup } from "../../context/LineupContext";
 import { useGameContext } from "../../context/GameContext";
 import { Runner, RunnerOnBase } from "../../types/Player";
@@ -113,6 +114,8 @@ const LineupManager: React.FC = () => {
               Place Runner on Base
             </button>
           </div>
+
+          <ImportLineup />
 
           {showForm && (
             <PlayerForm
