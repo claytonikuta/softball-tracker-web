@@ -265,8 +265,14 @@ const GameTracker: React.FC = () => {
         </div>
         <div className={styles["game-status"]}>
           <SafeRender>
-            <RunnersList />
-            <FieldDiamond />
+            <div className={styles["field-status-container"]}>
+              <div className={styles["runners-container"]}>
+                <RunnersList />
+              </div>
+              <div className={styles["field-diagram-container"]}>
+                <FieldDiamond />
+              </div>
+            </div>
           </SafeRender>
         </div>
       </div>

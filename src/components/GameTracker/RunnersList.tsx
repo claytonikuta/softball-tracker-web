@@ -20,6 +20,10 @@ const RunnersList: React.FC = () => {
   const [runnerScoring, setRunnerScoring] = React.useState<RunnerOnBase | null>(
     null
   );
+  // Add new state for out confirmation
+  const [showOutModal, setShowOutModal] = React.useState(false);
+  const [runnerBeingOut, setRunnerBeingOut] =
+    React.useState<RunnerOnBase | null>(null);
 
   // Get base name for display
   const getBaseName = (baseIndex: number): string => {
@@ -57,13 +61,21 @@ const RunnersList: React.FC = () => {
     }
   };
 
-  // Handle marking runner out
-  const handleRunnerOut = (runner: RunnerOnBase) => {
+  // Show confirmation modal for out instead of directly handling out
+  const confirmRunnerOut = (runner: RunnerOnBase) => {
+    setRunnerBeingOut(runner);
+    setShowOutModal(true);
+  };
+
+  // Handle marking runner out after confirmation
+  const handleRunnerOut = () => {
+    if (!runnerBeingOut) return;
+
     // Update the player's outs
-    const basePlayerId = runner.id.split("-")[0];
+    const basePlayerId = runnerBeingOut.id.split("-")[0];
     const updatedPlayer = {
-      ...runner,
-      outs: runner.outs + 1,
+      ...runnerBeingOut,
+      outs: runnerBeingOut.outs + 1,
     };
 
     // Update player stats
@@ -86,8 +98,12 @@ const RunnersList: React.FC = () => {
 
     // Remove from runners list
     setRunnersOnBase((prevRunners) =>
-      prevRunners.filter((r) => r.id !== runner.id)
+      prevRunners.filter((r) => r.id !== runnerBeingOut.id)
     );
+
+    // Close the modal
+    setShowOutModal(false);
+    setRunnerBeingOut(null);
   };
 
   // Handle run scored from modal
@@ -166,7 +182,7 @@ const RunnersList: React.FC = () => {
                     +
                   </Button>
                   <Button
-                    onClick={() => handleRunnerOut(runner)}
+                    onClick={() => confirmRunnerOut(runner)}
                     className={styles["out-button"]}
                   >
                     Out
@@ -197,6 +213,34 @@ const RunnersList: React.FC = () => {
               onClick={() => {
                 setShowRunScoredModal(false);
                 setRunnerScoring(null);
+              }}
+              className={styles["no-button"]}
+            >
+              No
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Out confirmation modal */}
+      <Modal
+        isOpen={showOutModal}
+        onClose={() => {
+          setShowOutModal(false);
+          setRunnerBeingOut(null);
+        }}
+        title="Confirm Out"
+      >
+        <div className={styles["run-modal-content"]}>
+          <p>Mark {runnerBeingOut?.name} as out?</p>
+          <div className={styles["run-modal-buttons"]}>
+            <Button onClick={handleRunnerOut} className={styles["yes-button"]}>
+              Yes
+            </Button>
+            <Button
+              onClick={() => {
+                setShowOutModal(false);
+                setRunnerBeingOut(null);
               }}
               className={styles["no-button"]}
             >

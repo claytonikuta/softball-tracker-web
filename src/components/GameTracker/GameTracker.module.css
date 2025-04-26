@@ -50,11 +50,20 @@
   margin-bottom: 15px;
 }
 
+.field-status-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
 /* Mobile layout (default) */
 @media (max-width: 767px) {
   .batter-section {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: 1fr 1fr;
+    min-height: 220px; /* Set a minimum height */
+    max-height: 300px; /* Limit maximum height */
   }
 
   .current-batter-container {
@@ -65,11 +74,31 @@
   .on-deck-container {
     grid-column: 2;
     grid-row: 1;
+    max-height: 110px; /* Force maximum height */
+    height: 100%;
+    overflow: hidden;
   }
 
   .in-the-hole-container {
     grid-column: 2;
     grid-row: 2;
+    max-height: 110px; /* Force maximum height */
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .field-status-container {
+    grid-template-columns: 2fr 1fr; /* 2/3 to 1/3 ratio */
+  }
+
+  .runners-container {
+    grid-column: 1;
+  }
+
+  .field-diagram-container {
+    grid-column: 2;
+    display: flex;
+    align-items: center; /* Center vertically */
   }
 }
 
