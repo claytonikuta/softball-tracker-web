@@ -23,7 +23,9 @@ export default async function handler(
         return res.status(404).json({ message: "Game not found" });
       }
 
-      const game = gameResult.rows[0];
+      const game = {
+        ...gameResult.rows[0],
+      };
 
       // Get innings data
       const inningsResult = await sql`
@@ -64,6 +66,8 @@ export default async function handler(
         innings,
         players,
         runners,
+        last_green_index,
+        last_orange_index,
       } = req.body;
 
       // Update game basic info
@@ -72,6 +76,8 @@ export default async function handler(
         SET 
           current_inning = ${current_inning}, 
           is_home_team_batting = ${is_home_team_batting},
+          last_green_index = ${last_green_index || 0},
+          last_orange_index = ${last_orange_index || 0},
           updated_at = NOW()
         WHERE id = ${id}
       `;
