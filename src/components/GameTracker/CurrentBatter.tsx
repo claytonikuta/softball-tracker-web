@@ -20,9 +20,12 @@ const CurrentBatter: React.FC = () => {
     isHomeTeamBatting,
     updateHomeInningScore,
     updateAwayInningScore,
+    setLastGreenIndex,
+    setLastOrangeIndex,
   } = useGameContext();
 
-  const { updatePlayer, getNextBatter } = useLineup();
+  const { updatePlayer, getNextBatter, greenLineup, orangeLineup } =
+    useLineup();
   const [showModal, setShowModal] = useState(false);
 
   const handleBatterResult = (result: string) => {
@@ -31,6 +34,29 @@ const CurrentBatter: React.FC = () => {
     // Store currentBatter in a temporary variable before we change state
     const batterWhoHit = { ...currentBatter };
     console.log(`${batterWhoHit.name} hit result: ${result}`);
+
+    if (batterWhoHit.group === "green") {
+      // Find this batter's position
+      const currentIndex = greenLineup.findIndex(
+        (p) => p.id === batterWhoHit.id
+      );
+      if (currentIndex !== -1) {
+        // Advance to the next player's position
+        const nextIndex = (currentIndex + 1) % greenLineup.length;
+        setLastGreenIndex(nextIndex);
+        console.log(`Advanced lastGreenIndex to ${nextIndex}`);
+      }
+    } else {
+      // Same logic for orange lineup
+      const currentIndex = orangeLineup.findIndex(
+        (p) => p.id === batterWhoHit.id
+      );
+      if (currentIndex !== -1) {
+        const nextIndex = (currentIndex + 1) % orangeLineup.length;
+        setLastOrangeIndex(nextIndex);
+        console.log(`Advanced lastOrangeIndex to ${nextIndex}`);
+      }
+    }
 
     // Calculate the next batters in the sequence
     const nextNextGroup = onDeckBatter?.group === "green" ? "orange" : "green";
