@@ -2,23 +2,15 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   border: 2px solid #28a745;
-  padding: 15px;
-  margin-top: 20px;
-}
-
-.fieldDiamond {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 2px solid #28a745;
-  padding: 10px; /* Reduced from 15px */
-  margin-top: 10px; /* Reduced from 20px */
-  width: 100%; /* Ensure it fits its container */
+  padding: 10px;
+  margin-top: 10px;
+  width: 100%;
 }
 
 .diamond {
   position: relative;
-  width: 100px; /* Reduced from 150px */
-  height: 100px; /* Reduced from 150px */
+  width: 80px;
+  height: 80px;
   margin: 0 auto;
   transform: rotate(45deg);
   background-color: #e9f5e9;
@@ -30,8 +22,8 @@
 .secondBase,
 .thirdBase {
   position: absolute;
-  width: 20px; /* Reduced from 25px */
-  height: 20px; /* Reduced from 25px */
+  width: 15px; /* Reduced from 25px */
+  height: 15px; /* Reduced from 25px */
   background-color: white;
   border: 2px solid #333;
   display: flex;
@@ -41,27 +33,27 @@
 }
 
 .homePlate {
-  bottom: -12px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%) rotate(-45deg);
 }
 
 .firstBase {
-  right: -12px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-45deg);
+  right: -10px;
+  bottom: -10px;
+  transform: rotate(-45deg);
 }
 
 .secondBase {
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-45deg);
+  top: -10px;
+  right: -10px;
+  transform: rotate(-45deg);
 }
 
 .thirdBase {
-  left: -12px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-45deg);
+  top: -10px;
+  left: -10px;
+  transform: rotate(-45deg);
 }
 
 .runnerNames {
@@ -72,25 +64,24 @@
   min-width: 70px;
   z-index: 5;
   color: white;
-  font-size: 11px;
+  font-size: 9px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .firstBase .runnerNames {
-  right: -75px;
-  top: 0;
+  bottom: -40px;
+  right: -40px;
 }
 
 .secondBase .runnerNames {
   top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: -40px;
 }
 
 .thirdBase .runnerNames {
-  left: -75px;
-  top: 0;
+  top: -40px;
+  left: -40px;
 }
 
 .runnerName {

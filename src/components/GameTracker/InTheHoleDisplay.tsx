@@ -16,10 +16,10 @@ const InTheHoleDisplay: React.FC = () => {
           <div className={styles["in-the-hole-group"]}>
             Group: {inTheHoleBatter.group === "green" ? "Green" : "Orange"}
           </div>
-          <div className={styles["in-the-hole-stats"]}>
+          {/* <div className={styles["in-the-hole-stats"]}>
             <span>Runs: {inTheHoleBatter.runs}</span>
             <span>Outs: {inTheHoleBatter.outs}</span>
-          </div>
+          </div> */}
         </div>
       ) : (
         <p className={styles["no-batter"]}>No batter in the hole</p>

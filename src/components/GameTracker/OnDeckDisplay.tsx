@@ -14,10 +14,10 @@ const OnDeckDisplay: React.FC = () => {
           <div className={styles["on-deck-group"]}>
             Group: {onDeckBatter.group === "green" ? "Green" : "Orange"}
           </div>
-          <div className={styles["on-deck-stats"]}>
+          {/* <div className={styles["on-deck-stats"]}>
             <span>Runs: {onDeckBatter.runs}</span>
             <span>Outs: {onDeckBatter.outs}</span>
-          </div>
+          </div> */}
         </div>
       ) : (
         <p className={styles["no-batter"]}>No batter on deck</p>
