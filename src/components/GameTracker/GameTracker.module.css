@@ -62,7 +62,6 @@
   .batter-section {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    min-height: 220px; /* Set a minimum height */
     max-height: 300px; /* Limit maximum height */
   }
 
