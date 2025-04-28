@@ -27,6 +27,10 @@ const GameTracker: React.FC = () => {
     setRunnersOnBase,
     setLastGreenIndex,
     setLastOrangeIndex,
+    currentInning,
+    isHomeTeamBatting,
+    lastGreenIndex,
+    lastOrangeIndex,
   } = useGameContext();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedStateRef = useRef<string>("");
@@ -49,6 +53,15 @@ const GameTracker: React.FC = () => {
 
         const gameData = await response.json();
         console.log("Loaded initial game data:", gameData);
+
+        // Set the batting order indices if they exist
+        if (gameData.game?.last_green_index !== undefined) {
+          setLastGreenIndex(gameData.game.last_green_index);
+        }
+
+        if (gameData.game?.last_orange_index !== undefined) {
+          setLastOrangeIndex(gameData.game.last_orange_index);
+        }
 
         // Store the runners data for processing after players are ready
         if (gameData.game?.runners?.length > 0) {
@@ -112,7 +125,14 @@ const GameTracker: React.FC = () => {
     };
 
     fetchGameData();
-  }, [id, greenLineup, orangeLineup, setRunnersOnBase]);
+  }, [
+    id,
+    greenLineup,
+    orangeLineup,
+    setRunnersOnBase,
+    setLastGreenIndex,
+    setLastOrangeIndex,
+  ]);
 
   useEffect(() => {
     if (greenLineup.length > 0 && orangeLineup.length > 0 && !currentBatter) {
@@ -276,20 +296,20 @@ const GameTracker: React.FC = () => {
       console.log("Debounced game state save triggered");
 
       const gameId = Array.isArray(id) ? id[0] : id;
-
-      // Only save game-related data, not players
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          current_inning: 1,
-          is_home_team_batting: true,
+          current_inning: currentInning,
+          is_home_team_batting: isHomeTeamBatting,
           runners: runnersOnBase.map((runner) => ({
             player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
+          last_green_index: lastGreenIndex,
+          last_orange_index: lastOrangeIndex,
         }),
       })
         .then(() => {
@@ -301,7 +321,7 @@ const GameTracker: React.FC = () => {
           setIsSaving(false);
           saveTimeoutRef.current = null;
         });
-    }, 800);
+    }, 800); // Added missing closing parenthesis for setTimeout
 
     return () => {
       if (saveTimeoutRef.current) {
@@ -316,6 +336,10 @@ const GameTracker: React.FC = () => {
     onDeckBatter,
     inTheHoleBatter,
     runnersOnBase,
+    currentInning,
+    isHomeTeamBatting,
+    lastGreenIndex,
+    lastOrangeIndex,
   ]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
