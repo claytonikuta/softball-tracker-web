@@ -36,9 +36,17 @@ const BasesDisplay: React.FC = () => {
   const handleRunScored = () => {
     if (!selectedRunner) return;
 
-    // Update the player's runs
-    const updatedPlayer = { ...selectedRunner, runs: selectedRunner.runs + 1 };
-    updatePlayer(selectedRunner.id, updatedPlayer);
+    // Extract the base player ID (IMPORTANT CHANGE)
+    const basePlayerId = selectedRunner.id.split("-")[0];
+
+    // Create updated player
+    const updatedPlayer = {
+      ...selectedRunner,
+      runs: selectedRunner.runs + 1,
+    };
+
+    // Update player stats using the BASE ID
+    updatePlayer(basePlayerId, updatedPlayer);
 
     // Remove runner from bases
     const updatedRunners = runnersOnBase.filter(

@@ -110,14 +110,15 @@ const RunnersList: React.FC = () => {
   const handleRunScored = () => {
     if (!runnerScoring) return;
 
-    // Update the player's runs
     const basePlayerId = runnerScoring.id.split("-")[0];
+
+    // Create an updated player with incremented runs
     const updatedPlayer = {
       ...runnerScoring,
       runs: runnerScoring.runs + 1,
     };
 
-    // Update player stats
+    // Update player stats using the BASE ID, not compound ID
     updatePlayer(basePlayerId, updatedPlayer);
 
     // Update inning runs
