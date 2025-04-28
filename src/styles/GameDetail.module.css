@@ -38,12 +38,15 @@
 }
 
 .gameHeader {
-  margin: 20px 0 30px 0;
   padding: 15px;
   border-bottom: 1px solid #eaeaea;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.gameHeader h1 {
+  margin: 0px;
 }
 
 .backLink {

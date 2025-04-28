@@ -20,7 +20,7 @@
   align-items: center;
   background-color: white;
   border-radius: 6px;
-  padding: 6px 10px; /* Smaller padding */
+  padding: 6px 6px; /* Smaller padding */
   margin-bottom: 8px; /* Reduced spacing */
   border: 1px solid #dee2e6;
 }
@@ -132,6 +132,11 @@
 
 .no-button {
   background-color: #6c757d;
+}
+
+.runner-name,
+.runner-base {
+  font-size: 14px;
 }
 
 @media (min-width: 768px) {

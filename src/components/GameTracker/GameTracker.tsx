@@ -301,6 +301,36 @@ const GameTracker: React.FC = () => {
   ]);
 
   useEffect(() => {
+    // Only run if we have lineups and a current batter
+    if (greenLineup.length > 0 && orangeLineup.length > 0 && currentBatter) {
+      // Find the current batter's position in their lineup
+      if (currentBatter.group === "green") {
+        const index = greenLineup.findIndex(
+          (player) => player.id === currentBatter.id
+        );
+        if (index !== -1) {
+          setLastGreenIndex(index);
+          console.log(`Auto-updated lastGreenIndex to ${index}`);
+        }
+      } else {
+        const index = orangeLineup.findIndex(
+          (player) => player.id === currentBatter.id
+        );
+        if (index !== -1) {
+          setLastOrangeIndex(index);
+          console.log(`Auto-updated lastOrangeIndex to ${index}`);
+        }
+      }
+    }
+  }, [
+    currentBatter,
+    greenLineup,
+    orangeLineup,
+    setLastGreenIndex,
+    setLastOrangeIndex,
+  ]);
+
+  useEffect(() => {
     if (!id || isSaving || !isInitialDataLoaded) return;
 
     // Create a string representation of current state to compare
