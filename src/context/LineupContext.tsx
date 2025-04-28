@@ -17,6 +17,7 @@ interface LineupContextType {
   reorderGreenLineup: (startIndex: number, endIndex: number) => void;
   reorderOrangeLineup: (startIndex: number, endIndex: number) => void;
   getNextBatter: (group: "green" | "orange") => Player | null;
+  advanceBatterIndex: (group: "green" | "orange") => void;
   lastGreenIndex: number;
   lastOrangeIndex: number;
   setLastGreenIndex: (index: number) => void;
@@ -242,6 +243,7 @@ export const LineupProvider: React.FC<{
     setOrangeLineup(newLineup);
   };
 
+  // FIXED VERSION:
   const getNextBatter = (group: "orange" | "green"): Player | null => {
     const lineup = group === "orange" ? orangeLineup : greenLineup;
     if (!lineup.length) return null;
@@ -252,14 +254,22 @@ export const LineupProvider: React.FC<{
     // Get next player in rotation
     const nextIndex = (currentIndex + 1) % lineup.length;
 
-    // Update last index for this group
+    return lineup[nextIndex];
+  };
+
+  // Add this new function to actually advance the batter
+  const advanceBatterIndex = (group: "orange" | "green") => {
+    const lineup = group === "orange" ? orangeLineup : greenLineup;
+    if (!lineup.length) return;
+
+    const currentIndex = group === "orange" ? lastOrangeIndex : lastGreenIndex;
+    const nextIndex = (currentIndex + 1) % lineup.length;
+
     if (group === "orange") {
       setLastOrangeIndex(nextIndex);
     } else {
       setLastGreenIndex(nextIndex);
     }
-
-    return lineup[nextIndex];
   };
 
   const saveLineupToDatabase = React.useCallback(
@@ -345,6 +355,7 @@ export const LineupProvider: React.FC<{
         reorderGreenLineup,
         reorderOrangeLineup,
         getNextBatter,
+        advanceBatterIndex,
         lastGreenIndex,
         lastOrangeIndex,
         setLastGreenIndex,

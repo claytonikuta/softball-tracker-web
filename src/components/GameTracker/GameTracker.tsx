@@ -205,7 +205,7 @@ const GameTracker: React.FC = () => {
           current_inning: 1,
           is_home_team_batting: true,
           runners: runnersOnBase.map((runner) => ({
-            player_id: runner.id,
+            player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
         }),
