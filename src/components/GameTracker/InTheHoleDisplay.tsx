@@ -13,9 +13,9 @@ const InTheHoleDisplay: React.FC = () => {
           <div className={styles["in-the-hole-name"]}>
             {inTheHoleBatter.name}
           </div>
-          <div className={styles["in-the-hole-group"]}>
+          {/* <div className={styles["in-the-hole-group"]}>
             Group: {inTheHoleBatter.group === "green" ? "Green" : "Orange"}
-          </div>
+          </div> */}
           {/* <div className={styles["in-the-hole-stats"]}>
             <span>Runs: {inTheHoleBatter.runs}</span>
             <span>Outs: {inTheHoleBatter.outs}</span>

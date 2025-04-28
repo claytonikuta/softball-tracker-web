@@ -7,11 +7,19 @@
   width: 100%;
 }
 
+.fieldDiamond h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #007bff;
+  text-align: center;
+  font-size: 16px;
+}
+
 .diamond {
   position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto;
+  width: 50px;
+  height: 50px;
+  margin: 20px auto;
   transform: rotate(45deg);
   background-color: #e9f5e9;
   border: 2px solid #28a745;
@@ -33,27 +41,27 @@
 }
 
 .homePlate {
-  bottom: -10px;
+  bottom: -7px;
   left: 50%;
   transform: translateX(-50%) rotate(-45deg);
 }
 
 .firstBase {
-  right: -10px;
-  bottom: -10px;
-  transform: rotate(-45deg);
+  right: -7px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-45deg);
 }
 
 .secondBase {
-  top: -10px;
-  right: -10px;
-  transform: rotate(-45deg);
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
 }
 
 .thirdBase {
-  top: -10px;
-  left: -10px;
-  transform: rotate(-45deg);
+  left: -7px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-45deg);
 }
 
 .runnerNames {
@@ -70,18 +78,19 @@
 }
 
 .firstBase .runnerNames {
-  bottom: -40px;
-  right: -40px;
+  right: -60px;
+  top: 0;
 }
 
 .secondBase .runnerNames {
-  top: -40px;
-  right: -40px;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .thirdBase .runnerNames {
-  top: -40px;
-  left: -40px;
+  left: -60px;
+  top: 0;
 }
 
 .runnerName {

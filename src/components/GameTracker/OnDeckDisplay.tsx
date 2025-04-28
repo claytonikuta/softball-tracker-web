@@ -11,9 +11,9 @@ const OnDeckDisplay: React.FC = () => {
       {onDeckBatter ? (
         <div className={styles["on-deck-card"]}>
           <div className={styles["on-deck-name"]}>{onDeckBatter.name}</div>
-          <div className={styles["on-deck-group"]}>
+          {/* <div className={styles["on-deck-group"]}>
             Group: {onDeckBatter.group === "green" ? "Green" : "Orange"}
-          </div>
+          </div> */}
           {/* <div className={styles["on-deck-stats"]}>
             <span>Runs: {onDeckBatter.runs}</span>
             <span>Outs: {onDeckBatter.outs}</span>

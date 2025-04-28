@@ -28,7 +28,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .lineup-section {
@@ -75,16 +75,16 @@
     grid-column: 2;
     grid-row: 1;
     max-height: 110px; /* Force maximum height */
-    height: 100%;
-    overflow: hidden;
+    height: 40%;
+    /* overflow: hidden; */
   }
 
   .in-the-hole-container {
     grid-column: 2;
     grid-row: 2;
     max-height: 110px; /* Force maximum height */
-    height: 100%;
-    overflow: hidden;
+    height: 40%;
+    /* overflow: hidden; */
   }
 
   .field-status-container {
