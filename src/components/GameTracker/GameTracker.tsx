@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import styles from "./GameTracker.module.css";
 import LineupManager from "../LineupManager/LineupManager";
 import SafeRender from "../shared/SafeRender";
+import { RunnerOnBase } from "@/types";
 
 const GameTracker: React.FC = () => {
   const { greenLineup, orangeLineup } = useLineup();
@@ -48,15 +49,13 @@ const GameTracker: React.FC = () => {
         const gameData = await response.json();
         console.log("Loaded initial game data:", gameData);
 
-        // If there are runners in the database, load them
-        if (
-          gameData.runners &&
-          Array.isArray(gameData.runners) &&
-          gameData.runners.length > 0
-        ) {
+        // Check if runners exist at the correct path in the response
+        const runnersArray = gameData.runners || [];
+
+        if (Array.isArray(runnersArray) && runnersArray.length > 0) {
           // Convert database runners to UI format with compound IDs
-          const loadedRunners = gameData.runners
-            .map((runner: { player_id: string; base_index: number }) => {
+          const loadedRunners = runnersArray
+            .map((runner) => {
               // Find the actual player object from lineup
               const player = [...greenLineup, ...orangeLineup].find(
                 (p) => p.id.toString() === runner.player_id.toString()
@@ -74,7 +73,7 @@ const GameTracker: React.FC = () => {
               }
               return null;
             })
-            .filter(Boolean);
+            .filter((runner): runner is RunnerOnBase => runner !== null); // Use type predicate
 
           console.log("Setting runners from database:", loadedRunners);
           setRunnersOnBase(loadedRunners);
