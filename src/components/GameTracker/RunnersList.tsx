@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "next/navigation";
 import { useGameContext } from "../../context/GameContext";
 import { useLineup } from "../../context/LineupContext";
 import { RunnerOnBase } from "../../types/Player";
@@ -24,6 +25,7 @@ const RunnersList: React.FC = () => {
   const [showOutModal, setShowOutModal] = React.useState(false);
   const [runnerBeingOut, setRunnerBeingOut] =
     React.useState<RunnerOnBase | null>(null);
+  const { id } = useParams();
 
   // Get base name for display
   const getBaseName = (baseIndex: number): string => {
@@ -140,6 +142,29 @@ const RunnersList: React.FC = () => {
     setRunnersOnBase((prevRunners) =>
       prevRunners.filter((r) => r.id !== runnerScoring.id)
     );
+
+    // IMPORTANT: Add immediate database update
+    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
+    if (gameId) {
+      // Get the updated runners list without the scored runner
+      const updatedRunners = runnersOnBase.filter(
+        (r) => r.id !== runnerScoring.id
+      );
+
+      // Send only this update to the database immediately
+      fetch(`/api/games/${gameId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          runners: updatedRunners.map((runner) => ({
+            player_id: runner.id.split("-")[0],
+            base_index: runner.baseIndex,
+          })),
+        }),
+      });
+    }
 
     setShowRunScoredModal(false);
     setRunnerScoring(null);
