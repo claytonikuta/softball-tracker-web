@@ -118,7 +118,7 @@ const RunnersList: React.FC = () => {
       runs: runnerScoring.runs + 1,
     };
 
-    // Update player stats using the BASE ID, not compound ID
+    // Update player stats using the BASE ID
     updatePlayer(basePlayerId, updatedPlayer);
 
     // Update inning runs

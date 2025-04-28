@@ -356,6 +356,15 @@ const GameTracker: React.FC = () => {
 
       const gameId = Array.isArray(id) ? id[0] : id;
 
+      console.log(
+        "Saving runners to database:",
+        runnersOnBase.map((r) => ({
+          playerId: r.id.split("-")[0],
+          baseIndex: r.baseIndex,
+          name: r.name,
+        }))
+      );
+
       // Only save game-related data, not players
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
