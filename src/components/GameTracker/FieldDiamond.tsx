@@ -26,7 +26,7 @@ const FieldDiamond: React.FC = () => {
             <div className={styles.runnerNames}>
               {runnersByBase.first.map((runner) => (
                 <div key={runner.id} className={styles.runnerName}>
-                  {runner.name}
+                  {runner.name.substring(0, 2)}
                 </div>
               ))}
             </div>
@@ -39,7 +39,7 @@ const FieldDiamond: React.FC = () => {
             <div className={styles.runnerNames}>
               {runnersByBase.second.map((runner) => (
                 <div key={runner.id} className={styles.runnerName}>
-                  {runner.name}
+                  {runner.name.substring(0, 2)}
                 </div>
               ))}
             </div>
@@ -52,7 +52,7 @@ const FieldDiamond: React.FC = () => {
             <div className={styles.runnerNames}>
               {runnersByBase.third.map((runner) => (
                 <div key={runner.id} className={styles.runnerName}>
-                  {runner.name}
+                  {runner.name.substring(0, 2)}
                 </div>
               ))}
             </div>
