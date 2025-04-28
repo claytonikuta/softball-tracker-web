@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "next/navigation";
 import { useGameContext } from "../../context/GameContext";
 import { useLineup } from "../../context/LineupContext";
 import { Player } from "../../types/Player";
@@ -7,6 +8,7 @@ import Button from "../shared/Button";
 import styles from "./BasesDisplay.module.css";
 
 const BasesDisplay: React.FC = () => {
+  const { id } = useParams();
   const { runnersOnBase, setRunnersOnBase } = useGameContext();
   const { updatePlayer } = useLineup();
   const [selectedRunner, setSelectedRunner] = useState<Player | null>(null);
@@ -60,15 +62,37 @@ const BasesDisplay: React.FC = () => {
   const handleRunnerOut = () => {
     if (!selectedRunner) return;
 
+    // Extract the base player ID
+    const basePlayerId = selectedRunner.id.split("-")[0];
+
     // Update the player's outs
     const updatedPlayer = { ...selectedRunner, outs: selectedRunner.outs + 1 };
-    updatePlayer(selectedRunner.id, updatedPlayer);
+    updatePlayer(basePlayerId, updatedPlayer);
 
-    // Remove runner from bases
+    // Calculate the updated runners list ONCE
     const updatedRunners = runnersOnBase.filter(
       (r) => r.id !== selectedRunner.id
     );
+
+    // 1. Update local state
     setRunnersOnBase(updatedRunners);
+
+    // 2. Update database immediately
+    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
+    if (gameId) {
+      fetch(`/api/games/${gameId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          runners: updatedRunners.map((runner) => ({
+            player_id: runner.id.split("-")[0],
+            base_index: runner.baseIndex,
+          })),
+        }),
+      });
+    }
 
     setShowModal(false);
   };

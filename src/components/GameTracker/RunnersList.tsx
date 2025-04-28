@@ -98,10 +98,30 @@ const RunnersList: React.FC = () => {
       );
     }
 
-    // Remove from runners list
-    setRunnersOnBase((prevRunners) =>
-      prevRunners.filter((r) => r.id !== runnerBeingOut.id)
+    // IMPORTANT: Calculate the updated runner list ONCE and use it for both operations
+    const updatedRunners = runnersOnBase.filter(
+      (r) => r.id !== runnerBeingOut.id
     );
+
+    // 1. Update local state
+    setRunnersOnBase(updatedRunners);
+
+    // 2. Update database immediately with the SAME updated list
+    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
+    if (gameId) {
+      fetch(`/api/games/${gameId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          runners: updatedRunners.map((runner) => ({
+            player_id: runner.id.split("-")[0],
+            base_index: runner.baseIndex,
+          })),
+        }),
+      });
+    }
 
     // Close the modal
     setShowOutModal(false);
