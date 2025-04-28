@@ -121,6 +121,9 @@ const RunnersList: React.FC = () => {
             player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
+          // CRITICAL: Add these batting order indices to preserve state
+          last_green_index: lastGreenIndex,
+          last_orange_index: lastOrangeIndex,
         }),
       });
     }
