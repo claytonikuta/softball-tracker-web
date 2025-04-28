@@ -55,13 +55,13 @@
 .secondBase {
   top: -7px;
   left: 50%;
-  transform: translateX(-50%) rotate(-45deg);
+  transform: translateX(-160%) rotate(-45deg);
 }
 
 .thirdBase {
   left: -7px;
   top: 50%;
-  transform: translateY(-50%) rotate(-45deg);
+  transform: translateY(50%) rotate(-45deg);
 }
 
 .runnerNames {
