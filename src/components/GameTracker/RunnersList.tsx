@@ -138,20 +138,17 @@ const RunnersList: React.FC = () => {
       );
     }
 
-    // Remove from runners list
-    setRunnersOnBase((prevRunners) =>
-      prevRunners.filter((r) => r.id !== runnerScoring.id)
+    // IMPORTANT: Calculate the updated runner list ONCE and use it for both operations
+    const updatedRunners = runnersOnBase.filter(
+      (r) => r.id !== runnerScoring.id
     );
 
-    // IMPORTANT: Add immediate database update
+    // 1. Update local state
+    setRunnersOnBase(updatedRunners);
+
+    // 2. Update database immediately with the SAME updated list
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
     if (gameId) {
-      // Get the updated runners list without the scored runner
-      const updatedRunners = runnersOnBase.filter(
-        (r) => r.id !== runnerScoring.id
-      );
-
-      // Send only this update to the database immediately
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
