@@ -35,6 +35,7 @@ const GameTracker: React.FC = () => {
   const { id } = useParams();
 
   useEffect(() => {
+    // Replace your fetchGameData function with this improved version:
     const fetchGameData = async () => {
       if (!id) return;
 
@@ -49,37 +50,60 @@ const GameTracker: React.FC = () => {
         const gameData = await response.json();
         console.log("Loaded initial game data:", gameData);
 
-        // Check if runners exist at the correct path in the response
-        const runnersArray = gameData.runners || [];
+        // Store the runners data for processing after players are ready
+        if (gameData.game?.runners?.length > 0) {
+          // Save the raw runners data temporarily
+          const runnersFromDB = gameData.game.runners;
+          console.log("Found runners in database:", runnersFromDB);
 
-        if (Array.isArray(runnersArray) && runnersArray.length > 0) {
-          // Convert database runners to UI format with compound IDs
-          const loadedRunners = runnersArray
-            .map((runner) => {
-              // Find the actual player object from lineup
-              const player = [...greenLineup, ...orangeLineup].find(
-                (p) => p.id.toString() === runner.player_id.toString()
-              );
+          // Create a delayed function to process runners once players are loaded
+          const processRunnersWhenPlayersReady = () => {
+            // Check if player data is loaded
+            if (greenLineup.length === 0 && orangeLineup.length === 0) {
+              console.log("Players not loaded yet, waiting...");
+              // Try again in 500ms
+              setTimeout(processRunnersWhenPlayersReady, 500);
+              return;
+            }
 
-              if (player) {
-                // Create runner with compound ID
-                return {
-                  ...player,
-                  id: `${player.id}-${Date.now()}-${Math.floor(
-                    Math.random() * 10000
-                  )}`,
-                  baseIndex: runner.base_index,
-                };
-              }
-              return null;
-            })
-            .filter((runner): runner is RunnerOnBase => runner !== null); // Use type predicate
+            // Now that players are loaded, process runners
+            const allPlayers = [...greenLineup, ...orangeLineup];
+            console.log(
+              "Processing runners with players:",
+              allPlayers.map((p) => p.id)
+            );
 
-          console.log("Setting runners from database:", loadedRunners);
-          setRunnersOnBase(loadedRunners);
+            const loadedRunners = runnersFromDB
+              .map((runner: { player_id: string; base_index: number }) => {
+                // Find the actual player object from lineup
+                const player = allPlayers.find(
+                  (p) => p.id.toString() === runner.player_id.toString()
+                );
+
+                if (player) {
+                  return {
+                    ...player,
+                    id: `${player.id}-${Date.now()}-${Math.floor(
+                      Math.random() * 10000
+                    )}`,
+                    baseIndex: runner.base_index,
+                  };
+                }
+                return null;
+              })
+              .filter(Boolean) as RunnerOnBase[];
+
+            if (loadedRunners.length > 0) {
+              console.log("Setting runners from database:", loadedRunners);
+              setRunnersOnBase(loadedRunners);
+            }
+          };
+
+          // Start the process
+          processRunnersWhenPlayersReady();
         }
 
-        // Mark data as loaded
+        // Mark initial data as loaded
         setIsInitialDataLoaded(true);
       } catch (error) {
         console.error("Error loading game data:", error);
