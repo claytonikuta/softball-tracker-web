@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useGameContext } from "../../context/GameContext";
 import { useLineup } from "../../context/LineupContext";
 import { RunnerOnBase } from "../../types/Player";
+import { useParams } from "next/navigation";
 import Modal from "../shared/Modal";
 import Button from "../shared/Button";
 import styles from "./CurrentBatter.module.css";
 
 const CurrentBatter: React.FC = () => {
+  const params = useParams();
+  const id = params?.id;
   const {
     currentBatter,
     onDeckBatter,
@@ -22,6 +25,8 @@ const CurrentBatter: React.FC = () => {
     updateAwayInningScore,
     setLastGreenIndex,
     setLastOrangeIndex,
+    lastOrangeIndex,
+    lastGreenIndex,
   } = useGameContext();
 
   const { updatePlayer, getNextBatter, greenLineup, orangeLineup } =
@@ -36,18 +41,18 @@ const CurrentBatter: React.FC = () => {
     console.log(`${batterWhoHit.name} hit result: ${result}`);
 
     if (batterWhoHit.group === "green") {
-      // Find this batter's position
       const currentIndex = greenLineup.findIndex(
         (p) => p.id === batterWhoHit.id
       );
       if (currentIndex !== -1) {
-        // Advance to the next player's position
         const nextIndex = (currentIndex + 1) % greenLineup.length;
         setLastGreenIndex(nextIndex);
         console.log(`Advanced lastGreenIndex to ${nextIndex}`);
+
+        // ADD THIS: Force the index to be saved to database immediately
+        saveIndicesToDatabase(nextIndex, lastOrangeIndex);
       }
     } else {
-      // Same logic for orange lineup
       const currentIndex = orangeLineup.findIndex(
         (p) => p.id === batterWhoHit.id
       );
@@ -55,6 +60,9 @@ const CurrentBatter: React.FC = () => {
         const nextIndex = (currentIndex + 1) % orangeLineup.length;
         setLastOrangeIndex(nextIndex);
         console.log(`Advanced lastOrangeIndex to ${nextIndex}`);
+
+        // ADD THIS: Force the index to be saved to database immediately
+        saveIndicesToDatabase(lastGreenIndex, nextIndex);
       }
     }
 
@@ -147,6 +155,22 @@ const CurrentBatter: React.FC = () => {
     }
 
     setShowModal(false);
+  };
+
+  const saveIndicesToDatabase = (greenIndex: number, orangeIndex: number) => {
+    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
+    if (!gameId) return;
+
+    fetch(`/api/games/${gameId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        last_green_index: greenIndex,
+        last_orange_index: orangeIndex,
+      }),
+    });
   };
 
   return (
