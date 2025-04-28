@@ -138,7 +138,6 @@ const RunnersList: React.FC = () => {
       );
     }
 
-    // IMPORTANT: Calculate the updated runner list ONCE and use it for both operations
     const updatedRunners = runnersOnBase.filter(
       (r) => r.id !== runnerScoring.id
     );
@@ -149,6 +148,7 @@ const RunnersList: React.FC = () => {
     // 2. Update database immediately with the SAME updated list
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
     if (gameId) {
+      // The key fix: Send only the runners array, nothing else
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
