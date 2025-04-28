@@ -8,6 +8,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.current-batter h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  text-align: center;
+  font-size: 18px;
+}
+
 .batter-name {
   font-weight: bold;
 }

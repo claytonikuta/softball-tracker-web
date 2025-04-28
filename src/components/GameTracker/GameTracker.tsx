@@ -134,27 +134,56 @@ const GameTracker: React.FC = () => {
     setLastOrangeIndex,
   ]);
 
+  // Add this effect to update batters based on loaded indices
   useEffect(() => {
-    if (greenLineup.length > 0 && orangeLineup.length > 0 && !currentBatter) {
-      setCurrentBatter(greenLineup[0]);
-      setOnDeckBatter(orangeLineup[0]);
+    // Only run this when we have both lineups and the indices are set
+    if (
+      greenLineup.length > 0 &&
+      orangeLineup.length > 0 &&
+      isInitialDataLoaded
+    ) {
+      console.log(
+        "Positioning batters based on saved indices:",
+        lastGreenIndex,
+        lastOrangeIndex
+      );
 
-      const inTheHolePlayer =
-        greenLineup.length > 1 ? greenLineup[1] : greenLineup[0];
-      setInTheHoleBatter(inTheHolePlayer);
+      // Determine which group is batting first (alternating pattern)
+      const isGreenBatting = lastGreenIndex <= lastOrangeIndex;
 
-      setLastGreenIndex(0);
-      setLastOrangeIndex(0);
+      // Get the current batter based on which group is up
+      const currentIndex = isGreenBatting ? lastGreenIndex : lastOrangeIndex;
+      const currentLineup = isGreenBatting ? greenLineup : orangeLineup;
+
+      // Get the on deck batter (from opposite group)
+      const onDeckIndex = isGreenBatting ? lastOrangeIndex : lastGreenIndex;
+      const onDeckLineup = isGreenBatting ? orangeLineup : greenLineup;
+
+      // Get the in the hole batter (from same group as current, next in order)
+      const inTheHoleIndex = (currentIndex + 1) % currentLineup.length;
+
+      // Set all three batters
+      if (currentLineup.length > currentIndex) {
+        setCurrentBatter(currentLineup[currentIndex]);
+      }
+
+      if (onDeckLineup.length > onDeckIndex) {
+        setOnDeckBatter(onDeckLineup[onDeckIndex]);
+      }
+
+      if (currentLineup.length > inTheHoleIndex) {
+        setInTheHoleBatter(currentLineup[inTheHoleIndex]);
+      }
     }
   }, [
     greenLineup,
     orangeLineup,
-    currentBatter,
+    lastGreenIndex,
+    lastOrangeIndex,
+    isInitialDataLoaded,
     setCurrentBatter,
     setOnDeckBatter,
     setInTheHoleBatter,
-    setLastGreenIndex,
-    setLastOrangeIndex,
   ]);
 
   console.log("GameTracker render - props:", {
