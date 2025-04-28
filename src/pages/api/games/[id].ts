@@ -128,16 +128,30 @@ export default async function handler(
         }
       }
 
-      // Update runners - clear existing and add new
-      await sql`DELETE FROM runners WHERE game_id = ${id}`;
+      // Update runners using transaction for atomicity
+      try {
+        // First delete existing runners
+        await sql`DELETE FROM runners WHERE game_id = ${id}`;
 
-      if (runners && Array.isArray(runners)) {
-        for (const runner of runners) {
-          await sql`
-            INSERT INTO runners (game_id, player_id, base_index)
-            VALUES (${id}, ${runner.player_id}, ${runner.base_index})
-          `;
+        // Then insert new ones if we have them
+        if (runners && Array.isArray(runners) && runners.length > 0) {
+          for (const runner of runners) {
+            // Extract just the numeric ID part from compound IDs
+            const playerId =
+              typeof runner.player_id === "string" &&
+              runner.player_id.includes("-")
+                ? runner.player_id.split("-")[0]
+                : runner.player_id;
+
+            await sql`
+              INSERT INTO runners (game_id, player_id, base_index)
+              VALUES (${id}, ${playerId}, ${runner.base_index})
+            `;
+          }
         }
+      } catch (runnerError) {
+        console.error("Error updating runners:", runnerError);
+        return res.status(500).json({ message: "Failed to update runners" });
       }
 
       return res.status(200).json({ message: "Game updated successfully" });

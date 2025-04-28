@@ -29,8 +29,67 @@ const GameTracker: React.FC = () => {
   } = useGameContext();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedStateRef = useRef<string>("");
+  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
 
   const { id } = useParams();
+
+  useEffect(() => {
+    const fetchGameData = async () => {
+      if (!id) return;
+
+      try {
+        const gameId = Array.isArray(id) ? id[0] : id;
+        const response = await fetch(`/api/games/${gameId}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch game data: ${response.status}`);
+        }
+
+        const gameData = await response.json();
+        console.log("Loaded initial game data:", gameData);
+
+        // If there are runners in the database, load them
+        if (
+          gameData.runners &&
+          Array.isArray(gameData.runners) &&
+          gameData.runners.length > 0
+        ) {
+          // Convert database runners to UI format with compound IDs
+          const loadedRunners = gameData.runners
+            .map((runner: { player_id: string; base_index: number }) => {
+              // Find the actual player object from lineup
+              const player = [...greenLineup, ...orangeLineup].find(
+                (p) => p.id.toString() === runner.player_id.toString()
+              );
+
+              if (player) {
+                // Create runner with compound ID
+                return {
+                  ...player,
+                  id: `${player.id}-${Date.now()}-${Math.floor(
+                    Math.random() * 10000
+                  )}`,
+                  baseIndex: runner.base_index,
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+
+          console.log("Setting runners from database:", loadedRunners);
+          setRunnersOnBase(loadedRunners);
+        }
+
+        // Mark data as loaded
+        setIsInitialDataLoaded(true);
+      } catch (error) {
+        console.error("Error loading game data:", error);
+        setIsInitialDataLoaded(true);
+      }
+    };
+
+    fetchGameData();
+  }, [id, greenLineup, orangeLineup, setRunnersOnBase]);
 
   useEffect(() => {
     if (greenLineup.length > 0 && orangeLineup.length > 0 && !currentBatter) {
@@ -170,7 +229,7 @@ const GameTracker: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (!id || isSaving) return;
+    if (!id || isSaving || !isInitialDataLoaded) return;
 
     // Create a string representation of current state to compare
     const gameState = JSON.stringify({
@@ -229,6 +288,7 @@ const GameTracker: React.FC = () => {
   }, [
     id,
     isSaving,
+    isInitialDataLoaded,
     currentBatter,
     onDeckBatter,
     inTheHoleBatter,
