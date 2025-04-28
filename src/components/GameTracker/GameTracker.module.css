@@ -74,7 +74,7 @@
     grid-column: 2;
     grid-row: 1;
     max-height: 110px; /* Force maximum height */
-    height: 40%;
+    height: 60%;
     /* overflow: hidden; */
   }
 
@@ -82,7 +82,7 @@
     grid-column: 2;
     grid-row: 2;
     max-height: 110px; /* Force maximum height */
-    height: 40%;
+    height: 60%;
     /* overflow: hidden; */
   }
 
