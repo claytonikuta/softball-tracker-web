@@ -34,7 +34,9 @@ export default async function handler(
 
       // Get players data
       const playersResult = await sql`
-      SELECT * FROM players WHERE game_id = ${id} ORDER BY position, index_in_group
+      SELECT * FROM players 
+      WHERE game_id = ${id} 
+      ORDER BY position, index_in_group
     `;
 
       // Get runners data

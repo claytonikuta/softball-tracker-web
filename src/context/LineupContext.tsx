@@ -93,49 +93,48 @@ export const LineupProvider: React.FC<{
 
   const addPlayer = async (player: Player) => {
     try {
-      // First add to UI state for immediate feedback
+      // First determine what index this player should get
+      let newIndex = 0;
+
       if (player.group === "green") {
+        // New player gets placed at the end of the green lineup
+        newIndex = greenLineup.length;
+        // Add to UI state for immediate feedback
         setGreenLineup((prev) => [...prev, player]);
       } else {
+        // New player gets placed at the end of the orange lineup
+        newIndex = orangeLineup.length;
+        // Add to UI state for immediate feedback
         setOrangeLineup((prev) => [...prev, player]);
       }
 
       // Extract game ID from URL
       const path = window.location.pathname;
       const gameIdMatch = path.match(/\/games\/(\d+)/);
-      if (!gameIdMatch || !gameIdMatch[1]) return;
+      const gameId = gameIdMatch ? gameIdMatch[1] : null;
 
-      // Send to API
-      const response = await fetch(`/api/games/${gameIdMatch[1]}/players`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: player.name,
-          group_name: player.group,
-          runs: player.runs || 0,
-          outs: player.outs || 0,
-          position: player.group === "green" ? 1 : 2,
-        }),
-      });
-
-      if (response.ok) {
-        const savedPlayer = await response.json();
-
-        // Update the player in state with the real database ID
-        const updateWithDbId = (prev: Player[]) =>
-          prev.map((p) =>
-            p.id === player.id ? { ...p, id: String(savedPlayer.id) } : p
-          );
-
-        if (player.group === "green") {
-          setGreenLineup(updateWithDbId);
-        } else {
-          setOrangeLineup(updateWithDbId);
-        }
+      if (gameId) {
+        // Add to database with the correct index_in_group
+        await fetch(`/api/games/${gameId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            players: [
+              {
+                name: player.name,
+                group_name: player.group,
+                position: player.group === "green" ? 1 : 2,
+                index_in_group: newIndex,
+                runs: 0,
+                outs: 0,
+              },
+            ],
+          }),
+        });
       }
-    } catch (error) {
-      console.error("Error saving player:", error);
-    }
+    } catch {}
   };
 
   const updatePlayer = async (id: string, updatedPlayer: Player) => {
