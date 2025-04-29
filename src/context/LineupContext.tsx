@@ -235,7 +235,7 @@ export const LineupProvider: React.FC<{
     newLineup.splice(endIndex, 0, removed);
     setGreenLineup(newLineup);
 
-    // Add this: Save the reordered lineup to the database
+    // Save the reordered lineup to the database
     const gameId = extractGameIdFromPath();
     if (gameId) {
       saveLineupToDatabase(gameId);
@@ -248,18 +248,21 @@ export const LineupProvider: React.FC<{
     newLineup.splice(endIndex, 0, removed);
     setOrangeLineup(newLineup);
 
-    // Add this: Save the reordered lineup to the database
+    // Save the reordered lineup to the database
     const gameId = extractGameIdFromPath();
     if (gameId) {
       saveLineupToDatabase(gameId);
     }
   };
 
-  // Add this helper function near the other utility functions
+  // Add this helper function for getting the game ID from URL
   const extractGameIdFromPath = () => {
-    const path = window.location.pathname;
-    const gameIdMatch = path.match(/\/games\/(\d+)/);
-    return gameIdMatch ? gameIdMatch[1] : null;
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/\/games\/(\d+)/);
+      return gameIdMatch ? gameIdMatch[1] : null;
+    }
+    return null;
   };
 
   // FIXED VERSION:
@@ -294,41 +297,52 @@ export const LineupProvider: React.FC<{
   const saveLineupToDatabase = React.useCallback(
     async (gameId: string | number) => {
       try {
-        // Debug the lineup before formatting
-        console.log(
-          "Raw lineup before formatting:",
-          JSON.stringify([...greenLineup, ...orangeLineup], null, 2)
-        );
-
-        // Format players - completely rewritten
-        const formattedPlayers = [...greenLineup, ...orangeLineup].map(
-          (player) => {
-            // Check if this should have an ID first
+        // Format players with index information
+        const formattedPlayers = [
+          // Green players with their index
+          ...greenLineup.map((player, index) => {
             const numericId = parseInt(player.id);
             const shouldIncludeId = !isNaN(numericId) && player.id.length < 10;
 
-            // Create the object with conditional ID property using spread
             return {
               name: player.name,
               group_name: player.group,
               runs: player.runs || 0,
               outs: player.outs || 0,
-              position: player.group === "green" ? 1 : 2,
+              position: 1, // Still indicate green group
+              index_in_group: index, // Store index within group
               game_id: gameId,
               ...(shouldIncludeId ? { id: numericId } : {}),
             };
-          }
-        );
+          }),
+
+          // Orange players with their index
+          ...orangeLineup.map((player, index) => {
+            const numericId = parseInt(player.id);
+            const shouldIncludeId = !isNaN(numericId) && player.id.length < 10;
+
+            return {
+              name: player.name,
+              group_name: player.group,
+              runs: player.runs || 0,
+              outs: player.outs || 0,
+              position: 2, // Still indicate orange group
+              index_in_group: index, // Store index within group
+              game_id: gameId,
+              ...(shouldIncludeId ? { id: numericId } : {}),
+            };
+          }),
+        ];
 
         // Debug the formatted players
         console.log(
-          "Formatted players:",
+          "Formatted players with order:",
           formattedPlayers.length,
           formattedPlayers
         );
 
         console.log(
-          "Complete payload:",
+          "Complete payload with order info:",
           JSON.stringify(
             {
               current_inning: 1,
@@ -350,7 +364,7 @@ export const LineupProvider: React.FC<{
             current_inning: 1,
             is_home_team_batting: true,
             players: formattedPlayers,
-            deleted_player_ids: deletedPlayerIds, // Add this line
+            deleted_player_ids: deletedPlayerIds,
           }),
         });
 

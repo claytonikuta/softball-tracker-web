@@ -34,20 +34,48 @@ export default async function handler(
 
       // Get players data
       const playersResult = await sql`
-        SELECT * FROM players WHERE game_id = ${id} ORDER BY position
-      `;
+      SELECT * FROM players WHERE game_id = ${id} ORDER BY position, index_in_group
+    `;
 
       // Get runners data
       const runnersResult = await sql`
-        SELECT r.*, p.name, p.group_name, p.runs, p.outs 
-        FROM runners r
-        JOIN players p ON r.player_id = p.id
-        WHERE r.game_id = ${id}
-      `;
+      SELECT r.*, p.name, p.group_name, p.runs, p.outs 
+      FROM runners r
+      JOIN players p ON r.player_id = p.id
+      WHERE r.game_id = ${id}
+    `;
 
       // Format data for client
       game.innings = inningsResult.rows;
       game.players = playersResult.rows;
+
+      const greenPlayers = (
+        game.players as { group_name: string; index_in_group: number }[]
+      )
+        .filter(
+          (p: { group_name: string; index_in_group: number }) =>
+            p.group_name === "green"
+        )
+        .sort(
+          (a: { index_in_group: number }, b: { index_in_group: number }) =>
+            a.index_in_group - b.index_in_group
+        );
+
+      const orangePlayers = (
+        game.players as { group_name: string; index_in_group: number }[]
+      )
+        .filter(
+          (p: { group_name: string; index_in_group: number }) =>
+            p.group_name === "orange"
+        )
+        .sort(
+          (a: { index_in_group: number }, b: { index_in_group: number }) =>
+            a.index_in_group - b.index_in_group
+        );
+
+      // Format data for client
+      game.innings = inningsResult.rows;
+      game.players = [...greenPlayers, ...orangePlayers];
       game.runners = runnersResult.rows;
 
       return res.status(200).json({ game });
@@ -115,21 +143,26 @@ export default async function handler(
           if (player.id) {
             // Update existing player
             await sql`
-              UPDATE players 
-              SET 
-                name = ${player.name}, 
-                group_name = ${player.group_name},
-                runs = ${player.runs}, 
-                outs = ${player.outs},
-                position = ${player.position}
-              WHERE id = ${player.id} AND game_id = ${id}
-            `;
+            UPDATE players 
+            SET 
+              name = ${player.name}, 
+              group_name = ${player.group_name},
+              runs = ${player.runs}, 
+              outs = ${player.outs},
+              position = ${player.position},
+              index_in_group = ${player.index_in_group || 0}
+            WHERE id = ${player.id} AND game_id = ${id}
+          `;
           } else {
             // Add new player
             await sql`
-              INSERT INTO players (game_id, name, group_name, runs, outs, position)
-              VALUES (${id}, ${player.name}, ${player.group_name}, ${player.runs}, ${player.outs}, ${player.position})
-            `;
+            INSERT INTO players (game_id, name, group_name, runs, outs, position, index_in_group)
+            VALUES (${id}, ${player.name}, ${player.group_name}, ${
+              player.runs
+            }, ${player.outs}, ${player.position}, ${
+              player.index_in_group || 0
+            })
+          `;
           }
         }
       }
