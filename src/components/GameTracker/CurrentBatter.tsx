@@ -36,7 +36,6 @@ const CurrentBatter: React.FC = () => {
 
     // Store currentBatter in a temporary variable before we change state
     const batterWhoHit = { ...currentBatter };
-    console.log(`${batterWhoHit.name} hit result: ${result}`);
 
     // Update batting indices for the lineup
     if (batterWhoHit.group === "green") {
@@ -46,7 +45,6 @@ const CurrentBatter: React.FC = () => {
       if (currentIndex !== -1) {
         const nextIndex = (currentIndex + 1) % greenLineup.length;
         setLastGreenIndex(nextIndex);
-        console.log(`Advanced lastGreenIndex to ${nextIndex}`);
 
         // Force the index to be saved to database immediately
         saveIndicesToDatabase(nextIndex, lastOrangeIndex);
@@ -58,7 +56,6 @@ const CurrentBatter: React.FC = () => {
       if (currentIndex !== -1) {
         const nextIndex = (currentIndex + 1) % orangeLineup.length;
         setLastOrangeIndex(nextIndex);
-        console.log(`Advanced lastOrangeIndex to ${nextIndex}`);
 
         // Force the index to be saved to database immediately
         saveIndicesToDatabase(lastGreenIndex, nextIndex);
@@ -147,7 +144,6 @@ const CurrentBatter: React.FC = () => {
       const uniqueId = `${batterWhoHit.id}-${Date.now()}-${Math.floor(
         Math.random() * 10000
       )}`;
-      console.log(`Creating runner with unique ID: ${uniqueId}`);
 
       // Create a proper RunnerOnBase object with the unique ID
       const newRunner: RunnerOnBase = {
@@ -158,7 +154,6 @@ const CurrentBatter: React.FC = () => {
 
       // Get the current runners from context first
       const updatedRunners = [...runnersOnBase, newRunner];
-      console.log(`Runners list updated to ${updatedRunners.length} runners`);
 
       // Set the state directly
       setRunnersOnBase(updatedRunners);

@@ -39,8 +39,6 @@ export const LineupProvider: React.FC<{
 
   // Initialize lineups from initialData if provided
   useEffect(() => {
-    console.log("LineupProvider initialData:", initialData);
-
     // Defensive check - make sure we have valid data to work with
     if (!initialData) return;
 
@@ -140,7 +138,6 @@ export const LineupProvider: React.FC<{
   const updatePlayer = async (id: string, updatedPlayer: Player) => {
     // Extract base ID (without timestamps)
     const baseId = id.includes("-") ? id.split("-")[0] : id;
-    console.log(`Updating player with base ID: ${baseId}`);
 
     // Update the UI first
     const playerToUpdate = {
@@ -187,22 +184,14 @@ export const LineupProvider: React.FC<{
   };
 
   const removePlayer = async (id: string) => {
-    console.log(`Attempting to remove player with ID: ${id}`);
-
     // First remove from UI for immediate feedback
     setGreenLineup((prev) => {
       const newLineup = prev.filter((p) => p.id !== id);
-      console.log(
-        `Green lineup: ${prev.length} -> ${newLineup.length} players`
-      );
       return newLineup;
     });
 
     setOrangeLineup((prev) => {
       const newLineup = prev.filter((p) => p.id !== id);
-      console.log(
-        `Orange lineup: ${prev.length} -> ${newLineup.length} players`
-      );
       return newLineup;
     });
 
@@ -229,8 +218,6 @@ export const LineupProvider: React.FC<{
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {
-    console.log(`Reordering green lineup: moving ${startIndex} to ${endIndex}`);
-
     // Create a new array with the player moved to new position
     const newLineup = [...greenLineup];
     const [removed] = newLineup.splice(startIndex, 1);
@@ -248,10 +235,6 @@ export const LineupProvider: React.FC<{
   };
 
   const reorderOrangeLineup = (startIndex: number, endIndex: number) => {
-    console.log(
-      `Reordering orange lineup: moving ${startIndex} to ${endIndex}`
-    );
-
     // Create a new array with the player moved to new position
     const newLineup = [...orangeLineup];
     const [removed] = newLineup.splice(startIndex, 1);
@@ -275,11 +258,6 @@ export const LineupProvider: React.FC<{
     lineup: Player[]
   ) => {
     try {
-      console.log(
-        `Updating ${group} player indices in database:`,
-        lineup.map((p, i) => `${p.name}: ${i}`).join(", ")
-      );
-
       // Create an array of update operations - one for each player
       const playersToUpdate = lineup
         .map((player, index) => {
@@ -311,10 +289,6 @@ export const LineupProvider: React.FC<{
           console.error(
             "Failed to update player indices:",
             await response.text()
-          );
-        } else {
-          console.log(
-            `Successfully updated ${playersToUpdate.length} player indices`
           );
         }
       }
@@ -401,27 +375,6 @@ export const LineupProvider: React.FC<{
             };
           }),
         ];
-
-        // Debug the formatted players
-        console.log(
-          "Formatted players with order:",
-          formattedPlayers.length,
-          formattedPlayers
-        );
-
-        console.log(
-          "Complete payload with order info:",
-          JSON.stringify(
-            {
-              current_inning: 1,
-              is_home_team_batting: true,
-              players: formattedPlayers,
-              deleted_player_ids: deletedPlayerIds,
-            },
-            null,
-            2
-          )
-        );
 
         const response = await fetch(`/api/games/${gameId}`, {
           method: "PUT",

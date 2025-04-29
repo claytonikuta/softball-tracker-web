@@ -17,8 +17,6 @@ export default async function handler(
   }
 
   try {
-    console.log(`Updating indices for ${players.length} players in game ${id}`);
-
     // Process each player update
     for (const player of players) {
       if (!player.id || typeof player.index_in_group !== "number") {
@@ -32,10 +30,6 @@ export default async function handler(
         SET index_in_group = ${player.index_in_group}
         WHERE id = ${player.id} AND game_id = ${id}
       `;
-
-      console.log(
-        `Updated player ${player.id} to index ${player.index_in_group}`
-      );
     }
 
     return res

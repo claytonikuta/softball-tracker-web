@@ -33,7 +33,6 @@ const SortablePlayerItem: React.FC<SortablePlayerItemProps> = ({ player }) => {
 
   // Modified to show confirmation instead of direct removal
   const handleRemove = (e: React.MouseEvent) => {
-    console.log("Remove button clicked for player:", player.name);
     e.stopPropagation();
     e.preventDefault();
     setShowRemoveModal(true);
@@ -41,14 +40,12 @@ const SortablePlayerItem: React.FC<SortablePlayerItemProps> = ({ player }) => {
 
   // Function to handle actual removal after confirmation
   const confirmRemove = () => {
-    console.log("Confirming removal of player:", player.name);
     removePlayer(player.id);
     setShowRemoveModal(false);
   };
 
   // Direct edit function that doesn't rely on click events
   const handleEdit = (e: React.MouseEvent) => {
-    console.log("Direct edit function called for player:", player.name);
     e.stopPropagation();
     e.preventDefault();
     setEditedRuns(player.runs);

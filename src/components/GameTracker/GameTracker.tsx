@@ -52,7 +52,6 @@ const GameTracker: React.FC = () => {
         }
 
         const gameData = await response.json();
-        console.log("Loaded initial game data:", gameData);
 
         // Set the batting order indices if they exist in the response
         if (gameData.game?.last_green_index !== undefined) {
@@ -67,13 +66,11 @@ const GameTracker: React.FC = () => {
         if (gameData.game?.runners?.length > 0) {
           // Save the raw runners data temporarily
           const runnersFromDB = gameData.game.runners;
-          console.log("Found runners in database:", runnersFromDB);
 
           // Create a delayed function to process runners once players are loaded
           const processRunnersWhenPlayersReady = () => {
             // Check if player data is loaded
             if (greenLineup.length === 0 && orangeLineup.length === 0) {
-              console.log("Players not loaded yet, waiting...");
               // Try again in 500ms
               setTimeout(processRunnersWhenPlayersReady, 500);
               return;
@@ -81,10 +78,6 @@ const GameTracker: React.FC = () => {
 
             // Now that players are loaded, process runners
             const allPlayers = [...greenLineup, ...orangeLineup];
-            console.log(
-              "Processing runners with players:",
-              allPlayers.map((p) => p.id)
-            );
 
             const loadedRunners = runnersFromDB
               .map((runner: { player_id: string; base_index: number }) => {
@@ -107,7 +100,6 @@ const GameTracker: React.FC = () => {
               .filter(Boolean) as RunnerOnBase[];
 
             if (loadedRunners.length > 0) {
-              console.log("Setting runners from database:", loadedRunners);
               setRunnersOnBase(loadedRunners);
             }
           };
@@ -142,12 +134,6 @@ const GameTracker: React.FC = () => {
       orangeLineup.length > 0 &&
       isInitialDataLoaded
     ) {
-      console.log(
-        "Positioning batters based on saved indices:",
-        lastGreenIndex,
-        lastOrangeIndex
-      );
-
       // Determine which group is batting first (alternating pattern)
       const isGreenBatting = lastGreenIndex <= lastOrangeIndex;
 
@@ -185,20 +171,8 @@ const GameTracker: React.FC = () => {
     setOnDeckBatter,
     setInTheHoleBatter,
   ]);
-
-  console.log("GameTracker render - props:", {
-    greenLineup,
-    orangeLineup,
-    runnersOnBase,
-    currentBatter,
-    onDeckBatter,
-    inTheHoleBatter,
-  });
-
   // Clean up removed players
   useEffect(() => {
-    console.log("Cleanup effect running");
-
     // Ensure arrays are valid before spreading
     if (!Array.isArray(greenLineup) || !Array.isArray(orangeLineup)) {
       console.warn("Lineup arrays not ready yet");
@@ -208,7 +182,6 @@ const GameTracker: React.FC = () => {
     // All available players
     const allPlayers = [...greenLineup, ...orangeLineup];
     const allPlayerIds = allPlayers.map((p) => p.id);
-    console.log("Current player IDs in lineup:", allPlayerIds);
 
     // Clean up current batter if removed
     if (currentBatter && !allPlayers.some((p) => p.id === currentBatter.id)) {
@@ -271,7 +244,6 @@ const GameTracker: React.FC = () => {
         const playerExists = allPlayerIds.includes(originalId);
 
         if (!playerExists) {
-          console.log(`Runner references deleted player: ${originalId}`);
           anyRunnersToRemove = true;
         }
 
@@ -283,7 +255,6 @@ const GameTracker: React.FC = () => {
         anyRunnersToRemove &&
         updatedRunners.length !== runnersOnBase.length
       ) {
-        console.log("Removing runners for deleted players");
         setRunnersOnBase(updatedRunners);
       }
     }
@@ -322,18 +293,8 @@ const GameTracker: React.FC = () => {
     // Set a new timeout for 800ms
     saveTimeoutRef.current = setTimeout(() => {
       setIsSaving(true);
-      console.log("Debounced game state save triggered");
 
       const gameId = Array.isArray(id) ? id[0] : id;
-
-      console.log(
-        "Saving runners to database:",
-        runnersOnBase.map((r) => ({
-          playerId: r.id.split("-")[0],
-          baseIndex: r.baseIndex,
-          name: r.name,
-        }))
-      );
 
       // Only save game-related data, not players
       fetch(`/api/games/${gameId}`, {
