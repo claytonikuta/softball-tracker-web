@@ -82,7 +82,7 @@ const RunnersList: React.FC = () => {
       outs: runnerBeingOut.outs + 1,
     };
 
-    // Update player stats
+    // Update player stats first
     updatePlayer(basePlayerId, updatedPlayer);
 
     // Update inning outs
@@ -105,8 +105,11 @@ const RunnersList: React.FC = () => {
       (r) => r.id !== runnerBeingOut.id
     );
 
-    // 1. Update local state
-    setRunnersOnBase(updatedRunners);
+    // 1. Update local state with a slight delay to avoid race conditions
+    // This prevents the UI from flashing
+    setTimeout(() => {
+      setRunnersOnBase(updatedRunners);
+    }, 50);
 
     // 2. Update database immediately with the SAME updated list
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
@@ -137,15 +140,12 @@ const RunnersList: React.FC = () => {
   const handleRunScored = () => {
     if (!runnerScoring) return;
 
+    // Update player stats
     const basePlayerId = runnerScoring.id.split("-")[0];
-
-    // Create an updated player with incremented runs
     const updatedPlayer = {
       ...runnerScoring,
       runs: runnerScoring.runs + 1,
     };
-
-    // Update player stats using the BASE ID
     updatePlayer(basePlayerId, updatedPlayer);
 
     // Update inning runs
@@ -168,8 +168,10 @@ const RunnersList: React.FC = () => {
       (r) => r.id !== runnerScoring.id
     );
 
-    // 1. Update local state
-    setRunnersOnBase(updatedRunners);
+    // 1. Update local state with a slight delay
+    setTimeout(() => {
+      setRunnersOnBase(updatedRunners);
+    }, 50);
 
     // 2. Update database immediately with the SAME updated list
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
@@ -184,7 +186,7 @@ const RunnersList: React.FC = () => {
             player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
-          // CRITICAL: Include the current batting indices
+          // CRITICAL: Add these batting order indices
           last_green_index: lastGreenIndex,
           last_orange_index: lastOrangeIndex,
         }),

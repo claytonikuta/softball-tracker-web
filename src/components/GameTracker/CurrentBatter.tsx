@@ -27,15 +27,19 @@ const CurrentBatter: React.FC = () => {
     lastGreenIndex,
   } = useGameContext();
 
-  const { updatePlayer, getNextBatter, greenLineup, orangeLineup } =
-    useLineup();
+  const { updatePlayer, greenLineup, orangeLineup } = useLineup();
   const [showModal, setShowModal] = useState(false);
+  const DEBUG = false;
+  const log = (...args: unknown[]) => {
+    if (DEBUG) console.log(...args);
+  };
 
   const handleBatterResult = (result: string) => {
     if (!currentBatter) return;
 
     // Store currentBatter in a temporary variable before we change state
     const batterWhoHit = { ...currentBatter };
+    log(`${batterWhoHit.name} hit result: ${result}`);
 
     // Update batting indices for the lineup
     if (batterWhoHit.group === "green") {
@@ -45,6 +49,7 @@ const CurrentBatter: React.FC = () => {
       if (currentIndex !== -1) {
         const nextIndex = (currentIndex + 1) % greenLineup.length;
         setLastGreenIndex(nextIndex);
+        log(`Advanced lastGreenIndex to ${nextIndex}`);
 
         // Force the index to be saved to database immediately
         saveIndicesToDatabase(nextIndex, lastOrangeIndex);
@@ -56,6 +61,7 @@ const CurrentBatter: React.FC = () => {
       if (currentIndex !== -1) {
         const nextIndex = (currentIndex + 1) % orangeLineup.length;
         setLastOrangeIndex(nextIndex);
+        log(`Advanced lastOrangeIndex to ${nextIndex}`);
 
         // Force the index to be saved to database immediately
         saveIndicesToDatabase(lastGreenIndex, nextIndex);
@@ -67,17 +73,43 @@ const CurrentBatter: React.FC = () => {
     const currentGroup = batterWhoHit.group;
     const oppositeGroup = currentGroup === "green" ? "orange" : "green";
 
-    // Next batter must be from the opposite group
-    const nextCurrentGroup = oppositeGroup;
-    // On-deck must be from the original group again
-    const nextOnDeckGroup = currentGroup;
-    // In-hole must be from the opposite group again
-    const nextInHoleGroup = oppositeGroup;
+    // First, decide which lineup to pull from next
+    const targetLineup = oppositeGroup === "green" ? greenLineup : orangeLineup;
+    const targetIndex =
+      oppositeGroup === "green" ? lastGreenIndex : lastOrangeIndex;
 
-    // Get the next batters based on strict alternating pattern
-    const nextCurrentBatter = getNextBatter(nextCurrentGroup);
-    const nextOnDeckBatter = getNextBatter(nextOnDeckGroup);
-    const nextInTheHoleBatter = getNextBatter(nextInHoleGroup);
+    // Next lineup for on-deck
+    const onDeckLineup = oppositeGroup === "green" ? orangeLineup : greenLineup;
+    const onDeckIndex =
+      oppositeGroup === "green" ? lastOrangeIndex : lastGreenIndex;
+
+    // Get batters with defensive checks
+    let nextCurrentBatter = null;
+    let nextOnDeckBatter = null;
+    let nextInTheHoleBatter = null;
+
+    // Only set batters if lineups have players
+    if (targetLineup.length > 0) {
+      nextCurrentBatter = targetLineup[targetIndex % targetLineup.length];
+    }
+
+    if (onDeckLineup.length > 0) {
+      nextOnDeckBatter = onDeckLineup[onDeckIndex % onDeckLineup.length];
+    }
+
+    // In-hole is next from current batter's lineup
+    if (targetLineup.length > 0) {
+      const inTheHoleIndex = (targetIndex + 1) % targetLineup.length;
+      nextInTheHoleBatter = targetLineup[inTheHoleIndex];
+    }
+
+    log(
+      `Next batter: ${nextCurrentBatter?.name} (${nextCurrentBatter?.group})`
+    );
+    log(`On deck: ${nextOnDeckBatter?.name} (${nextOnDeckBatter?.group})`);
+    log(
+      `In hole: ${nextInTheHoleBatter?.name} (${nextInTheHoleBatter?.group})`
+    );
 
     // Set the batters in their new positions
     setCurrentBatter(nextCurrentBatter);
