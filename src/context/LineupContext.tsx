@@ -229,28 +229,97 @@ export const LineupProvider: React.FC<{
   };
 
   const reorderGreenLineup = (startIndex: number, endIndex: number) => {
+    console.log(`Reordering green lineup: moving ${startIndex} to ${endIndex}`);
+
+    // Create a new array with the player moved to new position
     const newLineup = [...greenLineup];
     const [removed] = newLineup.splice(startIndex, 1);
     newLineup.splice(endIndex, 0, removed);
+
+    // Update local state
     setGreenLineup(newLineup);
 
-    // Save the reordered lineup to the database
+    // Save to database with explicit indices
     const gameId = extractGameIdFromPath();
     if (gameId) {
-      saveLineupToDatabase(gameId);
+      // We need to explicitly save each player with their new index
+      updatePlayerIndicesInDatabase(gameId, "green", newLineup);
     }
   };
 
   const reorderOrangeLineup = (startIndex: number, endIndex: number) => {
+    console.log(
+      `Reordering orange lineup: moving ${startIndex} to ${endIndex}`
+    );
+
+    // Create a new array with the player moved to new position
     const newLineup = [...orangeLineup];
     const [removed] = newLineup.splice(startIndex, 1);
     newLineup.splice(endIndex, 0, removed);
+
+    // Update local state
     setOrangeLineup(newLineup);
 
-    // Save the reordered lineup to the database
+    // Save to database with explicit indices
     const gameId = extractGameIdFromPath();
     if (gameId) {
-      saveLineupToDatabase(gameId);
+      // We need to explicitly save each player with their new index
+      updatePlayerIndicesInDatabase(gameId, "orange", newLineup);
+    }
+  };
+
+  // Add this new function to handle updating indices directly:
+  const updatePlayerIndicesInDatabase = async (
+    gameId: string | number,
+    group: "green" | "orange",
+    lineup: Player[]
+  ) => {
+    try {
+      console.log(
+        `Updating ${group} player indices in database:`,
+        lineup.map((p, i) => `${p.name}: ${i}`).join(", ")
+      );
+
+      // Create an array of update operations - one for each player
+      const playersToUpdate = lineup
+        .map((player, index) => {
+          const numericId = parseInt(player.id);
+          // Only include database players (ones with numeric IDs)
+          if (!isNaN(numericId) && player.id.length < 10) {
+            return {
+              id: numericId,
+              index_in_group: index,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean); // Remove any null entries
+
+      // Send the batch update
+      if (playersToUpdate.length > 0) {
+        const response = await fetch(`/api/games/${gameId}/update-indices`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            players: playersToUpdate,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error(
+            "Failed to update player indices:",
+            await response.text()
+          );
+        } else {
+          console.log(
+            `Successfully updated ${playersToUpdate.length} player indices`
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error updating player indices:", error);
     }
   };
 
