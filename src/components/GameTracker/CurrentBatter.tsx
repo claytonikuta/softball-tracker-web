@@ -12,8 +12,6 @@ const CurrentBatter: React.FC = () => {
   const id = params?.id;
   const {
     currentBatter,
-    onDeckBatter,
-    inTheHoleBatter,
     setCurrentBatter,
     setOnDeckBatter,
     setInTheHoleBatter,
@@ -40,6 +38,7 @@ const CurrentBatter: React.FC = () => {
     const batterWhoHit = { ...currentBatter };
     console.log(`${batterWhoHit.name} hit result: ${result}`);
 
+    // Update batting indices for the lineup
     if (batterWhoHit.group === "green") {
       const currentIndex = greenLineup.findIndex(
         (p) => p.id === batterWhoHit.id
@@ -49,7 +48,7 @@ const CurrentBatter: React.FC = () => {
         setLastGreenIndex(nextIndex);
         console.log(`Advanced lastGreenIndex to ${nextIndex}`);
 
-        // ADD THIS: Force the index to be saved to database immediately
+        // Force the index to be saved to database immediately
         saveIndicesToDatabase(nextIndex, lastOrangeIndex);
       }
     } else {
@@ -61,23 +60,34 @@ const CurrentBatter: React.FC = () => {
         setLastOrangeIndex(nextIndex);
         console.log(`Advanced lastOrangeIndex to ${nextIndex}`);
 
-        // ADD THIS: Force the index to be saved to database immediately
+        // Force the index to be saved to database immediately
         saveIndicesToDatabase(lastGreenIndex, nextIndex);
       }
     }
 
-    // Calculate the next batters in the sequence
-    const nextNextGroup = onDeckBatter?.group === "green" ? "orange" : "green";
-    const nextNextNextGroup = nextNextGroup === "green" ? "orange" : "green";
+    // ENFORCED ALTERNATING BATTING ORDER
+    // Always alternate green/orange regardless of what's currently on-deck
+    const currentGroup = batterWhoHit.group;
+    const oppositeGroup = currentGroup === "green" ? "orange" : "green";
 
-    // Get the batter that will go in the hole
-    const nextInTheHoleBatter = getNextBatter(nextNextNextGroup);
+    // Next batter must be from the opposite group
+    const nextCurrentGroup = oppositeGroup;
+    // On-deck must be from the original group again
+    const nextOnDeckGroup = currentGroup;
+    // In-hole must be from the opposite group again
+    const nextInHoleGroup = oppositeGroup;
 
-    // Update all three batters in the sequence
-    setCurrentBatter(onDeckBatter);
-    setOnDeckBatter(inTheHoleBatter);
+    // Get the next batters based on strict alternating pattern
+    const nextCurrentBatter = getNextBatter(nextCurrentGroup);
+    const nextOnDeckBatter = getNextBatter(nextOnDeckGroup);
+    const nextInTheHoleBatter = getNextBatter(nextInHoleGroup);
+
+    // Set the batters in their new positions
+    setCurrentBatter(nextCurrentBatter);
+    setOnDeckBatter(nextOnDeckBatter);
     setInTheHoleBatter(nextInTheHoleBatter);
 
+    // Process the actual hit result
     if (result === "out") {
       // Batter is out
       const updatedPlayer = {
@@ -86,7 +96,7 @@ const CurrentBatter: React.FC = () => {
       };
       updatePlayer(batterWhoHit.id, updatedPlayer);
 
-      // NEW CODE: Update inning outs for current team
+      // Update inning outs for current team
       if (isHomeTeamBatting) {
         updateHomeInningScore(
           currentInning,
@@ -108,7 +118,7 @@ const CurrentBatter: React.FC = () => {
       };
       updatePlayer(batterWhoHit.id, updatedPlayer);
 
-      // NEW CODE: Update inning runs for current team
+      // Update inning runs for current team
       if (isHomeTeamBatting) {
         updateHomeInningScore(
           currentInning,
