@@ -55,6 +55,8 @@ interface GameContextType {
   ) => void;
   currentBattingGroup: "green" | "orange";
   setCurrentBattingGroup: (group: "green" | "orange") => void;
+  alternatingTurn: "green" | "orange";
+  setAlternatingTurn: (turn: "green" | "orange") => void;
 }
 
 // Create an empty inning record
@@ -94,6 +96,10 @@ export const GameProvider: React.FC<{
   const [isHomeTeamBatting, setIsHomeTeamBatting] = useState<boolean>(true);
   const [homeTeam, setHomeTeam] = useState<TeamScore>(createInitialTeamScore());
   const [awayTeam, setAwayTeam] = useState<TeamScore>(createInitialTeamScore());
+  const [alternatingTurn, setAlternatingTurn] = useState<"green" | "orange">(
+    "green"
+  );
+
   useEffect(() => {
     console.log("GREEN INDEX CHANGED:", lastGreenIndex, new Error().stack);
   }, [lastGreenIndex]);
@@ -217,6 +223,8 @@ export const GameProvider: React.FC<{
         updateAwayInningScore,
         currentBattingGroup,
         setCurrentBattingGroup,
+        alternatingTurn,
+        setAlternatingTurn,
       }}
     >
       {children}

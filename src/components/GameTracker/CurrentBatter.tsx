@@ -25,8 +25,8 @@ const CurrentBatter: React.FC = () => {
     setLastOrangeIndex,
     lastOrangeIndex,
     lastGreenIndex,
-    currentBattingGroup,
-    setCurrentBattingGroup,
+    alternatingTurn,
+    setAlternatingTurn,
   } = useGameContext();
 
   const { updatePlayer, getNextBatter, greenLineup, orangeLineup } =
@@ -162,9 +162,7 @@ const CurrentBatter: React.FC = () => {
     }
 
     setShowModal(false);
-    setCurrentBattingGroup(
-      currentBattingGroup === "green" ? "orange" : "green"
-    );
+    setAlternatingTurn(alternatingTurn === "green" ? "orange" : "green");
   };
 
   const saveIndicesToDatabase = (greenIndex: number, orangeIndex: number) => {

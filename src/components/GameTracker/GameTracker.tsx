@@ -31,6 +31,7 @@ const GameTracker: React.FC = () => {
     lastOrangeIndex,
     currentInning,
     isHomeTeamBatting,
+    alternatingTurn,
   } = useGameContext();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedStateRef = useRef<string>("");
@@ -134,7 +135,7 @@ const GameTracker: React.FC = () => {
       isInitialDataLoaded
     ) {
       // Use currentBattingGroup instead of comparing indices
-      const isGreenBatting = lastGreenIndex <= lastOrangeIndex;
+      const isGreenBatting = alternatingTurn === "green";
 
       // Get the current batter based on which group is up
       const currentIndex = isGreenBatting ? lastGreenIndex : lastOrangeIndex;
@@ -169,6 +170,7 @@ const GameTracker: React.FC = () => {
     setCurrentBatter,
     setOnDeckBatter,
     setInTheHoleBatter,
+    alternatingTurn,
   ]);
 
   // Clean up removed players
