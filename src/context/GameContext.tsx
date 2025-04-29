@@ -53,6 +53,8 @@ interface GameContextType {
     runs: number | ((prev: number) => number),
     outs: number | ((prev: number) => number)
   ) => void;
+  currentBattingGroup: "green" | "orange";
+  setCurrentBattingGroup: (group: "green" | "orange") => void;
 }
 
 // Create an empty inning record
@@ -83,13 +85,22 @@ export const GameProvider: React.FC<{
   const [runnersOnBase, setRunnersOnBase] = useState<RunnerOnBase[]>([]);
   const [lastGreenIndex, setLastGreenIndex] = useState<number>(0);
   const [lastOrangeIndex, setLastOrangeIndex] = useState<number>(0);
+  const [currentBattingGroup, setCurrentBattingGroup] = useState<
+    "green" | "orange"
+  >("green");
 
   // Inning tracking state
   const [currentInning, setCurrentInning] = useState<number>(1);
   const [isHomeTeamBatting, setIsHomeTeamBatting] = useState<boolean>(true);
   const [homeTeam, setHomeTeam] = useState<TeamScore>(createInitialTeamScore());
   const [awayTeam, setAwayTeam] = useState<TeamScore>(createInitialTeamScore());
+  useEffect(() => {
+    console.log("GREEN INDEX CHANGED:", lastGreenIndex, new Error().stack);
+  }, [lastGreenIndex]);
 
+  useEffect(() => {
+    console.log("ORANGE INDEX CHANGED:", lastOrangeIndex, new Error().stack);
+  }, [lastOrangeIndex]);
   useEffect(() => {
     if (initialData) {
       if (initialData.home_team_name) {
@@ -204,6 +215,8 @@ export const GameProvider: React.FC<{
         setIsHomeTeamBatting,
         updateHomeInningScore,
         updateAwayInningScore,
+        currentBattingGroup,
+        setCurrentBattingGroup,
       }}
     >
       {children}

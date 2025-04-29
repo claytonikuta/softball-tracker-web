@@ -35,7 +35,6 @@ const GameTracker: React.FC = () => {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedStateRef = useRef<string>("");
   const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
-
   const { id } = useParams();
 
   useEffect(() => {
@@ -134,7 +133,7 @@ const GameTracker: React.FC = () => {
       orangeLineup.length > 0 &&
       isInitialDataLoaded
     ) {
-      // Determine which group is batting first (alternating pattern)
+      // Use currentBattingGroup instead of comparing indices
       const isGreenBatting = lastGreenIndex <= lastOrangeIndex;
 
       // Get the current batter based on which group is up
@@ -171,6 +170,7 @@ const GameTracker: React.FC = () => {
     setOnDeckBatter,
     setInTheHoleBatter,
   ]);
+
   // Clean up removed players
   useEffect(() => {
     // Ensure arrays are valid before spreading
