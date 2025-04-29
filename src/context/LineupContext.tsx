@@ -234,6 +234,12 @@ export const LineupProvider: React.FC<{
     const [removed] = newLineup.splice(startIndex, 1);
     newLineup.splice(endIndex, 0, removed);
     setGreenLineup(newLineup);
+
+    // Add this: Save the reordered lineup to the database
+    const gameId = extractGameIdFromPath();
+    if (gameId) {
+      saveLineupToDatabase(gameId);
+    }
   };
 
   const reorderOrangeLineup = (startIndex: number, endIndex: number) => {
@@ -241,6 +247,19 @@ export const LineupProvider: React.FC<{
     const [removed] = newLineup.splice(startIndex, 1);
     newLineup.splice(endIndex, 0, removed);
     setOrangeLineup(newLineup);
+
+    // Add this: Save the reordered lineup to the database
+    const gameId = extractGameIdFromPath();
+    if (gameId) {
+      saveLineupToDatabase(gameId);
+    }
+  };
+
+  // Add this helper function near the other utility functions
+  const extractGameIdFromPath = () => {
+    const path = window.location.pathname;
+    const gameIdMatch = path.match(/\/games\/(\d+)/);
+    return gameIdMatch ? gameIdMatch[1] : null;
   };
 
   // FIXED VERSION:
