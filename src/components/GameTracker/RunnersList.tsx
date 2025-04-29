@@ -15,8 +15,6 @@ const RunnersList: React.FC = () => {
     isHomeTeamBatting,
     updateHomeInningScore,
     updateAwayInningScore,
-    lastGreenIndex,
-    lastOrangeIndex,
   } = useGameContext();
   const { updatePlayer } = useLineup();
   const [showRunScoredModal, setShowRunScoredModal] = React.useState(false);
@@ -121,9 +119,6 @@ const RunnersList: React.FC = () => {
             player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
-          // CRITICAL: Add these batting order indices to preserve state
-          last_green_index: lastGreenIndex,
-          last_orange_index: lastOrangeIndex,
         }),
       });
     }
@@ -184,9 +179,6 @@ const RunnersList: React.FC = () => {
             player_id: runner.id.split("-")[0],
             base_index: runner.baseIndex,
           })),
-          // CRITICAL: Include the current batting indices
-          last_green_index: lastGreenIndex,
-          last_orange_index: lastOrangeIndex,
         }),
       });
     }
