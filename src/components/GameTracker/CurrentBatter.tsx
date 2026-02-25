@@ -63,13 +63,17 @@ const CurrentBatter: React.FC = () => {
     const currentGroup = batterWhoHit.group;
     const oppositeGroup = currentGroup === "green" ? "orange" : "green";
 
-    // Next current batter is from the opposite group (at its current index, not advanced)
+    // Use the UPDATED indices (not the stale state values)
+    // The opposite group's index hasn't changed, but we need to use the current stored values
+    // The group that just batted has been advanced (newGreenIndex/newOrangeIndex)
     const oppositeGroupIndex = oppositeGroup === "green" 
       ? lastGreenIndex 
       : lastOrangeIndex;
     const oppositeGroupLineup = oppositeGroup === "green" 
       ? greenLineup 
       : orangeLineup;
+    
+    // Next current batter is from the opposite group (at its current index)
     const nextCurrentBatter = oppositeGroupLineup.length > 0 && oppositeGroupIndex < oppositeGroupLineup.length
       ? oppositeGroupLineup[oppositeGroupIndex]
       : null;

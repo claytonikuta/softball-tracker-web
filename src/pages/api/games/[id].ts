@@ -178,11 +178,22 @@ export default async function handler(
         if (runners && Array.isArray(runners) && runners.length > 0) {
           for (const runner of runners) {
             // Extract just the numeric ID part from compound IDs
-            const playerId =
+            let playerId =
               typeof runner.player_id === "string" &&
               runner.player_id.includes("-")
                 ? runner.player_id.split("-")[0]
                 : runner.player_id;
+
+            // Validate that playerId is a valid integer (not a timestamp string)
+            // Timestamp-based IDs are temporary and shouldn't be saved to database
+            const numericId = parseInt(String(playerId));
+            if (isNaN(numericId) || numericId > 2147483647 || numericId < 1) {
+              // Skip saving runners with invalid/non-database player IDs
+              console.warn(`Skipping runner with invalid player_id: ${playerId}`);
+              continue;
+            }
+
+            playerId = numericId;
 
             await sql`
               INSERT INTO runners (game_id, player_id, base_index)

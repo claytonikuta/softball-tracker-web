@@ -127,14 +127,18 @@ const GameTracker: React.FC = () => {
   ]);
 
   // Add this effect to update batters based on loaded indices
+  // This only runs on initial load or when lineups change, not on every batter change
+  // (CurrentBatter.tsx handles the actual batter advancement)
   useEffect(() => {
     // Only run this when we have both lineups and the indices are set
+    // AND we don't already have batters set (initial load only)
     if (
       greenLineup.length > 0 &&
       orangeLineup.length > 0 &&
-      isInitialDataLoaded
+      isInitialDataLoaded &&
+      !currentBatter // Only set initial batters if none are set
     ) {
-      // Determine which group is currently batting
+      // Determine which group should bat first (based on alternatingTurn)
       const isGreenBatting = alternatingTurn === "green";
 
       // Current batter is from the group that's up
@@ -144,8 +148,7 @@ const GameTracker: React.FC = () => {
         ? currentLineup[currentIndex]
         : null;
 
-      // On-deck batter is the NEXT batter from the opposite group
-      // (the one that will bat after current)
+      // On-deck batter is from the opposite group (will bat after current)
       const oppositeGroupIndex = isGreenBatting ? lastOrangeIndex : lastGreenIndex;
       const oppositeGroupLineup = isGreenBatting ? orangeLineup : greenLineup;
       const onDeckBatter = oppositeGroupLineup.length > 0 && oppositeGroupIndex < oppositeGroupLineup.length
@@ -172,6 +175,7 @@ const GameTracker: React.FC = () => {
     lastGreenIndex,
     lastOrangeIndex,
     isInitialDataLoaded,
+    currentBatter, // Add this to dependency so we don't override manual settings
     setCurrentBatter,
     setOnDeckBatter,
     setInTheHoleBatter,
@@ -329,6 +333,22 @@ const GameTracker: React.FC = () => {
       const gameId = Array.isArray(id) ? id[0] : id;
 
       // Only save game-related data, not players
+      // Filter runners to only include those with valid numeric player IDs
+      const validRunners = runnersOnBase
+        .map((runner) => {
+          const baseId = runner.id.split("-")[0];
+          const numericId = parseInt(baseId);
+          // Only include runners with valid numeric IDs (database players)
+          if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
+            return {
+              player_id: numericId,
+              base_index: runner.baseIndex,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: {
@@ -337,10 +357,7 @@ const GameTracker: React.FC = () => {
         body: JSON.stringify({
           current_inning: currentInning,
           is_home_team_batting: isHomeTeamBatting,
-          runners: runnersOnBase.map((runner) => ({
-            player_id: runner.id.split("-")[0],
-            base_index: runner.baseIndex,
-          })),
+          runners: validRunners,
           last_green_index: lastGreenIndex,
           last_orange_index: lastOrangeIndex,
         }),

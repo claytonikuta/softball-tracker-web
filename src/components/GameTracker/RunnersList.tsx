@@ -140,20 +140,35 @@ const RunnersList: React.FC = () => {
     setRunnersOnBase(updatedRunners);
 
     // 2. Update database immediately with the SAME updated list
+    // Only save runners with valid numeric player IDs (database players)
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
     if (gameId) {
-      fetch(`/api/games/${gameId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          runners: updatedRunners.map((runner) => ({
-            player_id: runner.id.split("-")[0],
-            base_index: runner.baseIndex,
-          })),
-        }),
-      });
+      const validRunners = updatedRunners
+        .map((runner) => {
+          const baseId = runner.id.split("-")[0];
+          const numericId = parseInt(baseId);
+          // Only include runners with valid numeric IDs (database players)
+          if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
+            return {
+              player_id: numericId,
+              base_index: runner.baseIndex,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (validRunners.length > 0 || updatedRunners.length === 0) {
+        fetch(`/api/games/${gameId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            runners: validRunners,
+          }),
+        });
+      }
     }
 
     // Close the modal
@@ -210,20 +225,35 @@ const RunnersList: React.FC = () => {
     setRunnersOnBase(updatedRunners);
 
     // 2. Update database immediately with the SAME updated list
+    // Only save runners with valid numeric player IDs (database players)
     const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
     if (gameId) {
-      fetch(`/api/games/${gameId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          runners: updatedRunners.map((runner) => ({
-            player_id: runner.id.split("-")[0],
-            base_index: runner.baseIndex,
-          })),
-        }),
-      });
+      const validRunners = updatedRunners
+        .map((runner) => {
+          const baseId = runner.id.split("-")[0];
+          const numericId = parseInt(baseId);
+          // Only include runners with valid numeric IDs (database players)
+          if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
+            return {
+              player_id: numericId,
+              base_index: runner.baseIndex,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (validRunners.length > 0 || updatedRunners.length === 0) {
+        fetch(`/api/games/${gameId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            runners: validRunners,
+          }),
+        });
+      }
     }
 
     setShowRunScoredModal(false);
