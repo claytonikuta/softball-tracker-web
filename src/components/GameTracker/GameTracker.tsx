@@ -130,6 +130,12 @@ const GameTracker: React.FC = () => {
   // This only runs on initial load or when lineups change, not on every batter change
   // (CurrentBatter.tsx handles the actual batter advancement)
   useEffect(() => {
+    // Initialize the player IDs ref on first load
+    if (greenLineup.length > 0 && orangeLineup.length > 0 && prevPlayerIdsRef.current.size === 0) {
+      const allPlayers = [...greenLineup, ...orangeLineup];
+      prevPlayerIdsRef.current = new Set(allPlayers.map((p) => p.id));
+    }
+    
     // Only run this when we have both lineups and the indices are set
     // AND we don't already have batters set (initial load only)
     if (
@@ -183,6 +189,9 @@ const GameTracker: React.FC = () => {
   ]);
 
   // Clean up removed players (only reset batters if player is actually removed, not just updated)
+  // Use refs to track previous player IDs to detect actual removals vs updates
+  const prevPlayerIdsRef = useRef<Set<string>>(new Set());
+  
   useEffect(() => {
     // Ensure arrays are valid before spreading
     if (!Array.isArray(greenLineup) || !Array.isArray(orangeLineup)) {
@@ -193,6 +202,20 @@ const GameTracker: React.FC = () => {
     // All available players
     const allPlayers = [...greenLineup, ...orangeLineup];
     const allPlayerIds = new Set(allPlayers.map((p) => p.id));
+    
+    // Only proceed if a player was actually removed (not just updated)
+    const currentPlayerIds = allPlayerIds;
+    const prevPlayerIds = prevPlayerIdsRef.current;
+    const playerWasRemoved = prevPlayerIds.size > 0 && 
+      Array.from(prevPlayerIds).some(id => !currentPlayerIds.has(id));
+    
+    // Update the ref for next comparison
+    prevPlayerIdsRef.current = new Set(allPlayerIds);
+    
+    // If no player was removed, skip the cleanup (player was just updated)
+    if (!playerWasRemoved && prevPlayerIds.size > 0) {
+      return;
+    }
 
     // Only reset batters if the player ID doesn't exist in the lineup at all
     // (not just if the object reference changed due to an update)
