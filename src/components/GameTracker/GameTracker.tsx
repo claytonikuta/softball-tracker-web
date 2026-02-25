@@ -271,7 +271,7 @@ const GameTracker: React.FC = () => {
         const originalId = runner.id.split("-")[0];
 
         // Check if this original player ID exists in the lineup
-        const playerExists = allPlayerIds.includes(originalId);
+        const playerExists = allPlayerIds.has(originalId);
 
         if (!playerExists) {
           anyRunnersToRemove = true;
