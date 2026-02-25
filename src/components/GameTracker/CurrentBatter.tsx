@@ -29,8 +29,7 @@ const CurrentBatter: React.FC = () => {
     setAlternatingTurn,
   } = useGameContext();
 
-  const { updatePlayer, getNextBatter, greenLineup, orangeLineup } =
-    useLineup();
+  const { updatePlayer, greenLineup, orangeLineup } = useLineup();
   const [showModal, setShowModal] = useState(false);
 
   const handleBatterResult = (result: string) => {
