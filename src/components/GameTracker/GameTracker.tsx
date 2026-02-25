@@ -178,7 +178,7 @@ const GameTracker: React.FC = () => {
     alternatingTurn,
   ]);
 
-  // Clean up removed players
+  // Clean up removed players (only reset batters if player is actually removed, not just updated)
   useEffect(() => {
     // Ensure arrays are valid before spreading
     if (!Array.isArray(greenLineup) || !Array.isArray(orangeLineup)) {
@@ -188,54 +188,77 @@ const GameTracker: React.FC = () => {
 
     // All available players
     const allPlayers = [...greenLineup, ...orangeLineup];
-    const allPlayerIds = allPlayers.map((p) => p.id);
+    const allPlayerIds = new Set(allPlayers.map((p) => p.id));
 
-    // Clean up current batter if removed
-    if (currentBatter && !allPlayers.some((p) => p.id === currentBatter.id)) {
-      // Find next available batter of same group if possible
+    // Only reset batters if the player ID doesn't exist in the lineup at all
+    // (not just if the object reference changed due to an update)
+    if (currentBatter && !allPlayerIds.has(currentBatter.id)) {
+      // Player was actually removed, find replacement
       const group = currentBatter.group;
       const lineup = group === "green" ? greenLineup : orangeLineup;
 
       if (lineup.length > 0) {
-        setCurrentBatter(lineup[0]);
+        // Use the current index if valid, otherwise use 0
+        const currentIndex = group === "green" ? lastGreenIndex : lastOrangeIndex;
+        const replacementBatter = currentIndex < lineup.length 
+          ? lineup[currentIndex] 
+          : lineup[0];
+        setCurrentBatter(replacementBatter);
       } else {
         // If no players of that group, try to find any player
         const anyLineup = greenLineup.length > 0 ? greenLineup : orangeLineup;
-        setCurrentBatter(anyLineup.length > 0 ? anyLineup[0] : null);
+        const anyIndex = greenLineup.length > 0 ? lastGreenIndex : lastOrangeIndex;
+        const replacementBatter = anyLineup.length > 0 && anyIndex < anyLineup.length
+          ? anyLineup[anyIndex]
+          : (anyLineup.length > 0 ? anyLineup[0] : null);
+        setCurrentBatter(replacementBatter);
       }
     }
+    // Note: We don't update the batter object reference when player stats change
+    // The batter object will be updated naturally through the batter calculation effect
 
-    // Clean up on-deck batter if removed
-    if (onDeckBatter && !allPlayers.some((p) => p.id === onDeckBatter.id)) {
-      // Find next available batter of same group if possible
+    // Same logic for on-deck batter
+    if (onDeckBatter && !allPlayerIds.has(onDeckBatter.id)) {
       const group = onDeckBatter.group;
       const lineup = group === "green" ? greenLineup : orangeLineup;
 
       if (lineup.length > 0) {
-        setOnDeckBatter(lineup[0]);
+        const currentIndex = group === "green" ? lastGreenIndex : lastOrangeIndex;
+        const replacementBatter = currentIndex < lineup.length 
+          ? lineup[currentIndex] 
+          : lineup[0];
+        setOnDeckBatter(replacementBatter);
       } else {
-        // If no players of that group, try to find any player
         const anyLineup = greenLineup.length > 0 ? greenLineup : orangeLineup;
-        setOnDeckBatter(anyLineup.length > 0 ? anyLineup[0] : null);
+        const anyIndex = greenLineup.length > 0 ? lastGreenIndex : lastOrangeIndex;
+        const replacementBatter = anyLineup.length > 0 && anyIndex < anyLineup.length
+          ? anyLineup[anyIndex]
+          : (anyLineup.length > 0 ? anyLineup[0] : null);
+        setOnDeckBatter(replacementBatter);
       }
     }
+    // Note: We don't update the batter object reference when player stats change
 
-    if (
-      inTheHoleBatter &&
-      !allPlayers.some((p) => p.id === inTheHoleBatter.id)
-    ) {
-      // Find next available batter of same group if possible
+    // Same logic for in-the-hole batter
+    if (inTheHoleBatter && !allPlayerIds.has(inTheHoleBatter.id)) {
       const group = inTheHoleBatter.group;
       const lineup = group === "green" ? greenLineup : orangeLineup;
 
       if (lineup.length > 0) {
-        setInTheHoleBatter(lineup[0]);
+        const currentIndex = group === "green" ? lastGreenIndex : lastOrangeIndex;
+        const nextIndex = (currentIndex + 1) % lineup.length;
+        setInTheHoleBatter(lineup[nextIndex]);
       } else {
-        // If no players of that group, try to find any player
         const anyLineup = greenLineup.length > 0 ? greenLineup : orangeLineup;
-        setInTheHoleBatter(anyLineup.length > 0 ? anyLineup[0] : null);
+        const anyIndex = greenLineup.length > 0 ? lastGreenIndex : lastOrangeIndex;
+        const nextIndex = anyLineup.length > 0 ? (anyIndex + 1) % anyLineup.length : 0;
+        const replacementBatter = anyLineup.length > 0
+          ? anyLineup[nextIndex]
+          : null;
+        setInTheHoleBatter(replacementBatter);
       }
     }
+    // Note: We don't update the batter object reference when player stats change
 
     // Store a ref to previous players for comparison
     if (runnersOnBase.length > 0 && allPlayers.length > 0) {
@@ -272,6 +295,8 @@ const GameTracker: React.FC = () => {
     onDeckBatter,
     inTheHoleBatter,
     runnersOnBase,
+    lastGreenIndex,
+    lastOrangeIndex,
     setCurrentBatter,
     setOnDeckBatter,
     setInTheHoleBatter,

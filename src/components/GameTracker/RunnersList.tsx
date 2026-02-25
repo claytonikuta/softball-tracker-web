@@ -16,7 +16,7 @@ const RunnersList: React.FC = () => {
     updateHomeInningScore,
     updateAwayInningScore,
   } = useGameContext();
-  const { updatePlayer } = useLineup();
+  const { updatePlayer, greenLineup, orangeLineup } = useLineup();
   const [showRunScoredModal, setShowRunScoredModal] = React.useState(false);
   const [runnerScoring, setRunnerScoring] = React.useState<RunnerOnBase | null>(
     null
@@ -95,11 +95,22 @@ const RunnersList: React.FC = () => {
   const handleRunnerOut = () => {
     if (!runnerBeingOut) return;
 
-    // Update the player's outs
+    // Extract the base player ID (without timestamp)
     const basePlayerId = runnerBeingOut.id.split("-")[0];
+    
+    // Find the actual current player from the lineup (not the runner object)
+    const allPlayers = [...greenLineup, ...orangeLineup];
+    const currentPlayer = allPlayers.find((p) => p.id === basePlayerId);
+    
+    if (!currentPlayer) {
+      console.warn(`Player ${basePlayerId} not found in lineup`);
+      return;
+    }
+
+    // Create updated player with incremented outs, using current player data
     const updatedPlayer = {
-      ...runnerBeingOut,
-      outs: runnerBeingOut.outs + 1,
+      ...currentPlayer,
+      outs: currentPlayer.outs + 1,
     };
 
     // Update player stats
@@ -154,12 +165,22 @@ const RunnersList: React.FC = () => {
   const handleRunScored = () => {
     if (!runnerScoring) return;
 
+    // Extract the base player ID (without timestamp)
     const basePlayerId = runnerScoring.id.split("-")[0];
+    
+    // Find the actual current player from the lineup (not the runner object)
+    const allPlayers = [...greenLineup, ...orangeLineup];
+    const currentPlayer = allPlayers.find((p) => p.id === basePlayerId);
+    
+    if (!currentPlayer) {
+      console.warn(`Player ${basePlayerId} not found in lineup`);
+      return;
+    }
 
-    // Create an updated player with incremented runs
+    // Create updated player with incremented runs, using current player data
     const updatedPlayer = {
-      ...runnerScoring,
-      runs: runnerScoring.runs + 1,
+      ...currentPlayer,
+      runs: currentPlayer.runs + 1,
     };
 
     // Update player stats using the BASE ID
