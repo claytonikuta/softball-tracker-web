@@ -39,47 +39,62 @@ const CurrentBatter: React.FC = () => {
     // Store currentBatter in a temporary variable before we change state
     const batterWhoHit = { ...currentBatter };
 
-    // Update batting indices for the lineup
-    if (batterWhoHit.group === "green") {
-      const currentIndex = greenLineup.findIndex(
-        (p) => p.id === batterWhoHit.id
-      );
-      if (currentIndex !== -1) {
-        const nextIndex = (currentIndex + 1) % greenLineup.length;
-        setLastGreenIndex(nextIndex);
+    // Use stored indices instead of findIndex to avoid issues with reordered lineups
+    let newGreenIndex = lastGreenIndex;
+    let newOrangeIndex = lastOrangeIndex;
 
-        // Force the index to be saved to database immediately
-        saveIndicesToDatabase(nextIndex, lastOrangeIndex);
+    // Advance the index for the group that just batted
+    if (batterWhoHit.group === "green") {
+      if (greenLineup.length > 0) {
+        newGreenIndex = (lastGreenIndex + 1) % greenLineup.length;
+        setLastGreenIndex(newGreenIndex);
       }
     } else {
-      const currentIndex = orangeLineup.findIndex(
-        (p) => p.id === batterWhoHit.id
-      );
-      if (currentIndex !== -1) {
-        const nextIndex = (currentIndex + 1) % orangeLineup.length;
-        setLastOrangeIndex(nextIndex);
-
-        // Force the index to be saved to database immediately
-        saveIndicesToDatabase(lastGreenIndex, nextIndex);
+      if (orangeLineup.length > 0) {
+        newOrangeIndex = (lastOrangeIndex + 1) % orangeLineup.length;
+        setLastOrangeIndex(newOrangeIndex);
       }
     }
 
+    // Save indices to database immediately
+    saveIndicesToDatabase(newGreenIndex, newOrangeIndex);
+
     // ENFORCED ALTERNATING BATTING ORDER
-    // Always alternate green/orange regardless of what's currently on-deck
+    // Pattern: Green -> Orange -> Green -> Orange...
     const currentGroup = batterWhoHit.group;
     const oppositeGroup = currentGroup === "green" ? "orange" : "green";
 
-    // Next batter must be from the opposite group
-    const nextCurrentGroup = oppositeGroup;
-    // On-deck must be from the original group again
-    const nextOnDeckGroup = currentGroup;
-    // In-hole must be from the opposite group again
-    const nextInHoleGroup = oppositeGroup;
+    // Next current batter is from the opposite group (at its current index, not advanced)
+    const oppositeGroupIndex = oppositeGroup === "green" 
+      ? lastGreenIndex 
+      : lastOrangeIndex;
+    const oppositeGroupLineup = oppositeGroup === "green" 
+      ? greenLineup 
+      : orangeLineup;
+    const nextCurrentBatter = oppositeGroupLineup.length > 0 && oppositeGroupIndex < oppositeGroupLineup.length
+      ? oppositeGroupLineup[oppositeGroupIndex]
+      : null;
 
-    // Get the next batters based on strict alternating pattern
-    const nextCurrentBatter = getNextBatter(nextCurrentGroup);
-    const nextOnDeckBatter = getNextBatter(nextOnDeckGroup);
-    const nextInTheHoleBatter = getNextBatter(nextInHoleGroup);
+    // On-deck is the NEXT batter from the group that just batted
+    // (the one after the batter who just finished - using the newly advanced index)
+    const nextOnDeckIndex = batterWhoHit.group === "green" 
+      ? newGreenIndex 
+      : newOrangeIndex;
+    const nextOnDeckLineup = batterWhoHit.group === "green" 
+      ? greenLineup 
+      : orangeLineup;
+    const nextOnDeckBatter = nextOnDeckLineup.length > 0 && nextOnDeckIndex < nextOnDeckLineup.length
+      ? nextOnDeckLineup[nextOnDeckIndex] 
+      : null;
+
+    // In-the-hole is the NEXT batter from the opposite group
+    // (after the one that's about to bat - current + 1)
+    const nextInTheHoleIndex = oppositeGroupLineup.length > 0
+      ? (oppositeGroupIndex + 1) % oppositeGroupLineup.length
+      : 0;
+    const nextInTheHoleBatter = oppositeGroupLineup.length > 0
+      ? oppositeGroupLineup[nextInTheHoleIndex]
+      : null;
 
     // Set the batters in their new positions
     setCurrentBatter(nextCurrentBatter);

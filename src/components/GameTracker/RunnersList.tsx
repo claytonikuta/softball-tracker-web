@@ -37,15 +37,26 @@ const RunnersList: React.FC = () => {
 
   // Handle increasing runner's base
   const handleMoveForward = (runner: RunnerOnBase) => {
+    // Validate baseIndex is within valid range (0-2)
+    if (runner.baseIndex < 0 || runner.baseIndex > 2) {
+      console.warn(`Invalid baseIndex ${runner.baseIndex} for runner ${runner.name}. Resetting to 0.`);
+      setRunnersOnBase((prevRunners) =>
+        prevRunners.map((r) =>
+          r.id === runner.id ? { ...r, baseIndex: 0 } : r
+        )
+      );
+      return;
+    }
+
     if (runner.baseIndex === 2) {
       // Runner is at 3rd base, show run scored modal
       setRunnerScoring(runner);
       setShowRunScoredModal(true);
-    } else {
-      // Move runner forward one base
+    } else if (runner.baseIndex < 2) {
+      // Move runner forward one base (only if not already at max)
       setRunnersOnBase((prevRunners) =>
         prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: r.baseIndex + 1 } : r
+          r.id === runner.id ? { ...r, baseIndex: Math.min(r.baseIndex + 1, 2) } : r
         )
       );
     }
@@ -53,11 +64,22 @@ const RunnersList: React.FC = () => {
 
   // Handle decreasing runner's base
   const handleMoveBackward = (runner: RunnerOnBase) => {
+    // Validate baseIndex is within valid range (0-2)
+    if (runner.baseIndex < 0 || runner.baseIndex > 2) {
+      console.warn(`Invalid baseIndex ${runner.baseIndex} for runner ${runner.name}. Resetting to 0.`);
+      setRunnersOnBase((prevRunners) =>
+        prevRunners.map((r) =>
+          r.id === runner.id ? { ...r, baseIndex: 0 } : r
+        )
+      );
+      return;
+    }
+
     if (runner.baseIndex > 0) {
       // Only move back if not on first base
       setRunnersOnBase((prevRunners) =>
         prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: r.baseIndex - 1 } : r
+          r.id === runner.id ? { ...r, baseIndex: Math.max(r.baseIndex - 1, 0) } : r
         )
       );
     }

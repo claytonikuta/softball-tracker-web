@@ -5,11 +5,15 @@ import styles from "./FieldDiamond.module.css";
 const FieldDiamond: React.FC = () => {
   const { runnersOnBase } = useGameContext();
 
-  // Group runners by base
+  // Group runners by base, filtering out invalid baseIndex values
+  const validRunners = runnersOnBase.filter(
+    (runner) => runner.baseIndex >= 0 && runner.baseIndex <= 2
+  );
+
   const runnersByBase = {
-    first: runnersOnBase.filter((runner) => runner.baseIndex === 0),
-    second: runnersOnBase.filter((runner) => runner.baseIndex === 1),
-    third: runnersOnBase.filter((runner) => runner.baseIndex === 2),
+    first: validRunners.filter((runner) => runner.baseIndex === 0),
+    second: validRunners.filter((runner) => runner.baseIndex === 1),
+    third: validRunners.filter((runner) => runner.baseIndex === 2),
   };
 
   return (

@@ -134,32 +134,37 @@ const GameTracker: React.FC = () => {
       orangeLineup.length > 0 &&
       isInitialDataLoaded
     ) {
-      // Use currentBattingGroup instead of comparing indices
+      // Determine which group is currently batting
       const isGreenBatting = alternatingTurn === "green";
 
-      // Get the current batter based on which group is up
+      // Current batter is from the group that's up
       const currentIndex = isGreenBatting ? lastGreenIndex : lastOrangeIndex;
       const currentLineup = isGreenBatting ? greenLineup : orangeLineup;
+      const currentBatter = currentLineup.length > 0 && currentIndex < currentLineup.length
+        ? currentLineup[currentIndex]
+        : null;
 
-      // Get the on deck batter (from opposite group)
-      const onDeckIndex = isGreenBatting ? lastOrangeIndex : lastGreenIndex;
-      const onDeckLineup = isGreenBatting ? orangeLineup : greenLineup;
+      // On-deck batter is the NEXT batter from the opposite group
+      // (the one that will bat after current)
+      const oppositeGroupIndex = isGreenBatting ? lastOrangeIndex : lastGreenIndex;
+      const oppositeGroupLineup = isGreenBatting ? orangeLineup : greenLineup;
+      const onDeckBatter = oppositeGroupLineup.length > 0 && oppositeGroupIndex < oppositeGroupLineup.length
+        ? oppositeGroupLineup[oppositeGroupIndex]
+        : null;
 
-      // Get the in the hole batter (from same group as current, next in order)
-      const inTheHoleIndex = (currentIndex + 1) % currentLineup.length;
+      // In-the-hole batter is the NEXT batter from the current group
+      // (after the one currently batting)
+      const inTheHoleIndex = currentLineup.length > 0
+        ? (currentIndex + 1) % currentLineup.length
+        : 0;
+      const inTheHoleBatter = currentLineup.length > 0
+        ? currentLineup[inTheHoleIndex]
+        : null;
 
       // Set all three batters
-      if (currentLineup.length > currentIndex) {
-        setCurrentBatter(currentLineup[currentIndex]);
-      }
-
-      if (onDeckLineup.length > onDeckIndex) {
-        setOnDeckBatter(onDeckLineup[onDeckIndex]);
-      }
-
-      if (currentLineup.length > inTheHoleIndex) {
-        setInTheHoleBatter(currentLineup[inTheHoleIndex]);
-      }
+      setCurrentBatter(currentBatter);
+      setOnDeckBatter(onDeckBatter);
+      setInTheHoleBatter(inTheHoleBatter);
     }
   }, [
     greenLineup,
