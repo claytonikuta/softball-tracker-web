@@ -53,6 +53,9 @@ export interface GameSessionState {
   awayTeam: TeamScore;
   deletedPlayerIds: number[];
   isInitialDataLoaded: boolean;
+  ourTeam: "home" | "away";
+  homeTeamName: string;
+  awayTeamName: string;
 }
 
 const initialState: GameSessionState = {
@@ -68,6 +71,9 @@ const initialState: GameSessionState = {
   awayTeam: createInitialTeamScore(),
   deletedPlayerIds: [],
   isInitialDataLoaded: false,
+  ourTeam: "home",
+  homeTeamName: "Xiballba",
+  awayTeamName: "Opponent",
 };
 
 // ── Actions ──────────────────────────────────────────────────────────────────
@@ -108,7 +114,13 @@ export type GameSessionAction =
     }
   | { type: "SET_INNING"; inning: number }
   | { type: "SET_HOME_TEAM_BATTING"; isHome: boolean }
-  | { type: "CLEAR_DELETED_PLAYER_IDS" };
+  | { type: "CLEAR_DELETED_PLAYER_IDS" }
+  | {
+      type: "SET_GAME_META";
+      ourTeam: "home" | "away";
+      homeTeamName: string;
+      awayTeamName: string;
+    };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -470,6 +482,14 @@ function gameSessionReducer(
     case "CLEAR_DELETED_PLAYER_IDS":
       return { ...state, deletedPlayerIds: [] };
 
+    case "SET_GAME_META":
+      return {
+        ...state,
+        ourTeam: action.ourTeam,
+        homeTeamName: action.homeTeamName,
+        awayTeamName: action.awayTeamName,
+      };
+
     default:
       return state;
   }
@@ -490,11 +510,17 @@ interface GameSessionContextType {
   homeTeam: TeamScore;
   awayTeam: TeamScore;
   isInitialDataLoaded: boolean;
+  ourTeam: "home" | "away";
+  homeTeamName: string;
+  awayTeamName: string;
 
   // Derived values
   currentBatter: Player | null;
   onDeckBatter: Player | null;
   inTheHoleBatter: Player | null;
+  isOurTurnToBat: boolean;
+  ourTeamName: string;
+  opponentTeamName: string;
 
   // Dispatch
   dispatch: React.Dispatch<GameSessionAction>;
@@ -592,6 +618,23 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     if (lineup.length === 0) return null;
     return lineup[(index + 1) % lineup.length] ?? null;
   }, [state]);
+
+  const isOurTurnToBat = useMemo(() => {
+    return (
+      (state.ourTeam === "home" && state.isHomeTeamBatting) ||
+      (state.ourTeam === "away" && !state.isHomeTeamBatting)
+    );
+  }, [state.ourTeam, state.isHomeTeamBatting]);
+
+  const ourTeamName = useMemo(
+    () => (state.ourTeam === "home" ? state.homeTeamName : state.awayTeamName),
+    [state.ourTeam, state.homeTeamName, state.awayTeamName]
+  );
+
+  const opponentTeamName = useMemo(
+    () => (state.ourTeam === "home" ? state.awayTeamName : state.homeTeamName),
+    [state.ourTeam, state.homeTeamName, state.awayTeamName]
+  );
 
   // ── Async action helpers ─────────────────────────────────────────────────
 
@@ -793,9 +836,15 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       homeTeam: state.homeTeam,
       awayTeam: state.awayTeam,
       isInitialDataLoaded: state.isInitialDataLoaded,
+      ourTeam: state.ourTeam,
+      homeTeamName: state.homeTeamName,
+      awayTeamName: state.awayTeamName,
       currentBatter,
       onDeckBatter,
       inTheHoleBatter,
+      isOurTurnToBat,
+      ourTeamName,
+      opponentTeamName,
       dispatch,
       addPlayer,
       updatePlayer,
@@ -808,6 +857,9 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       currentBatter,
       onDeckBatter,
       inTheHoleBatter,
+      isOurTurnToBat,
+      ourTeamName,
+      opponentTeamName,
       addPlayer,
       updatePlayer,
       removePlayer,

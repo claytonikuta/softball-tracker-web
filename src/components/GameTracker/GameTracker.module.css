@@ -16,6 +16,35 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  position: relative;
+}
+
+.opponent-at-bat {
+  pointer-events: none;
+  opacity: 0.45;
+  user-select: none;
+}
+
+.opponent-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.opponent-overlay span {
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
 }
 
 .batter-info {

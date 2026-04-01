@@ -1,11 +1,11 @@
-// pages/games/new.tsx
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/NewGame.module.css";
 
 export default function NewGame() {
-  const [homeTeam, setHomeTeam] = useState("Our Team");
+  const [homeTeam, setHomeTeam] = useState("Xiballba");
   const [awayTeam, setAwayTeam] = useState("Opponent");
+  const [ourTeam, setOurTeam] = useState<"home" | "away">("home");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [gameDate, setGameDate] = useState(
@@ -26,7 +26,8 @@ export default function NewGame() {
         body: JSON.stringify({
           home_team_name: homeTeam,
           away_team_name: awayTeam,
-          date: gameDate, // Add this line to include the date
+          our_team: ourTeam,
+          date: gameDate,
         }),
       });
 
@@ -36,7 +37,6 @@ export default function NewGame() {
         throw new Error(data.message || "Failed to create game");
       }
 
-      // Redirect to the new game
       router.push(`/games/${data.game.id}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -68,7 +68,29 @@ export default function NewGame() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="homeTeam">Home Team</label>
+          <label>We are playing:</label>
+          <div className={styles.teamToggle}>
+            <button
+              type="button"
+              className={`${styles.toggleOption} ${ourTeam === "home" ? styles.toggleActive : ""}`}
+              onClick={() => setOurTeam("home")}
+            >
+              Home
+            </button>
+            <button
+              type="button"
+              className={`${styles.toggleOption} ${ourTeam === "away" ? styles.toggleActive : ""}`}
+              onClick={() => setOurTeam("away")}
+            >
+              Away
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="homeTeam">
+            Home Team {ourTeam === "home" && <span className={styles.usTag}>US</span>}
+          </label>
           <input
             id="homeTeam"
             type="text"
@@ -79,7 +101,9 @@ export default function NewGame() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="awayTeam">Away Team</label>
+          <label htmlFor="awayTeam">
+            Away Team {ourTeam === "away" && <span className={styles.usTag}>US</span>}
+          </label>
           <input
             id="awayTeam"
             type="text"

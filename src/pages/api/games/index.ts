@@ -21,7 +21,7 @@ export default async function handler(
 
   // POST - Create new game
   if (req.method === "POST") {
-    const { home_team_name, away_team_name } = req.body;
+    const { home_team_name, away_team_name, our_team } = req.body;
 
     if (!home_team_name || !away_team_name) {
       return res
@@ -29,11 +29,12 @@ export default async function handler(
         .json({ message: "Home and away team names are required" });
     }
 
+    const ourTeamValue = our_team === "away" ? "away" : "home";
+
     try {
-      // Create a new game
       const gameResult = await sql`
-        INSERT INTO games (home_team_name, away_team_name) 
-        VALUES (${home_team_name}, ${away_team_name}) 
+        INSERT INTO games (home_team_name, away_team_name, our_team) 
+        VALUES (${home_team_name}, ${away_team_name}, ${ourTeamValue}) 
         RETURNING *
       `;
 

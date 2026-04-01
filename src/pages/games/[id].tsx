@@ -26,6 +26,7 @@ export default function GameDetail() {
   interface GameData {
     home_team_name: string;
     away_team_name: string;
+    our_team: "home" | "away";
     date: string;
     players: { id: number; name: string; position: string }[];
   }

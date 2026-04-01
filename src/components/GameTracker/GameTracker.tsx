@@ -26,6 +26,7 @@ const GameTracker: React.FC = () => {
     currentInning,
     isHomeTeamBatting,
     isInitialDataLoaded,
+    isOurTurnToBat,
     dispatch,
   } = useGameSession();
 
@@ -57,9 +58,17 @@ const GameTracker: React.FC = () => {
 
         const gameData = await response.json();
 
-        const loadedGreenIndex = gameData.game?.last_green_index ?? 0;
-        const loadedOrangeIndex = gameData.game?.last_orange_index ?? 0;
-        const runnersFromDB = gameData.game?.runners ?? [];
+        const game = gameData.game;
+        const loadedGreenIndex = game?.last_green_index ?? 0;
+        const loadedOrangeIndex = game?.last_orange_index ?? 0;
+        const runnersFromDB = game?.runners ?? [];
+
+        dispatch({
+          type: "SET_GAME_META",
+          ourTeam: game?.our_team === "away" ? "away" : "home",
+          homeTeamName: game?.home_team_name ?? "Home",
+          awayTeamName: game?.away_team_name ?? "Away",
+        });
 
         const processRunners = () => {
           const { green, orange } = lineupsRef.current;
@@ -200,7 +209,14 @@ const GameTracker: React.FC = () => {
         <Scoreboard />
       </SafeRender>
 
-      <div className={styles["game-tracker-container"]}>
+      <div
+        className={`${styles["game-tracker-container"]} ${!isOurTurnToBat ? styles["opponent-at-bat"] : ""}`}
+      >
+        {!isOurTurnToBat && (
+          <div className={styles["opponent-overlay"]}>
+            <span>Opponent at bat</span>
+          </div>
+        )}
         <div className={styles["batter-info"]}>
           <div className={styles["batter-section"]}>
             <div className={styles["current-batter-container"]}>

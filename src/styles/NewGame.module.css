@@ -1,0 +1,134 @@
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.container h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--blue-color);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--blue-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.teamToggle {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+}
+
+.toggleOption {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.toggleOption:first-child {
+  border-right: 1px solid var(--border-color);
+}
+
+.toggleActive {
+  background: var(--blue-color);
+  color: white;
+}
+
+.usTag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background-color: var(--green-color);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancelButton,
+.submitButton {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.cancelButton {
+  background: var(--gray-color);
+  color: white;
+}
+
+.submitButton {
+  background: var(--blue-color);
+  color: white;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelButton:hover,
+.submitButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
