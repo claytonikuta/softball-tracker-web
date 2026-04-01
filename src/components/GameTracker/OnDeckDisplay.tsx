@@ -1,9 +1,9 @@
 import React from "react";
-import { useGameContext } from "../../context/GameContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import styles from "./OnDeckDisplay.module.css";
 
 const OnDeckDisplay: React.FC = () => {
-  const { onDeckBatter } = useGameContext();
+  const { onDeckBatter } = useGameSession();
 
   return (
     <div className={styles["on-deck-display"]}>

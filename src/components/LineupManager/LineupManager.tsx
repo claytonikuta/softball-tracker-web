@@ -2,35 +2,28 @@ import React, { useState } from "react";
 import PlayerForm from "./PlayerForm";
 import PlayerList from "./PlayerList";
 import ImportLineup from "./ImportLineup";
-import { useLineup } from "../../context/LineupContext";
-import { useGameContext } from "../../context/GameContext";
-import { Runner, RunnerOnBase } from "../../types/Player";
+import { useGameSession } from "../../context/GameSessionContext";
+import { Runner } from "../../types/Player";
 import Modal from "../shared/Modal";
 import Button from "../shared/Button";
 import styles from "./LineupManager.module.css";
 
-// Create a minimal version of the component that's guaranteed to work
 const LineupManager: React.FC = () => {
   const {
     greenLineup,
     orangeLineup,
     addPlayer,
-    reorderGreenLineup,
-    reorderOrangeLineup,
-  } = useLineup();
-  const { setRunnersOnBase } = useGameContext();
+    reorderLineup,
+    dispatch,
+  } = useGameSession();
 
-  // State hooks
   const [showForm, setShowForm] = useState(false);
   const [showPlaceRunnerModal, setShowPlaceRunnerModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Runner | null>(null);
   const [selectedBase, setSelectedBase] = useState<number>(0);
 
-  // Extra safety - wrap everything in try/catch blocks
   try {
-    // Super careful defensive checks
     if (!greenLineup || !Array.isArray(greenLineup)) {
-      console.warn("Invalid greenLineup:", greenLineup);
       return (
         <div className={styles["lineup-manager"]}>
           <h2>Lineup Manager</h2>
@@ -40,7 +33,6 @@ const LineupManager: React.FC = () => {
     }
 
     if (!orangeLineup || !Array.isArray(orangeLineup)) {
-      console.warn("Invalid orangeLineup:", orangeLineup);
       return (
         <div className={styles["lineup-manager"]}>
           <h2>Lineup Manager</h2>
@@ -49,10 +41,8 @@ const LineupManager: React.FC = () => {
       );
     }
 
-    // Safe computed values
     const allPlayers = [...greenLineup, ...orangeLineup];
 
-    // Handler functions
     const handleAddPlayer = (player: {
       name: string;
       group: "green" | "orange";
@@ -73,32 +63,20 @@ const LineupManager: React.FC = () => {
 
     const confirmPlaceRunner = () => {
       if (!selectedPlayer) return;
-
-      // Create runner with unique ID
-      const uniqueId = `${selectedPlayer.id}-${Date.now()}-${Math.floor(
-        Math.random() * 10000
-      )}`;
-
-      const newRunner: RunnerOnBase = {
-        ...selectedPlayer,
-        id: uniqueId,
+      dispatch({
+        type: "PLACE_RUNNER",
+        player: selectedPlayer,
         baseIndex: selectedBase,
-      };
-
-      setRunnersOnBase((prev) =>
-        Array.isArray(prev) ? [...prev, newRunner] : [newRunner]
-      );
+      });
       setShowPlaceRunnerModal(false);
       setSelectedPlayer(null);
       setSelectedBase(0);
     };
 
-    // Render the component
     return (
       <div className={styles["lineup-manager"]}>
         <h2>Lineup Manager</h2>
 
-        {/* Start with just the basics */}
         <div className={styles["lineup-actions"]}>
           <div className={styles["action-buttons"]}>
             <button
@@ -129,12 +107,16 @@ const LineupManager: React.FC = () => {
           <PlayerList
             title="Green Group Lineup"
             players={greenLineup}
-            onReorder={reorderGreenLineup}
+            onReorder={(startIndex: number, endIndex: number) =>
+              reorderLineup("green", startIndex, endIndex)
+            }
           />
           <PlayerList
             title="Orange Group Lineup"
             players={orangeLineup}
-            onReorder={reorderOrangeLineup}
+            onReorder={(startIndex: number, endIndex: number) =>
+              reorderLineup("orange", startIndex, endIndex)
+            }
           />
         </div>
 
@@ -229,7 +211,6 @@ const LineupManager: React.FC = () => {
       </div>
     );
   } catch (error) {
-    // Final safety net - if anything goes wrong, show a simple fallback
     console.error("Caught error in LineupManager:", error);
     return (
       <div className={styles["lineup-manager"]}>

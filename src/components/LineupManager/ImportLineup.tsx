@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLineup } from "../../context/LineupContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import { useRouter } from "next/router";
 import Button from "../shared/Button";
 import styles from "./ImportLineup.module.css";
@@ -20,7 +20,7 @@ interface ImportedPlayer {
 const ImportLineup: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { greenLineup, orangeLineup, addPlayer } = useLineup();
+  const { greenLineup, orangeLineup, addPlayer } = useGameSession();
 
   const [previousGames, setPreviousGames] = useState<Game[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string>("");

@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import { useLineup } from "../../context/LineupContext";
-import { useGameContext } from "../../context/GameContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import { Player } from "../../types/Player";
 import Modal from "../shared/Modal";
 import styles from "./BattingOrderPreview.module.css";
@@ -11,8 +10,7 @@ interface BattingOrderEntry {
 }
 
 const BattingOrderPreview: React.FC = () => {
-  const { greenLineup, orangeLineup } = useLineup();
-  const { currentBatter, alternatingTurn } = useGameContext();
+  const { greenLineup, orangeLineup, currentBatter, alternatingTurn } = useGameSession();
   const [showModal, setShowModal] = useState(false);
   const activeRef = useRef<HTMLDivElement>(null);
 

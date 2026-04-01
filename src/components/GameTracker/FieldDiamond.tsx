@@ -1,9 +1,9 @@
 import React from "react";
-import { useGameContext } from "../../context/GameContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import styles from "./FieldDiamond.module.css";
 
 const FieldDiamond: React.FC = () => {
-  const { runnersOnBase } = useGameContext();
+  const { runnersOnBase } = useGameSession();
 
   // Group runners by base, filtering out invalid baseIndex values
   const validRunners = runnersOnBase.filter(

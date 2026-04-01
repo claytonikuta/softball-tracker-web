@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Player } from "../../types/Player";
 import PlayerCard from "../shared/PlayerCard";
-import { useLineup } from "../../context/LineupContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import Modal from "../shared/Modal";
 import Button from "../shared/Button";
 import styles from "./SortablePlayerItem.module.css";
@@ -15,7 +15,7 @@ interface SortablePlayerItemProps {
 const SortablePlayerItem: React.FC<SortablePlayerItemProps> = ({ player }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: player.id });
-  const { removePlayer, updatePlayer } = useLineup();
+  const { removePlayer, updatePlayer } = useGameSession();
 
   // Add state for the confirmation modal
   const [showRemoveModal, setShowRemoveModal] = useState(false);

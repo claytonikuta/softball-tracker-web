@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { GameProvider } from "../../context/GameContext";
-import { LineupProvider } from "../../context/LineupContext";
+import { GameSessionProvider } from "../../context/GameSessionContext";
 import styles from "../../styles/GameDetail.module.css";
 import SafeRender from "@/components/shared/SafeRender";
 
@@ -135,18 +134,16 @@ export default function GameDetail() {
 
       <div className={styles.gameContainer}>
         <SafeRender>
-          <GameProvider initialData={gameData}>
-            <LineupProvider
-              // Ensure we always have a valid array, even as an empty one
-              initialData={
-                gameData?.players?.length
-                  ? JSON.parse(JSON.stringify(gameData.players))
-                  : []
-              }
-            >
-              <GameTracker />
-            </LineupProvider>
-          </GameProvider>
+          <GameSessionProvider
+            initialPlayers={
+              gameData?.players?.length
+                ? JSON.parse(JSON.stringify(gameData.players))
+                : []
+            }
+            gameId={id as string}
+          >
+            <GameTracker />
+          </GameSessionProvider>
         </SafeRender>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLineup } from "../../context/LineupContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import { Player } from "../../types/Player";
 import styles from "./ImportLineup.module.css";
 
@@ -14,7 +14,7 @@ const ImportLineup: React.FC = () => {
   const [previousGames, setPreviousGames] = useState<Game[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const { greenLineup, orangeLineup, addPlayer } = useLineup();
+  const { greenLineup, orangeLineup, addPlayer } = useGameSession();
 
   // Fetch previous games when component mounts
   useEffect(() => {

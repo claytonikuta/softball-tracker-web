@@ -1,5 +1,5 @@
 import React from "react";
-import { useGameContext } from "../../context/GameContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import Button from "../shared/Button";
 import styles from "./ScoreBoard.module.css";
 
@@ -9,63 +9,42 @@ const Scoreboard: React.FC = () => {
     homeTeam,
     awayTeam,
     isHomeTeamBatting,
-    setCurrentInning,
-    setIsHomeTeamBatting,
-    updateHomeInningScore,
-    updateAwayInningScore,
-  } = useGameContext();
+    dispatch,
+  } = useGameSession();
 
-  // Helper function to increment or decrement a value with a minimum of 0
-  const updateValue = (
-    current: number,
-    increment: boolean,
-    max: number = 999,
-    min: number = 0
-  ): number => {
-    if (increment) {
-      return current < max ? current + 1 : current;
-    } else {
-      return current > min ? current - 1 : min;
-    }
-  };
-
-  // Handle inning change
   const changeInning = (increment: boolean) => {
     const newInning = increment
       ? currentInning < 9
         ? currentInning + 1
-        : currentInning // Max 9 innings
+        : currentInning
       : currentInning > 1
-      ? currentInning - 1
-      : 1; // Min 1 inning (prevent going to 0)
-    setCurrentInning(newInning);
+        ? currentInning - 1
+        : 1;
+    dispatch({ type: "SET_INNING", inning: newInning });
   };
 
-  // Toggle batting team
   const toggleBattingTeam = () => {
-    setIsHomeTeamBatting(!isHomeTeamBatting);
+    dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: !isHomeTeamBatting });
   };
 
-  // Update runs for current batting team in current inning
   const updateRuns = (team: "home" | "away", increment: boolean) => {
-    const updateFn =
-      team === "home" ? updateHomeInningScore : updateAwayInningScore;
-    updateFn(
-      currentInning,
-      (prev) => updateValue(prev, increment),
-      (outs) => outs // keep outs the same
-    );
+    dispatch({
+      type: "UPDATE_INNING_SCORE",
+      team,
+      inning: currentInning,
+      runsDelta: increment ? 1 : -1,
+      outsDelta: 0,
+    });
   };
 
-  // Update outs for current batting team in current inning
   const updateOuts = (team: "home" | "away", increment: boolean) => {
-    const updateFn =
-      team === "home" ? updateHomeInningScore : updateAwayInningScore;
-    updateFn(
-      currentInning,
-      (runs) => runs, // keep runs the same
-      (prev) => updateValue(prev, increment, 3) // Max 3 outs per inning
-    );
+    dispatch({
+      type: "UPDATE_INNING_SCORE",
+      team,
+      inning: currentInning,
+      runsDelta: 0,
+      outsDelta: increment ? 1 : -1,
+    });
   };
 
   return (

@@ -1,9 +1,9 @@
 import React from "react";
-import { useGameContext } from "../../context/GameContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import styles from "./InTheHoleDisplay.module.css";
 
 const InTheHoleDisplay: React.FC = () => {
-  const { inTheHoleBatter } = useGameContext();
+  const { inTheHoleBatter } = useGameSession();
 
   return (
     <div className={styles["in-the-hole-display"]}>

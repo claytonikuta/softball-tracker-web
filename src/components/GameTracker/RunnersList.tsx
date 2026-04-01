@@ -1,33 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useGameContext } from "../../context/GameContext";
-import { useLineup } from "../../context/LineupContext";
+import { useGameSession } from "../../context/GameSessionContext";
 import { RunnerOnBase } from "../../types/Player";
 import Button from "../shared/Button";
 import Modal from "../shared/Modal";
 import styles from "./RunnersList.module.css";
 
 const RunnersList: React.FC = () => {
-  const {
-    runnersOnBase,
-    setRunnersOnBase,
-    currentInning,
-    isHomeTeamBatting,
-    updateHomeInningScore,
-    updateAwayInningScore,
-  } = useGameContext();
-  const { updatePlayer, greenLineup, orangeLineup } = useLineup();
-  const [showRunScoredModal, setShowRunScoredModal] = React.useState(false);
-  const [runnerScoring, setRunnerScoring] = React.useState<RunnerOnBase | null>(
-    null
-  );
-  // Add new state for out confirmation
-  const [showOutModal, setShowOutModal] = React.useState(false);
-  const [runnerBeingOut, setRunnerBeingOut] =
-    React.useState<RunnerOnBase | null>(null);
+  const { runnersOnBase, dispatch } = useGameSession();
+  const [showRunScoredModal, setShowRunScoredModal] = useState(false);
+  const [runnerScoring, setRunnerScoring] = useState<RunnerOnBase | null>(null);
+  const [showOutModal, setShowOutModal] = useState(false);
+  const [runnerBeingOut, setRunnerBeingOut] = useState<RunnerOnBase | null>(null);
   const { id } = useParams();
 
-  // Get base name for display
   const getBaseName = (baseIndex: number): string => {
     if (baseIndex === 0) return "1st";
     if (baseIndex === 1) return "2nd";
@@ -35,227 +21,69 @@ const RunnersList: React.FC = () => {
     return "Unknown";
   };
 
-  // Handle increasing runner's base
+  const saveRunnersToDb = (excludeRunnerId?: string) => {
+    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
+    if (!gameId) return;
+
+    const remaining = excludeRunnerId
+      ? runnersOnBase.filter((r) => r.id !== excludeRunnerId)
+      : runnersOnBase;
+
+    const validRunners = remaining
+      .map((runner) => {
+        const baseId = runner.id.split("-")[0];
+        const numericId = parseInt(baseId);
+        if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
+          return { player_id: numericId, base_index: runner.baseIndex };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    fetch(`/api/games/${gameId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ runners: validRunners }),
+    }).catch(() => {});
+  };
+
   const handleMoveForward = (runner: RunnerOnBase) => {
-    // Validate baseIndex is within valid range (0-2)
     if (runner.baseIndex < 0 || runner.baseIndex > 2) {
-      console.warn(`Invalid baseIndex ${runner.baseIndex} for runner ${runner.name}. Resetting to 0.`);
-      setRunnersOnBase((prevRunners) =>
-        prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: 0 } : r
-        )
-      );
+      dispatch({ type: "MOVE_RUNNER", runnerId: runner.id, direction: "backward" });
       return;
     }
 
     if (runner.baseIndex === 2) {
-      // Runner is at 3rd base, show run scored modal
       setRunnerScoring(runner);
       setShowRunScoredModal(true);
-    } else if (runner.baseIndex < 2) {
-      // Move runner forward one base (only if not already at max)
-      setRunnersOnBase((prevRunners) =>
-        prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: Math.min(r.baseIndex + 1, 2) } : r
-        )
-      );
+    } else {
+      dispatch({ type: "MOVE_RUNNER", runnerId: runner.id, direction: "forward" });
     }
   };
 
-  // Handle decreasing runner's base
   const handleMoveBackward = (runner: RunnerOnBase) => {
-    // Validate baseIndex is within valid range (0-2)
-    if (runner.baseIndex < 0 || runner.baseIndex > 2) {
-      console.warn(`Invalid baseIndex ${runner.baseIndex} for runner ${runner.name}. Resetting to 0.`);
-      setRunnersOnBase((prevRunners) =>
-        prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: 0 } : r
-        )
-      );
-      return;
-    }
-
     if (runner.baseIndex > 0) {
-      // Only move back if not on first base
-      setRunnersOnBase((prevRunners) =>
-        prevRunners.map((r) =>
-          r.id === runner.id ? { ...r, baseIndex: Math.max(r.baseIndex - 1, 0) } : r
-        )
-      );
+      dispatch({ type: "MOVE_RUNNER", runnerId: runner.id, direction: "backward" });
     }
   };
 
-  // Show confirmation modal for out instead of directly handling out
   const confirmRunnerOut = (runner: RunnerOnBase) => {
     setRunnerBeingOut(runner);
     setShowOutModal(true);
   };
 
-  // Handle marking runner out after confirmation
   const handleRunnerOut = () => {
     if (!runnerBeingOut) return;
-
-    // Extract the base player ID (without timestamp)
-    const basePlayerId = runnerBeingOut.id.split("-")[0];
-    
-    // Find the actual current player from the lineup (not the runner object)
-    const allPlayers = [...greenLineup, ...orangeLineup];
-    const currentPlayer = allPlayers.find((p) => p.id === basePlayerId);
-    
-    if (!currentPlayer) {
-      console.warn(`Player ${basePlayerId} not found in lineup`);
-      return;
-    }
-
-    // Create updated player with incremented outs, using current player data
-    const updatedPlayer = {
-      ...currentPlayer,
-      outs: currentPlayer.outs + 1,
-    };
-
-    // Update player stats
-    updatePlayer(basePlayerId, updatedPlayer);
-
-    // Update inning outs
-    if (isHomeTeamBatting) {
-      updateHomeInningScore(
-        currentInning,
-        (runs) => runs,
-        (outs) => outs + 1
-      );
-    } else {
-      updateAwayInningScore(
-        currentInning,
-        (runs) => runs,
-        (outs) => outs + 1
-      );
-    }
-
-    // IMPORTANT: Calculate the updated runner list ONCE and use it for both operations
-    const updatedRunners = runnersOnBase.filter(
-      (r) => r.id !== runnerBeingOut.id
-    );
-
-    // 1. Update local state
-    setRunnersOnBase(updatedRunners);
-
-    // 2. Update database immediately with the SAME updated list
-    // Only save runners with valid numeric player IDs (database players)
-    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
-    if (gameId) {
-      const validRunners = updatedRunners
-        .map((runner) => {
-          const baseId = runner.id.split("-")[0];
-          const numericId = parseInt(baseId);
-          // Only include runners with valid numeric IDs (database players)
-          if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
-            return {
-              player_id: numericId,
-              base_index: runner.baseIndex,
-            };
-          }
-          return null;
-        })
-        .filter(Boolean);
-
-      if (validRunners.length > 0 || updatedRunners.length === 0) {
-        fetch(`/api/games/${gameId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            runners: validRunners,
-          }),
-        });
-      }
-    }
-
-    // Close the modal
+    dispatch({ type: "RUNNER_OUT", runnerId: runnerBeingOut.id });
+    saveRunnersToDb(runnerBeingOut.id);
     setShowOutModal(false);
     setRunnerBeingOut(null);
   };
 
-  // Handle run scored from modal
   const handleRunScored = () => {
     if (!runnerScoring) return;
-
-    // Extract the base player ID (without timestamp)
-    const basePlayerId = runnerScoring.id.split("-")[0];
-    
-    // Find the actual current player from the lineup (not the runner object)
-    const allPlayers = [...greenLineup, ...orangeLineup];
-    const currentPlayer = allPlayers.find((p) => p.id === basePlayerId);
-    
-    if (!currentPlayer) {
-      console.warn(`Player ${basePlayerId} not found in lineup`);
-      return;
-    }
-
-    // Create updated player with incremented runs, using current player data
-    const updatedPlayer = {
-      ...currentPlayer,
-      runs: currentPlayer.runs + 1,
-    };
-
-    // Update player stats using the BASE ID
-    updatePlayer(basePlayerId, updatedPlayer);
-
-    // Update inning runs
-    if (isHomeTeamBatting) {
-      updateHomeInningScore(
-        currentInning,
-        (runs) => runs + 1,
-        (outs) => outs
-      );
-    } else {
-      updateAwayInningScore(
-        currentInning,
-        (runs) => runs + 1,
-        (outs) => outs
-      );
-    }
-
-    // IMPORTANT: Calculate the updated runner list ONCE and use it for both operations
-    const updatedRunners = runnersOnBase.filter(
-      (r) => r.id !== runnerScoring.id
-    );
-
-    // 1. Update local state
-    setRunnersOnBase(updatedRunners);
-
-    // 2. Update database immediately with the SAME updated list
-    // Only save runners with valid numeric player IDs (database players)
-    const gameId = id ? (Array.isArray(id) ? id[0] : id) : null;
-    if (gameId) {
-      const validRunners = updatedRunners
-        .map((runner) => {
-          const baseId = runner.id.split("-")[0];
-          const numericId = parseInt(baseId);
-          // Only include runners with valid numeric IDs (database players)
-          if (!isNaN(numericId) && numericId > 0 && numericId <= 2147483647) {
-            return {
-              player_id: numericId,
-              base_index: runner.baseIndex,
-            };
-          }
-          return null;
-        })
-        .filter(Boolean);
-
-      if (validRunners.length > 0 || updatedRunners.length === 0) {
-        fetch(`/api/games/${gameId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            runners: validRunners,
-          }),
-        });
-      }
-    }
-
+    dispatch({ type: "RUNNER_SCORED", runnerId: runnerScoring.id });
+    saveRunnersToDb(runnerScoring.id);
     setShowRunScoredModal(false);
     setRunnerScoring(null);
   };
@@ -310,7 +138,6 @@ const RunnersList: React.FC = () => {
         )}
       </div>
 
-      {/* Run scored confirmation modal */}
       <Modal
         isOpen={showRunScoredModal}
         onClose={() => {
@@ -338,7 +165,6 @@ const RunnersList: React.FC = () => {
         </div>
       </Modal>
 
-      {/* Out confirmation modal */}
       <Modal
         isOpen={showOutModal}
         onClose={() => {
