@@ -19,15 +19,26 @@ const Scoreboard: React.FC = () => {
   const isTop = !isHomeTeamBatting;
   const halfLabel = isTop ? "Top" : "Bot";
 
-  const changeInning = (increment: boolean) => {
-    const newInning = increment
-      ? currentInning < 9
-        ? currentInning + 1
-        : currentInning
-      : currentInning > 1
-        ? currentInning - 1
-        : 1;
-    dispatch({ type: "SET_INNING", inning: newInning });
+  const advanceHalf = () => {
+    if (isHomeTeamBatting) {
+      if (currentInning < 9) {
+        dispatch({ type: "SET_INNING", inning: currentInning + 1 });
+        dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: false });
+      }
+    } else {
+      dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: true });
+    }
+  };
+
+  const retreatHalf = () => {
+    if (!isHomeTeamBatting) {
+      if (currentInning > 1) {
+        dispatch({ type: "SET_INNING", inning: currentInning - 1 });
+        dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: true });
+      }
+    } else {
+      dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: false });
+    }
   };
 
   const toggleHalf = () => {
@@ -73,7 +84,7 @@ const Scoreboard: React.FC = () => {
         <h3>Scoreboard</h3>
         <div className={styles["inning-controls"]}>
           <Button
-            onClick={() => changeInning(false)}
+            onClick={retreatHalf}
             className={styles["small-btn"]}
           >
             &minus;
@@ -83,7 +94,7 @@ const Scoreboard: React.FC = () => {
             <span className={styles["inning-number"]}>{currentInning}</span>
           </div>
           <Button
-            onClick={() => changeInning(true)}
+            onClick={advanceHalf}
             className={styles["small-btn"]}
           >
             +
