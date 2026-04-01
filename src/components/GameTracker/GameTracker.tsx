@@ -10,6 +10,7 @@ import { useGameContext } from "../../context/GameContext";
 import { useParams } from "next/navigation";
 import styles from "./GameTracker.module.css";
 import LineupManager from "../LineupManager/LineupManager";
+import BattingOrderPreview from "./BattingOrderPreview";
 import SafeRender from "../shared/SafeRender";
 import { RunnerOnBase } from "@/types";
 
@@ -456,6 +457,10 @@ const GameTracker: React.FC = () => {
           </SafeRender>
         </div>
       </div>
+
+      <SafeRender>
+        <BattingOrderPreview />
+      </SafeRender>
 
       <div className={styles["lineup-section"]}>
         <SafeRender fallback={<div>Error loading lineup manager</div>}>

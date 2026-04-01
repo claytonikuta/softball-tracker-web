@@ -1,0 +1,180 @@
+/* Horizontal preview strip */
+.batting-order-preview {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: var(--card-bg, white);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.batting-order-preview:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.preview-title {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.horizontal-list {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.horizontal-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.horizontal-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.horizontal-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}
+
+/* Individual chip */
+.order-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-size: 13px;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.chip-number {
+  font-weight: 700;
+  font-size: 11px;
+  opacity: 0.6;
+  min-width: 16px;
+  text-align: center;
+}
+
+.chip-name {
+  font-weight: 500;
+}
+
+/* Group colors */
+.green-player {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.orange-player {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+/* Active/current batter highlight */
+.active-chip {
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+  transform: scale(1.08);
+  font-weight: 600;
+}
+
+.active-chip.green-player {
+  background: #a5d6a7;
+  border-color: #2e7d32;
+}
+
+.active-chip.orange-player {
+  background: #ffcc80;
+  border-color: #e65100;
+}
+
+.tap-hint {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: 6px;
+}
+
+/* === Modal vertical list === */
+.modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  gap: 12px;
+  transition: background 0.15s;
+}
+
+.modal-number {
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 24px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.modal-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.modal-group {
+  font-size: 12px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Modal group colors */
+.modal-green {
+  background: #f1f8e9;
+  color: #2e7d32;
+}
+
+.modal-orange {
+  background: #fff8e1;
+  color: #e65100;
+}
+
+/* Modal active batter */
+.modal-active {
+  font-weight: 600;
+  position: relative;
+}
+
+.modal-active.modal-green {
+  background: #a5d6a7;
+  box-shadow: inset 4px 0 0 #2e7d32;
+}
+
+.modal-active.modal-orange {
+  background: #ffcc80;
+  box-shadow: inset 4px 0 0 #e65100;
+}
+
+.modal-active .modal-number {
+  opacity: 1;
+}
+
+.modal-active .modal-name {
+  font-weight: 700;
+}
