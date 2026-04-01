@@ -11,13 +11,13 @@ export default async function handler(
   // Add a single player
   if (req.method === "POST") {
     try {
-      const { name, group_name, runs, outs, position } = req.body;
+      const { name, group_name, runs, outs, position, index_in_group } = req.body;
 
       const result = await sql`
-        INSERT INTO players (game_id, name, group_name, runs, outs, position)
+        INSERT INTO players (game_id, name, group_name, runs, outs, position, index_in_group)
         VALUES (${gameId}, ${name}, ${group_name}, ${runs || 0}, ${
         outs || 0
-      }, ${position})
+      }, ${position}, ${index_in_group ?? 0})
         RETURNING *
       `;
 

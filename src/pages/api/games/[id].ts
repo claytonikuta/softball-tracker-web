@@ -98,10 +98,15 @@ export default async function handler(
         runners,
         last_green_index,
         last_orange_index,
+        date,
       } = req.body;
 
+      // Handle date-only update
+      if (date !== undefined) {
+        await sql`UPDATE games SET date = ${date}, updated_at = NOW() WHERE id = ${id}`;
+      }
+
       // Only update game-level fields that were actually provided
-      // (partial PUTs like runner-only saves must not clobber indices)
       const hasGameFields =
         current_inning !== undefined ||
         is_home_team_batting !== undefined ||
@@ -123,8 +128,6 @@ export default async function handler(
             updated_at = NOW()
           WHERE id = ${id}
         `;
-      } else {
-        await sql`UPDATE games SET updated_at = NOW() WHERE id = ${id}`;
       }
 
       // Update innings (match by inning_number, not DB id)

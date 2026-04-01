@@ -20,23 +20,7 @@ export default async function handler(
       ALTER COLUMN is_home_team_batting SET DEFAULT false
     `;
 
-    // Remove duplicate players: keep the row with the lowest id for each
-    // (game_id, name, group_name) combination
-    const dupeResult = await sql`
-      DELETE FROM players
-      WHERE id NOT IN (
-        SELECT MIN(id)
-        FROM players
-        GROUP BY game_id, name, group_name
-      )
-    `;
-
-    const deletedCount = dupeResult.rowCount ?? 0;
-
-    return res.status(200).json({
-      message: "Migration completed",
-      duplicatesRemoved: deletedCount,
-    });
+    return res.status(200).json({ message: "Migration completed" });
   } catch (error) {
     console.error("Migration error:", error);
     return res.status(500).json({ message: "Migration failed", error: String(error) });
