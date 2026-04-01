@@ -23,6 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding-bottom: 8px;
 }
 
 .in-the-hole-name {
