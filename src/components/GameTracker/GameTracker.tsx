@@ -61,6 +61,8 @@ const GameTracker: React.FC = () => {
         const game = gameData.game;
         const loadedGreenIndex = game?.last_green_index ?? 0;
         const loadedOrangeIndex = game?.last_orange_index ?? 0;
+        const loadedInning = game?.current_inning ?? 1;
+        const loadedIsHomeBatting = game?.is_home_team_batting ?? false;
         const runnersFromDB = game?.runners ?? [];
 
         dispatch({
@@ -99,6 +101,8 @@ const GameTracker: React.FC = () => {
             lastGreenIndex: loadedGreenIndex,
             lastOrangeIndex: loadedOrangeIndex,
             runners: loadedRunners,
+            currentInning: loadedInning,
+            isHomeTeamBatting: loadedIsHomeBatting,
           });
         };
 
@@ -110,6 +114,8 @@ const GameTracker: React.FC = () => {
             lastGreenIndex: loadedGreenIndex,
             lastOrangeIndex: loadedOrangeIndex,
             runners: [],
+            currentInning: loadedInning,
+            isHomeTeamBatting: loadedIsHomeBatting,
           });
         }
       } catch (error) {

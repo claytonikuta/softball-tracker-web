@@ -85,6 +85,8 @@ export type GameSessionAction =
       lastGreenIndex: number;
       lastOrangeIndex: number;
       runners: RunnerOnBase[];
+      currentInning: number;
+      isHomeTeamBatting: boolean;
     }
   | { type: "MARK_INITIAL_DATA_LOADED" }
   | { type: "ADD_PLAYER"; player: Player }
@@ -203,6 +205,8 @@ function gameSessionReducer(
         lastGreenIndex: action.lastGreenIndex,
         lastOrangeIndex: action.lastOrangeIndex,
         runnersOnBase: action.runners,
+        currentInning: action.currentInning,
+        isHomeTeamBatting: action.isHomeTeamBatting,
         isInitialDataLoaded: true,
       };
 

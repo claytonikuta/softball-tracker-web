@@ -65,10 +65,7 @@ const Scoreboard: React.FC = () => {
     });
   };
 
-  const getCellClass = (
-    team: "home" | "away",
-    inningIndex: number
-  ): string => {
+  const getCellClass = (team: "home" | "away", inningIndex: number): string => {
     if (inningIndex + 1 !== currentInning) return "";
     const isActiveTeam =
       (team === "home" && isHomeTeamBatting) ||
@@ -83,20 +80,14 @@ const Scoreboard: React.FC = () => {
       <div className={styles["scoreboard-header"]}>
         <h3>Scoreboard</h3>
         <div className={styles["inning-controls"]}>
-          <Button
-            onClick={retreatHalf}
-            className={styles["small-btn"]}
-          >
+          <Button onClick={retreatHalf} className={styles["small-btn"]}>
             &minus;
           </Button>
           <div className={styles["inning-label"]}>
             <span className={styles["half-indicator"]}>{halfLabel}</span>
             <span className={styles["inning-number"]}>{currentInning}</span>
           </div>
-          <Button
-            onClick={advanceHalf}
-            className={styles["small-btn"]}
-          >
+          <Button onClick={advanceHalf} className={styles["small-btn"]}>
             +
           </Button>
           <Button
@@ -129,20 +120,6 @@ const Scoreboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className={styles["home-row"]}>
-              <td>
-                {homeTeamName}
-                {ourTeam === "home" && (
-                  <span className={styles["us-indicator"]}> *</span>
-                )}
-              </td>
-              {homeTeam.innings.map((inning, index) => (
-                <td key={index + 1} className={getCellClass("home", index)}>
-                  {inning.runs}
-                </td>
-              ))}
-              <td className={styles["total-cell"]}>{homeTeam.totalRuns}</td>
-            </tr>
             <tr className={styles["away-row"]}>
               <td>
                 {awayTeamName}
@@ -157,6 +134,20 @@ const Scoreboard: React.FC = () => {
               ))}
               <td className={styles["total-cell"]}>{awayTeam.totalRuns}</td>
             </tr>
+            <tr className={styles["home-row"]}>
+              <td>
+                {homeTeamName}
+                {ourTeam === "home" && (
+                  <span className={styles["us-indicator"]}> *</span>
+                )}
+              </td>
+              {homeTeam.innings.map((inning, index) => (
+                <td key={index + 1} className={getCellClass("home", index)}>
+                  {inning.runs}
+                </td>
+              ))}
+              <td className={styles["total-cell"]}>{homeTeam.totalRuns}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -165,17 +156,23 @@ const Scoreboard: React.FC = () => {
         {/* Away team controls — enabled when away is batting */}
         <div
           className={`${styles["team-section"]} ${
-            isAwayBatting ? styles["active-section"] : styles["disabled-section"]
+            isAwayBatting
+              ? styles["active-section"]
+              : styles["disabled-section"]
           }`}
         >
           <h4>
             {awayTeamName}
             {ourTeam === "away" && <span className={styles["us-tag"]}>US</span>}
-            {isAwayBatting && <span className={styles["batting-tag"]}>BATTING</span>}
+            {isAwayBatting && (
+              <span className={styles["batting-tag"]}>BATTING</span>
+            )}
           </h4>
           <div className={styles["team-scores"]}>
             <div className={styles["score-control"]}>
-              <span>Runs: {awayTeam.innings[currentInning - 1]?.runs || 0}</span>
+              <span>
+                Runs: {awayTeam.innings[currentInning - 1]?.runs || 0}
+              </span>
               <div className={styles["score-buttons"]}>
                 <Button
                   onClick={() => updateRuns("away", false)}
@@ -194,7 +191,9 @@ const Scoreboard: React.FC = () => {
               </div>
             </div>
             <div className={styles["score-control"]}>
-              <span>Outs: {awayTeam.innings[currentInning - 1]?.outs || 0}</span>
+              <span>
+                Outs: {awayTeam.innings[currentInning - 1]?.outs || 0}
+              </span>
               <div className={styles["score-buttons"]}>
                 <Button
                   onClick={() => updateOuts("away", false)}
@@ -218,17 +217,23 @@ const Scoreboard: React.FC = () => {
         {/* Home team controls — enabled when home is batting */}
         <div
           className={`${styles["team-section"]} ${
-            isHomeTeamBatting ? styles["active-section"] : styles["disabled-section"]
+            isHomeTeamBatting
+              ? styles["active-section"]
+              : styles["disabled-section"]
           }`}
         >
           <h4>
             {homeTeamName}
             {ourTeam === "home" && <span className={styles["us-tag"]}>US</span>}
-            {isHomeTeamBatting && <span className={styles["batting-tag"]}>BATTING</span>}
+            {isHomeTeamBatting && (
+              <span className={styles["batting-tag"]}>BATTING</span>
+            )}
           </h4>
           <div className={styles["team-scores"]}>
             <div className={styles["score-control"]}>
-              <span>Runs: {homeTeam.innings[currentInning - 1]?.runs || 0}</span>
+              <span>
+                Runs: {homeTeam.innings[currentInning - 1]?.runs || 0}
+              </span>
               <div className={styles["score-buttons"]}>
                 <Button
                   onClick={() => updateRuns("home", false)}
@@ -247,7 +252,9 @@ const Scoreboard: React.FC = () => {
               </div>
             </div>
             <div className={styles["score-control"]}>
-              <span>Outs: {homeTeam.innings[currentInning - 1]?.outs || 0}</span>
+              <span>
+                Outs: {homeTeam.innings[currentInning - 1]?.outs || 0}
+              </span>
               <div className={styles["score-buttons"]}>
                 <Button
                   onClick={() => updateOuts("home", false)}

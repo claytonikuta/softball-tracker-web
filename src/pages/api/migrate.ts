@@ -15,7 +15,12 @@ export default async function handler(
       ADD COLUMN IF NOT EXISTS our_team VARCHAR(10) DEFAULT 'home'
     `;
 
-    return res.status(200).json({ message: "Migration completed: our_team column added" });
+    await sql`
+      ALTER TABLE games
+      ALTER COLUMN is_home_team_batting SET DEFAULT false
+    `;
+
+    return res.status(200).json({ message: "Migration completed" });
   } catch (error) {
     console.error("Migration error:", error);
     return res.status(500).json({ message: "Migration failed", error: String(error) });
