@@ -4,84 +4,66 @@ import { Player } from "../../types/Player";
 import Modal from "../shared/Modal";
 import styles from "./BattingOrderPreview.module.css";
 
-interface BattingOrderEntry {
-  player: Player;
-  groupIndex: number; // index within the player's own group
-}
-
 const BattingOrderPreview: React.FC = () => {
-  const { greenLineup, orangeLineup, currentBatter, alternatingTurn } = useGameSession();
+  const {
+    greenLineup,
+    orangeLineup,
+    lastGreenIndex,
+    lastOrangeIndex,
+    alternatingTurn,
+    currentBatter,
+  } = useGameSession();
+
   const [showModal, setShowModal] = useState(false);
   const activeRef = useRef<HTMLDivElement>(null);
 
-  // Build the full alternating batting order until every player has appeared at least once
-  const battingOrder: BattingOrderEntry[] = useMemo(() => {
+  const upcomingBatters: Player[] = useMemo(() => {
     if (greenLineup.length === 0 && orangeLineup.length === 0) return [];
 
-    // Determine which group bats first based on alternatingTurn
-    // If alternatingTurn is "green", green bats on odd slots; if "orange", orange bats on odd slots
-    const firstGroup = alternatingTurn === "green" ? greenLineup : orangeLineup;
-    const secondGroup = alternatingTurn === "green" ? orangeLineup : greenLineup;
+    // Show enough so every player from both groups appears at least once
+    const count =
+      greenLineup.length > 0 && orangeLineup.length > 0
+        ? 2 * Math.max(greenLineup.length, orangeLineup.length)
+        : greenLineup.length + orangeLineup.length;
 
-    if (firstGroup.length === 0 && secondGroup.length === 0) return [];
+    const result: Player[] = [];
+    let turn = alternatingTurn;
+    let gIdx = lastGreenIndex;
+    let oIdx = lastOrangeIndex;
 
-    // Need enough entries so every player appears at least once
-    // That's 2 * max(firstGroup.length, secondGroup.length)
-    const maxGroupLen = Math.max(firstGroup.length, secondGroup.length);
-    const totalEntries = maxGroupLen * 2;
+    for (let i = 0; i < count; i++) {
+      const lineup = turn === "green" ? greenLineup : orangeLineup;
+      const idx = turn === "green" ? gIdx : oIdx;
 
-    const order: BattingOrderEntry[] = [];
-
-    // Handle edge case: one group is empty
-    if (firstGroup.length === 0) {
-      for (let i = 0; i < secondGroup.length; i++) {
-        order.push({ player: secondGroup[i], groupIndex: i });
+      if (lineup.length > 0) {
+        result.push(lineup[idx % lineup.length]);
       }
-      return order;
-    }
-    if (secondGroup.length === 0) {
-      for (let i = 0; i < firstGroup.length; i++) {
-        order.push({ player: firstGroup[i], groupIndex: i });
-      }
-      return order;
-    }
 
-    let firstIdx = 0;
-    let secondIdx = 0;
-
-    for (let i = 0; i < totalEntries; i++) {
-      if (i % 2 === 0) {
-        // First group's turn
-        order.push({
-          player: firstGroup[firstIdx % firstGroup.length],
-          groupIndex: firstIdx % firstGroup.length,
-        });
-        firstIdx++;
+      if (turn === "green") {
+        gIdx = greenLineup.length > 0 ? (gIdx + 1) % greenLineup.length : 0;
       } else {
-        // Second group's turn
-        order.push({
-          player: secondGroup[secondIdx % secondGroup.length],
-          groupIndex: secondIdx % secondGroup.length,
-        });
-        secondIdx++;
+        oIdx = orangeLineup.length > 0 ? (oIdx + 1) % orangeLineup.length : 0;
+      }
+
+      if (greenLineup.length > 0 && orangeLineup.length > 0) {
+        turn = turn === "green" ? "orange" : "green";
       }
     }
 
-    return order;
-  }, [greenLineup, orangeLineup, alternatingTurn]);
+    return result;
+  }, [greenLineup, orangeLineup, lastGreenIndex, lastOrangeIndex, alternatingTurn]);
 
-  // Scroll the active batter into view in the horizontal list
   useEffect(() => {
     if (activeRef.current) {
       activeRef.current.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
-        inline: "center",
+        inline: "start",
       });
     }
-  }, [currentBatter, battingOrder]);
+  }, [currentBatter]);
 
-  if (battingOrder.length === 0) return null;
+  if (upcomingBatters.length === 0) return null;
 
   return (
     <>
@@ -91,22 +73,21 @@ const BattingOrderPreview: React.FC = () => {
       >
         <h3 className={styles["preview-title"]}>Batting Order</h3>
         <div className={styles["horizontal-list"]}>
-          {battingOrder.map((entry, index) => {
-            const isActive = currentBatter?.id === entry.player.id;
+          {upcomingBatters.map((player, index) => {
+            const isActive = index === 0;
             const groupClass =
-              entry.player.group === "green"
+              player.group === "green"
                 ? styles["green-player"]
                 : styles["orange-player"];
             return (
               <div
-                key={`${entry.player.id}-${index}`}
+                key={`${player.id}-${index}`}
                 ref={isActive ? activeRef : null}
                 className={`${styles["order-chip"]} ${groupClass} ${
                   isActive ? styles["active-chip"] : ""
                 }`}
               >
-                <span className={styles["chip-number"]}>{index + 1}</span>
-                <span className={styles["chip-name"]}>{entry.player.name}</span>
+                <span className={styles["chip-name"]}>{player.name}</span>
               </div>
             );
           })}
@@ -117,28 +98,34 @@ const BattingOrderPreview: React.FC = () => {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title="Full Batting Order"
+        title="Upcoming Batters"
       >
         <div className={styles["modal-list"]}>
-          {battingOrder.map((entry, index) => {
-            const isActive = currentBatter?.id === entry.player.id;
+          {upcomingBatters.map((player, index) => {
+            const isActive = index === 0;
             const groupClass =
-              entry.player.group === "green"
+              player.group === "green"
                 ? styles["modal-green"]
                 : styles["modal-orange"];
+            const label =
+              index === 0
+                ? "NOW"
+                : index === 1
+                  ? "On Deck"
+                  : index === 2
+                    ? "In Hole"
+                    : `#${index + 1}`;
             return (
               <div
-                key={`modal-${entry.player.id}-${index}`}
+                key={`modal-${player.id}-${index}`}
                 className={`${styles["modal-row"]} ${groupClass} ${
                   isActive ? styles["modal-active"] : ""
                 }`}
               >
-                <span className={styles["modal-number"]}>{index + 1}</span>
-                <span className={styles["modal-name"]}>
-                  {entry.player.name}
-                </span>
+                <span className={styles["modal-number"]}>{label}</span>
+                <span className={styles["modal-name"]}>{player.name}</span>
                 <span className={styles["modal-group"]}>
-                  {entry.player.group === "green" ? "Green" : "Orange"}
+                  {player.group === "green" ? "Green" : "Orange"}
                 </span>
               </div>
             );
