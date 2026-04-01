@@ -76,25 +76,14 @@
   color: white;
 }
 
-.roleTag {
+.usTag {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  background-color: var(--blue-color);
+  background-color: var(--green-color);
   color: white;
   padding: 2px 6px;
   border-radius: 4px;
-}
-
-.roleTagMuted {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  background-color: var(--gray-color);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  opacity: 0.7;
 }
 
 .error {

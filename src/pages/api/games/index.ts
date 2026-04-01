@@ -33,8 +33,8 @@ export default async function handler(
 
     try {
       const gameResult = await sql`
-        INSERT INTO games (home_team_name, away_team_name, our_team) 
-        VALUES (${home_team_name}, ${away_team_name}, ${ourTeamValue}) 
+        INSERT INTO games (home_team_name, away_team_name, our_team, current_inning, is_home_team_batting) 
+        VALUES (${home_team_name}, ${away_team_name}, ${ourTeamValue}, 1, false) 
         RETURNING *
       `;
 

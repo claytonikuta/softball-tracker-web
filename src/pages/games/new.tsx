@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import styles from "../../styles/NewGame.module.css";
 
 export default function NewGame() {
-  const [ourName, setOurName] = useState("Xiballba");
-  const [opponentName, setOpponentName] = useState("Opponent");
-  const [weAre, setWeAre] = useState<"home" | "away">("home");
+  const [homeTeam, setHomeTeam] = useState("Xiballba");
+  const [awayTeam, setAwayTeam] = useState("Opponent");
+  const [ourTeam, setOurTeam] = useState<"home" | "away">("home");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [gameDate, setGameDate] = useState(
@@ -19,17 +19,14 @@ export default function NewGame() {
     setLoading(true);
     setError("");
 
-    const home_team_name = weAre === "home" ? ourName : opponentName;
-    const away_team_name = weAre === "home" ? opponentName : ourName;
-
     try {
       const response = await fetch("/api/games", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          home_team_name,
-          away_team_name,
-          our_team: weAre,
+          home_team_name: homeTeam,
+          away_team_name: awayTeam,
+          our_team: ourTeam,
           date: gameDate,
         }),
       });
@@ -71,55 +68,49 @@ export default function NewGame() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="ourTeam">
-            Our Team
-            <span className={styles.roleTag}>
-              {weAre === "home" ? "HOME" : "AWAY"}
-            </span>
-          </label>
-          <input
-            id="ourTeam"
-            type="text"
-            value={ourName}
-            onChange={(e) => setOurName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="opponent">
-            Opponent
-            <span className={styles.roleTagMuted}>
-              {weAre === "home" ? "AWAY" : "HOME"}
-            </span>
-          </label>
-          <input
-            id="opponent"
-            type="text"
-            value={opponentName}
-            onChange={(e) => setOpponentName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className={styles.formGroup}>
           <label>We are playing:</label>
           <div className={styles.teamToggle}>
             <button
               type="button"
-              className={`${styles.toggleOption} ${weAre === "home" ? styles.toggleActive : ""}`}
-              onClick={() => setWeAre("home")}
+              className={`${styles.toggleOption} ${ourTeam === "home" ? styles.toggleActive : ""}`}
+              onClick={() => setOurTeam("home")}
             >
               Home
             </button>
             <button
               type="button"
-              className={`${styles.toggleOption} ${weAre === "away" ? styles.toggleActive : ""}`}
-              onClick={() => setWeAre("away")}
+              className={`${styles.toggleOption} ${ourTeam === "away" ? styles.toggleActive : ""}`}
+              onClick={() => setOurTeam("away")}
             >
               Away
             </button>
           </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="homeTeam">
+            Home Team {ourTeam === "home" && <span className={styles.usTag}>US</span>}
+          </label>
+          <input
+            id="homeTeam"
+            type="text"
+            value={homeTeam}
+            onChange={(e) => setHomeTeam(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="awayTeam">
+            Away Team {ourTeam === "away" && <span className={styles.usTag}>US</span>}
+          </label>
+          <input
+            id="awayTeam"
+            type="text"
+            value={awayTeam}
+            onChange={(e) => setAwayTeam(e.target.value)}
+            required
+          />
         </div>
 
         <div className={styles.buttons}>
