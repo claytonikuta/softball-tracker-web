@@ -12,6 +12,9 @@ const Scoreboard: React.FC = () => {
     dispatch,
   } = useGameSession();
 
+  const isTop = !isHomeTeamBatting;
+  const halfLabel = isTop ? "Top" : "Bot";
+
   const changeInning = (increment: boolean) => {
     const newInning = increment
       ? currentInning < 9
@@ -23,7 +26,7 @@ const Scoreboard: React.FC = () => {
     dispatch({ type: "SET_INNING", inning: newInning });
   };
 
-  const toggleBattingTeam = () => {
+  const toggleHalf = () => {
     dispatch({ type: "SET_HOME_TEAM_BATTING", isHome: !isHomeTeamBatting });
   };
 
@@ -47,19 +50,34 @@ const Scoreboard: React.FC = () => {
     });
   };
 
+  const getCellClass = (
+    team: "home" | "away",
+    inningIndex: number
+  ): string => {
+    if (inningIndex + 1 !== currentInning) return "";
+    const isActiveTeam =
+      (team === "home" && isHomeTeamBatting) ||
+      (team === "away" && !isHomeTeamBatting);
+    return isActiveTeam
+      ? styles["active-cell"]
+      : styles["inactive-cell"];
+  };
+
   return (
     <div className={styles["scoreboard"]}>
       <div className={styles["scoreboard-header"]}>
         <h3>Scoreboard</h3>
         <div className={styles["inning-controls"]}>
-          <span>Inning:</span>
           <Button
             onClick={() => changeInning(false)}
             className={styles["small-btn"]}
           >
-            -
+            &minus;
           </Button>
-          <span className={styles["current-inning"]}>{currentInning}</span>
+          <div className={styles["inning-label"]}>
+            <span className={styles["half-indicator"]}>{halfLabel}</span>
+            <span className={styles["inning-number"]}>{currentInning}</span>
+          </div>
           <Button
             onClick={() => changeInning(true)}
             className={styles["small-btn"]}
@@ -67,10 +85,10 @@ const Scoreboard: React.FC = () => {
             +
           </Button>
           <Button
-            onClick={toggleBattingTeam}
-            className={styles["toggle-team-btn"]}
+            onClick={toggleHalf}
+            className={`${styles["half-toggle-btn"]} ${isTop ? styles["top-half"] : styles["bot-half"]}`}
           >
-            {isHomeTeamBatting ? "Home" : "Away"} Batting
+            {isTop ? "Top \u25B2" : "Bot \u25BC"}
           </Button>
         </div>
       </div>
@@ -85,100 +103,46 @@ const Scoreboard: React.FC = () => {
                   key={index + 1}
                   className={
                     currentInning === index + 1
-                      ? styles["current-inning-col"]
+                      ? styles["current-inning-header"]
                       : ""
                   }
                 >
                   {index + 1}
                 </th>
               ))}
-              <th>Total</th>
+              <th>R</th>
             </tr>
           </thead>
           <tbody>
-            <tr className={styles["home-team"]}>
-              <td>Xiballba</td>
-              {homeTeam.innings.map((inning, index) => (
-                <td
-                  key={index + 1}
-                  className={
-                    currentInning === index + 1
-                      ? styles["current-inning-col"]
-                      : ""
-                  }
-                >
-                  {inning.runs}
-                </td>
-              ))}
-              <td>{homeTeam.totalRuns}</td>
-            </tr>
-            <tr className={styles["away-team"]}>
+            <tr className={styles["away-row"]}>
               <td>Opponent</td>
               {awayTeam.innings.map((inning, index) => (
-                <td
-                  key={index + 1}
-                  className={
-                    currentInning === index + 1
-                      ? styles["current-inning-col"]
-                      : ""
-                  }
-                >
+                <td key={index + 1} className={getCellClass("away", index)}>
                   {inning.runs}
                 </td>
               ))}
-              <td>{awayTeam.totalRuns}</td>
+              <td className={styles["total-cell"]}>{awayTeam.totalRuns}</td>
+            </tr>
+            <tr className={styles["home-row"]}>
+              <td>Xiballba</td>
+              {homeTeam.innings.map((inning, index) => (
+                <td key={index + 1} className={getCellClass("home", index)}>
+                  {inning.runs}
+                </td>
+              ))}
+              <td className={styles["total-cell"]}>{homeTeam.totalRuns}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div className={styles["team-controls"]}>
-        <div className={styles["team-section"]}>
-          <h4>Xiballba</h4>
-          <div className={styles["team-scores"]}>
-            <div className={styles["score-control"]}>
-              <span>
-                Runs: {homeTeam.innings[currentInning - 1]?.runs || 0}
-              </span>
-              <div className={styles["score-buttons"]}>
-                <Button
-                  onClick={() => updateRuns("home", false)}
-                  className={styles["small-btn"]}
-                >
-                  -
-                </Button>
-                <Button
-                  onClick={() => updateRuns("home", true)}
-                  className={styles["small-btn"]}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-            <div className={styles["score-control"]}>
-              <span>
-                Outs: {homeTeam.innings[currentInning - 1]?.outs || 0}
-              </span>
-              <div className={styles["score-buttons"]}>
-                <Button
-                  onClick={() => updateOuts("home", false)}
-                  className={styles["small-btn"]}
-                >
-                  -
-                </Button>
-                <Button
-                  onClick={() => updateOuts("home", true)}
-                  className={styles["small-btn"]}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles["team-section"]}>
-          <h4>Opponent</h4>
+        <div
+          className={`${styles["team-section"]} ${!isHomeTeamBatting ? styles["active-section"] : styles["disabled-section"]}`}
+        >
+          <h4>
+            Opponent {!isHomeTeamBatting && <span className={styles["batting-tag"]}>BATTING</span>}
+          </h4>
           <div className={styles["team-scores"]}>
             <div className={styles["score-control"]}>
               <span>
@@ -188,12 +152,14 @@ const Scoreboard: React.FC = () => {
                 <Button
                   onClick={() => updateRuns("away", false)}
                   className={styles["small-btn"]}
+                  disabled={isHomeTeamBatting}
                 >
-                  -
+                  &minus;
                 </Button>
                 <Button
                   onClick={() => updateRuns("away", true)}
                   className={styles["small-btn"]}
+                  disabled={isHomeTeamBatting}
                 >
                   +
                 </Button>
@@ -207,12 +173,66 @@ const Scoreboard: React.FC = () => {
                 <Button
                   onClick={() => updateOuts("away", false)}
                   className={styles["small-btn"]}
+                  disabled={isHomeTeamBatting}
                 >
-                  -
+                  &minus;
                 </Button>
                 <Button
                   onClick={() => updateOuts("away", true)}
                   className={styles["small-btn"]}
+                  disabled={isHomeTeamBatting}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`${styles["team-section"]} ${isHomeTeamBatting ? styles["active-section"] : styles["disabled-section"]}`}
+        >
+          <h4>
+            Xiballba {isHomeTeamBatting && <span className={styles["batting-tag"]}>BATTING</span>}
+          </h4>
+          <div className={styles["team-scores"]}>
+            <div className={styles["score-control"]}>
+              <span>
+                Runs: {homeTeam.innings[currentInning - 1]?.runs || 0}
+              </span>
+              <div className={styles["score-buttons"]}>
+                <Button
+                  onClick={() => updateRuns("home", false)}
+                  className={styles["small-btn"]}
+                  disabled={!isHomeTeamBatting}
+                >
+                  &minus;
+                </Button>
+                <Button
+                  onClick={() => updateRuns("home", true)}
+                  className={styles["small-btn"]}
+                  disabled={!isHomeTeamBatting}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+            <div className={styles["score-control"]}>
+              <span>
+                Outs: {homeTeam.innings[currentInning - 1]?.outs || 0}
+              </span>
+              <div className={styles["score-buttons"]}>
+                <Button
+                  onClick={() => updateOuts("home", false)}
+                  className={styles["small-btn"]}
+                  disabled={!isHomeTeamBatting}
+                >
+                  &minus;
+                </Button>
+                <Button
+                  onClick={() => updateOuts("home", true)}
+                  className={styles["small-btn"]}
+                  disabled={!isHomeTeamBatting}
                 >
                   +
                 </Button>
