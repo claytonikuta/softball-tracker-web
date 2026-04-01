@@ -36,6 +36,11 @@ const GameTracker: React.FC = () => {
   const lineupsRef = useRef({ green: greenLineup, orange: orangeLineup });
   const { id } = useParams();
 
+  // Startup log so we can confirm new code is loaded
+  useEffect(() => {
+    console.warn("[GameTracker] Component mounted — refactored version loaded");
+  }, []);
+
   // Keep the lineups ref current so the polling callback can read fresh data
   // without being a dependency of the fetch effect
   lineupsRef.current = { green: greenLineup, orange: orangeLineup };

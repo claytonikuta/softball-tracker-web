@@ -100,17 +100,32 @@ export default async function handler(
         last_orange_index,
       } = req.body;
 
-      // Update game basic info
-      await sql`
-        UPDATE games 
-        SET 
-          current_inning = ${current_inning}, 
-          is_home_team_batting = ${is_home_team_batting},
-          last_green_index = ${last_green_index || 0},
-          last_orange_index = ${last_orange_index || 0},
-          updated_at = NOW()
-        WHERE id = ${id}
-      `;
+      // Only update game-level fields that were actually provided
+      // (partial PUTs like runner-only saves must not clobber indices)
+      const hasGameFields =
+        current_inning !== undefined ||
+        is_home_team_batting !== undefined ||
+        last_green_index !== undefined ||
+        last_orange_index !== undefined;
+
+      if (hasGameFields) {
+        const game = (
+          await sql`SELECT current_inning, is_home_team_batting, last_green_index, last_orange_index FROM games WHERE id = ${id}`
+        ).rows[0];
+
+        await sql`
+          UPDATE games 
+          SET 
+            current_inning = ${current_inning ?? game?.current_inning ?? 1}, 
+            is_home_team_batting = ${is_home_team_batting ?? game?.is_home_team_batting ?? true},
+            last_green_index = ${last_green_index ?? game?.last_green_index ?? 0},
+            last_orange_index = ${last_orange_index ?? game?.last_orange_index ?? 0},
+            updated_at = NOW()
+          WHERE id = ${id}
+        `;
+      } else {
+        await sql`UPDATE games SET updated_at = NOW() WHERE id = ${id}`;
+      }
 
       // Update innings
       if (innings && Array.isArray(innings)) {
