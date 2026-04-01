@@ -117,7 +117,7 @@ export default async function handler(
           UPDATE games 
           SET 
             current_inning = ${current_inning ?? game?.current_inning ?? 1}, 
-            is_home_team_batting = ${is_home_team_batting ?? game?.is_home_team_batting ?? true},
+            is_home_team_batting = ${is_home_team_batting ?? game?.is_home_team_batting ?? false},
             last_green_index = ${last_green_index ?? game?.last_green_index ?? 0},
             last_orange_index = ${last_orange_index ?? game?.last_orange_index ?? 0},
             updated_at = NOW()

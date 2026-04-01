@@ -66,7 +66,7 @@ const initialState: GameSessionState = {
   alternatingTurn: "green",
   runnersOnBase: [],
   currentInning: 1,
-  isHomeTeamBatting: true,
+  isHomeTeamBatting: false,
   homeTeam: createInitialTeamScore(),
   awayTeam: createInitialTeamScore(),
   deletedPlayerIds: [],
@@ -805,7 +805,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             current_inning: 1,
-            is_home_team_batting: true,
+            is_home_team_batting: false,
             players: formattedPlayers,
             deleted_player_ids: state.deletedPlayerIds,
           }),

@@ -129,20 +129,6 @@ const Scoreboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className={styles["away-row"]}>
-              <td>
-                {awayTeamName}
-                {ourTeam === "away" && (
-                  <span className={styles["us-indicator"]}> *</span>
-                )}
-              </td>
-              {awayTeam.innings.map((inning, index) => (
-                <td key={index + 1} className={getCellClass("away", index)}>
-                  {inning.runs}
-                </td>
-              ))}
-              <td className={styles["total-cell"]}>{awayTeam.totalRuns}</td>
-            </tr>
             <tr className={styles["home-row"]}>
               <td>
                 {homeTeamName}
@@ -156,6 +142,20 @@ const Scoreboard: React.FC = () => {
                 </td>
               ))}
               <td className={styles["total-cell"]}>{homeTeam.totalRuns}</td>
+            </tr>
+            <tr className={styles["away-row"]}>
+              <td>
+                {awayTeamName}
+                {ourTeam === "away" && (
+                  <span className={styles["us-indicator"]}> *</span>
+                )}
+              </td>
+              {awayTeam.innings.map((inning, index) => (
+                <td key={index + 1} className={getCellClass("away", index)}>
+                  {inning.runs}
+                </td>
+              ))}
+              <td className={styles["total-cell"]}>{awayTeam.totalRuns}</td>
             </tr>
           </tbody>
         </table>
