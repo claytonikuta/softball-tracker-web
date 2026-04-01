@@ -154,11 +154,10 @@ export default async function handler(
         }
       }
 
-      // Update players
+      // Update existing players only (INSERT is handled by dedicated add-player path)
       if (players && Array.isArray(players)) {
         for (const player of players) {
           if (player.id) {
-            // Update existing player
             await sql`
             UPDATE players 
             SET 
@@ -169,16 +168,6 @@ export default async function handler(
               position = ${player.position},
               index_in_group = ${player.index_in_group || 0}
             WHERE id = ${player.id} AND game_id = ${id}
-          `;
-          } else {
-            // Add new player
-            await sql`
-            INSERT INTO players (game_id, name, group_name, runs, outs, position, index_in_group)
-            VALUES (${id}, ${player.name}, ${player.group_name}, ${
-              player.runs
-            }, ${player.outs}, ${player.position}, ${
-              player.index_in_group || 0
-            })
           `;
           }
         }

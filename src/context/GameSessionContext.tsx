@@ -700,37 +700,41 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
 
   const addPlayer = useCallback(
     async (player: Player) => {
-      dispatch({ type: "ADD_PLAYER", player });
-
       const gid = extractGameId();
-      if (!gid) return;
 
-      const lineup =
-        player.group === "green" ? state.greenLineup : state.orangeLineup;
-      const newIndex = lineup.length;
-
-      try {
-        await fetch(`/api/games/${gid}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            players: [
-              {
-                name: player.name,
-                group_name: player.group,
-                position: player.group === "green" ? 1 : 2,
-                index_in_group: newIndex,
-                runs: 0,
-                outs: 0,
-              },
-            ],
-          }),
-        });
-      } catch {
-        // silently fail - UI already updated
+      if (gid) {
+        try {
+          const lineup =
+            player.group === "green" ? state.greenLineup : state.orangeLineup;
+          const res = await fetch(`/api/games/${gid}/players`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: player.name,
+              group_name: player.group,
+              position: player.group === "green" ? 1 : 2,
+              index_in_group: lineup.length,
+              runs: 0,
+              outs: 0,
+            }),
+          });
+          if (res.ok) {
+            const dbPlayer = await res.json();
+            const playerWithDbId: Player = {
+              ...player,
+              id: String(dbPlayer.id),
+            };
+            dispatch({ type: "ADD_PLAYER", player: playerWithDbId });
+            return;
+          }
+        } catch {
+          // fall through to local-only add
+        }
       }
+
+      dispatch({ type: "ADD_PLAYER", player });
     },
-    [extractGameId, state.greenLineup, state.orangeLineup]
+    [extractGameId, state.greenLineup, state.orangeLineup, dispatch]
   );
 
   const updatePlayer = useCallback(
