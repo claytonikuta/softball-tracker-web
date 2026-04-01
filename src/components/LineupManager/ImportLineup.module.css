@@ -1,20 +1,23 @@
 .importLineupContainer {
-  margin: 15px 0;
+  margin: 12px 0;
 }
 
 .importToggleButton {
   background-color: var(--gray-color);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-weight: 500;
-  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 12px;
   width: 100%;
   max-width: 300px;
   display: block;
   margin: 0 auto;
+  min-height: 44px;
+  transition: background-color 0.15s;
 }
 
 .importToggleButton:hover {
@@ -22,17 +25,17 @@
 }
 
 .importLineup {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: var(--gray-bg-alt);
-  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: var(--card-bg-alt);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
 }
 
 .importLineup h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 16px;
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text-secondary);
   text-align: center;
 }
@@ -40,17 +43,18 @@
 .selectContainer {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .gameSelect {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid var(--border-input);
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
   background-color: var(--input-bg);
   color: var(--text-color);
+  min-height: 44px;
 }
 
 .buttonGroup {
@@ -61,15 +65,18 @@
 
 .importButton {
   background-color: var(--green-color);
+  min-height: 44px;
+  font-weight: 600;
 }
 
 .importButton:disabled {
-  background-color: var(--gray-color);
+  background-color: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .cancelButton {
   background-color: var(--gray-color);
+  min-height: 44px;
 }
 
 @media (min-width: 768px) {

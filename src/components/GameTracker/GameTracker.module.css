@@ -1,28 +1,30 @@
 .game-tracker {
   background: var(--card-bg);
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: var(--radius-md);
+  padding: 16px;
   margin: 8px;
   box-shadow: var(--card-shadow);
 }
 
 .game-tracker h2 {
   text-align: center;
-  margin-bottom: 20px;
-  color: var(--text-color);
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .game-tracker-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
   position: relative;
 }
 
 .opponent-at-bat {
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.4;
   user-select: none;
+  filter: grayscale(0.3);
 }
 
 .opponent-overlay {
@@ -38,25 +40,31 @@
 .opponent-overlay span {
   background: var(--card-bg);
   color: var(--text-secondary);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-shadow-lg);
   pointer-events: auto;
 }
 
 .batter-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .lineup-section {
-  margin-top: 30px;
-  border-top: 1px solid var(--border-color);
+  margin-top: 24px;
+  border-top: 1px solid var(--border-light);
   padding-top: 20px;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px;
 }
 
 @media (max-width: 768px) {
@@ -68,15 +76,13 @@
 .batter-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 10px;
 }
 
 .field-status-container {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 12px;
 }
 
 @media (max-width: 767px) {

@@ -1,47 +1,91 @@
 .current-batter {
   background: var(--card-bg-alt);
-  border-radius: 8px;
-  padding: 15px;
+  border-radius: var(--radius-md);
+  padding: 14px;
   border: 2px solid var(--primary-color);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.current-batter:active {
+  box-shadow: inset 0 0 0 1px var(--primary-color);
 }
 
 .current-batter h3 {
-  margin-top: 0;
-  margin-bottom: 5px;
+  margin: 0 0 6px 0;
   text-align: center;
-  font-size: 18px;
-  color: var(--text-color);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary-color);
+}
+
+.batter-card {
+  text-align: center;
 }
 
 .batter-name {
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 18px;
   color: var(--text-color);
+  margin-bottom: 4px;
 }
 
 .batter-group {
+  font-size: 13px;
   color: var(--text-muted);
 }
 
 .batter-stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
-.current-batter:active {
-  background-color: var(--highlight-bg);
+.click-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.no-batter {
+  text-align: center;
+  color: var(--text-placeholder);
+  font-style: italic;
+  font-size: 14px;
 }
 
 .hit-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin: 15px 0;
+  margin: 16px 0;
+}
+
+.hit-button {
+  background-color: var(--green-color);
+  min-height: 48px;
+  font-size: 16px;
 }
 
 .out-button {
   grid-column: 1 / -1;
+  background-color: var(--red-color);
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.batter-actions p {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
 }
 
 @media (min-width: 768px) {
@@ -54,9 +98,11 @@
   .hit-button {
     flex: 1;
     min-width: 80px;
+    min-height: 42px;
   }
 
   .out-button {
     flex: 2;
+    min-height: 42px;
   }
 }

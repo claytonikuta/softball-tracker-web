@@ -4,8 +4,8 @@
   align-items: center;
   background: var(--card-bg);
   padding: 12px;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--card-shadow);
   position: relative;
   user-select: none;
   -webkit-user-select: none;
@@ -15,71 +15,73 @@
 .player-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   width: 100%;
 }
 
 .player-name {
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 15px;
   color: var(--text-color);
 }
 
 .player-group {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
 .player-stats {
   display: flex;
-  gap: 15px;
-  margin-top: 4px;
+  gap: 14px;
+  margin-top: 3px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .edit-player-btn,
 .remove-player-btn {
-  width: 36px !important;
-  height: 36px !important;
-  font-size: 18px !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 16px !important;
+  min-height: 40px !important;
 }
 
 .counter-control {
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 16px;
   justify-content: center;
-  margin: 15px 0;
+  margin: 14px 0;
 }
 
 .counter-value {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
   min-width: 40px;
   text-align: center;
   color: var(--text-color);
 }
 
 .edit-player-form {
-  padding: 15px;
+  padding: 8px;
 }
 
 .edit-stat {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .edit-stat h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
+  margin: 0 0 8px 0;
   color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .modal-actions {
-  margin-top: 30px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 @media (min-width: 768px) {
@@ -100,8 +102,9 @@
 
   .edit-player-btn,
   .remove-player-btn {
-    width: 28px !important;
-    height: 28px !important;
+    width: 32px !important;
+    height: 32px !important;
     font-size: 14px !important;
+    min-height: 32px !important;
   }
 }

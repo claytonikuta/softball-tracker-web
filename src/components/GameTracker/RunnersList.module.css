@@ -1,134 +1,129 @@
 .runners-list {
-  background-color: var(--card-bg-alt);
-  border-radius: 8px;
-  border: 2px solid var(--primary-color);
-  padding: 10px;
-  height: 100%;
+  background: var(--card-bg-alt);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  border: 2px solid var(--orange-color);
 }
 
 .runners-list h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  color: var(--primary-color);
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
   text-align: center;
-  font-size: 16px;
+  color: var(--orange-color);
+}
+
+.no-runners {
+  text-align: center;
+  color: var(--text-placeholder);
+  font-style: italic;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.runners-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .runner-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--card-bg);
-  border-radius: 6px;
-  padding: 6px 6px;
-  margin-bottom: 8px;
-  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
 }
 
-.runner-item:active {
-  background-color: var(--card-bg-alt);
-}
-
-.base-options,
-.outcome-options {
+.runner-info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin: 15px 0;
+  gap: 2px;
 }
 
-.run-button {
-  width: 100%;
-  min-height: 44px;
-  margin: 0;
+.runner-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-color);
+}
+
+.runner-base {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.runner-controls {
+  display: flex;
+  gap: 6px;
 }
 
 .base-button {
   width: 36px;
   height: 36px;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-size: 18px;
-  font-weight: bold;
-  border-radius: 4px;
-}
-
-.out-button {
-  background-color: var(--red-color);
-  width: auto;
-  min-width: 50px;
-  height: 36px;
-  font-size: 14px;
-}
-
-.runner-controls {
+  border-radius: var(--radius-sm);
   display: flex;
-  gap: 8px;
   align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.forward-button {
+  background-color: var(--green-color);
 }
 
 .backward-button {
   background-color: var(--gray-color);
 }
 
-.backward-button:disabled {
-  background-color: var(--gray-light);
-  cursor: not-allowed;
-}
-
-.forward-button {
-  background-color: var(--blue-color);
-}
-
-.runner-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.runner-name {
-  font-size: 14px;
-  color: var(--text-color);
-}
-
-.runner-base {
-  font-size: 14px;
-  color: var(--gray-color);
-  margin-top: 4px;
+.out-button {
+  background-color: var(--red-color);
+  min-width: 44px;
+  height: 36px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .run-modal-content {
   text-align: center;
-  padding: 15px;
+}
+
+.run-modal-content p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
 }
 
 .run-modal-buttons {
   display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 15px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .yes-button {
   background-color: var(--green-color);
+  min-height: 48px;
+  font-size: 16px;
 }
 
 .no-button {
   background-color: var(--gray-color);
+  min-height: 48px;
+  font-size: 16px;
 }
 
 @media (min-width: 768px) {
-  .base-options,
-  .outcome-options {
+  .run-modal-buttons {
     flex-direction: row;
     justify-content: center;
   }
 
-  .base-button,
-  .run-button,
-  .out-button {
-    width: auto;
-    min-height: auto;
+  .yes-button,
+  .no-button {
+    min-height: 42px;
+    min-width: 100px;
   }
 }

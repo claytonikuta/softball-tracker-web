@@ -1,21 +1,22 @@
 .batting-order-preview {
-  margin-top: 20px;
+  margin-top: 16px;
   margin-bottom: 10px;
   padding: 12px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: box-shadow 0.2s;
 }
 
-.batting-order-preview:hover {
+.batting-order-preview:active {
   box-shadow: var(--card-shadow);
 }
 
 .preview-title {
   margin: 0 0 8px 0;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -31,7 +32,7 @@
 }
 
 .horizontal-list::-webkit-scrollbar {
-  height: 4px;
+  height: 3px;
 }
 
 .horizontal-list::-webkit-scrollbar-track {
@@ -47,21 +48,13 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
   white-space: nowrap;
   font-size: 13px;
   flex-shrink: 0;
   border: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.chip-number {
-  font-weight: 700;
-  font-size: 11px;
-  opacity: 0.6;
-  min-width: 16px;
-  text-align: center;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .chip-name {
@@ -83,14 +76,10 @@
 }
 
 .active-chip {
-  border-color: var(--text-color);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+  border-color: currentColor;
   transform: scale(1.08);
-  font-weight: 600;
-}
-
-:global(.dark-mode) .active-chip {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .active-chip.green-player {
@@ -122,7 +111,8 @@
   margin-top: 6px;
 }
 
-/* Modal vertical list */
+/* ── Modal List ────────────────────────────────────────────────────────── */
+
 .modal-list {
   display: flex;
   flex-direction: column;
@@ -133,15 +123,14 @@
   display: flex;
   align-items: center;
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   gap: 12px;
-  transition: background 0.15s;
 }
 
 .modal-number {
   font-weight: 700;
-  font-size: 14px;
-  min-width: 24px;
+  font-size: 13px;
+  min-width: 52px;
   text-align: center;
   opacity: 0.5;
 }
@@ -153,10 +142,11 @@
 }
 
 .modal-group {
-  font-size: 12px;
-  opacity: 0.7;
+  font-size: 11px;
+  opacity: 0.6;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  font-weight: 600;
 }
 
 .modal-green {
@@ -175,12 +165,11 @@
 
 .modal-active {
   font-weight: 600;
-  position: relative;
 }
 
 .modal-active.modal-green {
   background: #a5d6a7;
-  box-shadow: inset 4px 0 0 #2e7d32;
+  box-shadow: inset 3px 0 0 #2e7d32;
   color: #1b5e20;
 }
 
@@ -191,7 +180,7 @@
 
 .modal-active.modal-orange {
   background: #ffcc80;
-  box-shadow: inset 4px 0 0 #e65100;
+  box-shadow: inset 3px 0 0 #e65100;
   color: #bf360c;
 }
 

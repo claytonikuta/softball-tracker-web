@@ -3,84 +3,93 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-color);
   padding: 20px;
 }
 
 .loginCard {
   background: var(--card-bg);
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: var(--card-shadow);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  box-shadow: var(--card-shadow-lg);
   width: 100%;
   max-width: 400px;
 }
 
 .loginCard h1 {
-  color: var(--blue-color);
+  color: var(--primary-color);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  font-size: 1.6rem;
 }
 
 .loginCard h2 {
-  color: var(--text-color);
+  color: var(--text-muted);
   text-align: center;
-  margin-bottom: 25px;
-  font-weight: normal;
+  margin-bottom: 28px;
+  font-weight: 400;
+  font-size: 15px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .formGroup label {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .formGroup input {
-  padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
   font-size: 16px;
   background-color: var(--input-bg);
   color: var(--text-color);
+  min-height: 48px;
 }
 
 .loginButton {
-  background-color: var(--blue-color);
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 8px;
+  min-height: 50px;
+  transition: background-color 0.15s;
 }
 
 .loginButton:hover {
-  background-color: var(--blue-hover);
+  background-color: var(--primary-hover);
 }
 
 .loginButton:disabled {
   background-color: var(--disabled-bg);
   cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .error {
   background-color: var(--error-bg);
   color: var(--error-text);
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
   text-align: center;
+  font-size: 14px;
 }

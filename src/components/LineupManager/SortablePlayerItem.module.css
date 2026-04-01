@@ -1,39 +1,37 @@
 .counter-control {
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 16px;
   justify-content: center;
-  margin: 15px 0;
+  margin: 14px 0;
 }
 
 .counter-value {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
   min-width: 40px;
   text-align: center;
   color: var(--text-color);
 }
 
 .edit-stat {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .modal-actions {
-  margin-top: 30px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sortable-item {
   display: flex;
   position: relative;
   touch-action: none;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .drag-handle {
@@ -44,12 +42,13 @@
   width: 36px;
   background-color: var(--gray-bg);
   cursor: grab;
-  gap: 5px;
+  gap: 4px;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
   align-self: stretch;
+  transition: background-color 0.15s;
 }
 
 .drag-handle:active {
@@ -58,10 +57,10 @@
 }
 
 .handle-line {
-  width: 20px;
-  height: 3px;
+  width: 18px;
+  height: 2px;
   background-color: var(--handle-line);
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 .card-content {

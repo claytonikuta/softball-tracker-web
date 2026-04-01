@@ -1,33 +1,33 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1000;
-  padding: 10px;
+  padding: 0;
+  animation: fade-in 0.15s ease;
 }
 
 .modal-content {
   background-color: var(--card-bg);
-  border-radius: 8px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: modal-appear 0.3s ease;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+  animation: modal-appear 0.25s ease;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
@@ -38,25 +38,31 @@
 .modal-header h3 {
   margin: 0;
   color: var(--text-color);
-  font-size: 18px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .modal-close-btn {
-  background: none;
+  background: var(--gray-bg);
   border: none;
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  color: var(--text-placeholder);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s;
+}
+
+.modal-close-btn:hover {
+  background: var(--border-color);
 }
 
 .modal-body {
-  padding: 15px;
-  overflow-y: auto;
+  padding: 20px;
 }
 
 .modal-actions {
@@ -66,15 +72,27 @@
   margin-top: 20px;
 }
 
+/* Desktop: center the modal, round all corners */
 @media (min-width: 768px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-content {
+    border-radius: var(--radius-lg);
+    max-height: 80vh;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
   .modal-actions {
     flex-direction: row;
     justify-content: center;
   }
 
   .modal-close-btn {
-    font-size: 22px;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
 }

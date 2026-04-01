@@ -1,37 +1,38 @@
 .player-form {
   background: var(--card-bg-alt);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
   border: 1px solid var(--border-color);
   width: 100%;
   max-width: 100%;
-  box-sizing: border-box;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid var(--border-input);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 16px;
   max-width: 280px;
   margin: 0 auto;
   display: block;
   background-color: var(--input-bg);
   color: var(--text-color);
+  min-height: 44px;
 }
 
 .form-actions {
@@ -44,20 +45,24 @@
   background-color: var(--green-color);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 15px;
+  min-height: 44px;
 }
 
 .cancel-btn {
   background-color: var(--gray-color);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 15px;
+  min-height: 44px;
 }
 
 .submit-btn:hover {

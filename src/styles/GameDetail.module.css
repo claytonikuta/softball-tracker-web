@@ -1,11 +1,39 @@
+.gameHeader {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gameHeader h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.backLink {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
 .date {
   cursor: pointer;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 .editHint {
-  font-size: 0.8rem;
+  font-size: 12px;
   color: var(--text-faint);
   font-style: italic;
 }
@@ -14,52 +42,36 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .dateEditor input {
-  padding: 5px;
-  border: 1px solid var(--border-input);
-  border-radius: 4px;
-  background-color: var(--input-bg);
-  color: var(--text-color);
+  padding: 6px 10px;
+  font-size: 14px;
 }
 
 .dateEditor button {
-  padding: 5px 10px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
 }
 
 .dateEditor button:last-child {
-  background-color: var(--text-faint);
+  background-color: var(--gray-color);
 }
 
-.gameHeader {
-  padding: 15px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 60px 20px;
+  font-size: 15px;
 }
 
-.gameHeader h1 {
-  margin: 0px;
-  color: var(--text-color);
-}
-
-.backLink {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  display: inline-block;
-}
-
-.backLink:hover {
-  text-decoration: underline;
+.error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  margin: 20px;
 }

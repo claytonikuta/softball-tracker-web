@@ -1,6 +1,6 @@
 .fieldDiamond {
   background-color: var(--card-bg-alt);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--green-color);
   padding: 10px;
   margin-top: 10px;
@@ -8,11 +8,13 @@
 }
 
 .fieldDiamond h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  color: var(--primary-color);
+  margin: 0 0 8px 0;
+  color: var(--green-color);
   text-align: center;
-  font-size: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .diamond {
@@ -23,6 +25,7 @@
   transform: rotate(45deg);
   background-color: var(--green-bg-field);
   border: 2px solid var(--green-color);
+  border-radius: 3px;
 }
 
 .homePlate,
@@ -33,11 +36,12 @@
   width: 15px;
   height: 15px;
   background-color: var(--card-bg);
-  border: 2px solid var(--text-color);
+  border: 2px solid var(--text-muted);
   display: flex;
   justify-content: center;
   align-items: center;
   transform: rotate(-45deg);
+  border-radius: 2px;
 }
 
 .homePlate {
@@ -68,12 +72,13 @@
   position: absolute;
   background-color: var(--runner-tag-bg);
   border-radius: 4px;
-  padding: 4px;
+  padding: 3px 5px;
   z-index: 5;
   color: white;
   font-size: 9px;
+  font-weight: 600;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .firstBase .runnerNames {
@@ -96,5 +101,5 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: 2px 0;
+  margin: 1px 0;
 }
