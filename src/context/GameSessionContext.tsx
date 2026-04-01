@@ -26,6 +26,8 @@ interface PlayerData {
   name: string;
   position: string;
   group_name?: string;
+  runs?: number;
+  outs?: number;
 }
 
 const createEmptyInning = (): InningScore => ({ runs: 0, outs: 0 });
@@ -78,6 +80,14 @@ const initialState: GameSessionState = {
 
 // ── Actions ──────────────────────────────────────────────────────────────────
 
+interface DBInning {
+  inning_number: number;
+  home_runs: number;
+  home_outs: number;
+  away_runs: number;
+  away_outs: number;
+}
+
 export type GameSessionAction =
   | { type: "INIT_LINEUPS"; green: Player[]; orange: Player[] }
   | {
@@ -87,6 +97,7 @@ export type GameSessionAction =
       runners: RunnerOnBase[];
       currentInning: number;
       isHomeTeamBatting: boolean;
+      innings?: DBInning[];
     }
   | { type: "MARK_INITIAL_DATA_LOADED" }
   | { type: "ADD_PLAYER"; player: Player }
@@ -199,7 +210,40 @@ function gameSessionReducer(
         orangeLineup: action.orange,
       };
 
-    case "LOAD_GAME_STATE":
+    case "LOAD_GAME_STATE": {
+      let homeTeam = state.homeTeam;
+      let awayTeam = state.awayTeam;
+
+      if (action.innings && action.innings.length > 0) {
+        const homeInnings = [...homeTeam.innings];
+        const awayInnings = [...awayTeam.innings];
+
+        for (const dbInning of action.innings) {
+          const idx = dbInning.inning_number - 1;
+          if (idx >= 0 && idx < homeInnings.length) {
+            homeInnings[idx] = {
+              runs: dbInning.home_runs ?? 0,
+              outs: dbInning.home_outs ?? 0,
+            };
+            awayInnings[idx] = {
+              runs: dbInning.away_runs ?? 0,
+              outs: dbInning.away_outs ?? 0,
+            };
+          }
+        }
+
+        homeTeam = {
+          innings: homeInnings,
+          totalRuns: homeInnings.reduce((s, i) => s + i.runs, 0),
+          totalOuts: homeInnings.reduce((s, i) => s + i.outs, 0),
+        };
+        awayTeam = {
+          innings: awayInnings,
+          totalRuns: awayInnings.reduce((s, i) => s + i.runs, 0),
+          totalOuts: awayInnings.reduce((s, i) => s + i.outs, 0),
+        };
+      }
+
       return {
         ...state,
         lastGreenIndex: action.lastGreenIndex,
@@ -207,8 +251,11 @@ function gameSessionReducer(
         runnersOnBase: action.runners,
         currentInning: action.currentInning,
         isHomeTeamBatting: action.isHomeTeamBatting,
+        homeTeam,
+        awayTeam,
         isInitialDataLoaded: true,
       };
+    }
 
     case "MARK_INITIAL_DATA_LOADED":
       return { ...state, isInitialDataLoaded: true };
@@ -585,8 +632,8 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
           .includes("green")
           ? "green"
           : "orange",
-        runs: 0,
-        outs: 0,
+        runs: pd.runs ?? 0,
+        outs: pd.outs ?? 0,
       };
       if (player.group === "green") green.push(player);
       else orange.push(player);

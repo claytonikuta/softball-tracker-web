@@ -127,17 +127,17 @@ export default async function handler(
         await sql`UPDATE games SET updated_at = NOW() WHERE id = ${id}`;
       }
 
-      // Update innings
+      // Update innings (match by inning_number, not DB id)
       if (innings && Array.isArray(innings)) {
         for (const inning of innings) {
           await sql`
             UPDATE innings 
             SET 
-              home_runs = ${inning.home_runs}, 
-              home_outs = ${inning.home_outs},
-              away_runs = ${inning.away_runs}, 
-              away_outs = ${inning.away_outs}
-            WHERE id = ${inning.id} AND game_id = ${id}
+              home_runs = ${inning.home_runs ?? 0}, 
+              home_outs = ${inning.home_outs ?? 0},
+              away_runs = ${inning.away_runs ?? 0}, 
+              away_outs = ${inning.away_outs ?? 0}
+            WHERE game_id = ${id} AND inning_number = ${inning.inning_number}
           `;
         }
       }

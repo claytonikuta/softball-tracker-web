@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import CurrentBatter from "./CurrentBatter";
 import OnDeckDisplay from "./OnDeckDisplay";
 import InTheHoleDisplay from "./InTheHoleDisplay";
@@ -25,13 +25,15 @@ const GameTracker: React.FC = () => {
     lastOrangeIndex,
     currentInning,
     isHomeTeamBatting,
+    homeTeam,
+    awayTeam,
     isInitialDataLoaded,
     isOurTurnToBat,
     dispatch,
   } = useGameSession();
 
-  const [isSaving, setIsSaving] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef(false);
   const lastSavedStateRef = useRef<string>("");
   const hasFetchedRef = useRef(false);
   const lineupsRef = useRef({ green: greenLineup, orange: orangeLineup });
@@ -64,6 +66,7 @@ const GameTracker: React.FC = () => {
         const loadedInning = game?.current_inning ?? 1;
         const loadedIsHomeBatting = game?.is_home_team_batting ?? false;
         const runnersFromDB = game?.runners ?? [];
+        const inningsFromDB = game?.innings ?? [];
 
         dispatch({
           type: "SET_GAME_META",
@@ -103,6 +106,7 @@ const GameTracker: React.FC = () => {
             runners: loadedRunners,
             currentInning: loadedInning,
             isHomeTeamBatting: loadedIsHomeBatting,
+            innings: inningsFromDB,
           });
         };
 
@@ -116,6 +120,7 @@ const GameTracker: React.FC = () => {
             runners: [],
             currentInning: loadedInning,
             isHomeTeamBatting: loadedIsHomeBatting,
+            innings: inningsFromDB,
           });
         }
       } catch (error) {
@@ -129,23 +134,29 @@ const GameTracker: React.FC = () => {
 
   // Auto-save game state (debounced)
   useEffect(() => {
-    if (!id || isSaving || !isInitialDataLoaded) return;
+    if (!id || !isInitialDataLoaded) return;
 
-    const gameState = JSON.stringify({
-      currentBatter,
-      onDeckBatter,
-      inTheHoleBatter,
+    const fingerprint = JSON.stringify({
       runnersOnBase,
+      lastGreenIndex,
+      lastOrangeIndex,
+      currentInning,
+      isHomeTeamBatting,
+      homeInnings: homeTeam.innings,
+      awayInnings: awayTeam.innings,
+      greenStats: greenLineup.map((p) => ({ id: p.id, runs: p.runs, outs: p.outs })),
+      orangeStats: orangeLineup.map((p) => ({ id: p.id, runs: p.runs, outs: p.outs })),
     });
 
-    if (gameState === lastSavedStateRef.current) return;
+    if (fingerprint === lastSavedStateRef.current) return;
 
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
 
     saveTimeoutRef.current = setTimeout(() => {
-      setIsSaving(true);
+      if (isSavingRef.current) return;
+      isSavingRef.current = true;
 
       const gameId = Array.isArray(id) ? id[0] : id;
 
@@ -160,6 +171,43 @@ const GameTracker: React.FC = () => {
         })
         .filter(Boolean);
 
+      const inningsPayload = homeTeam.innings.map((hi, idx) => ({
+        inning_number: idx + 1,
+        home_runs: hi.runs,
+        home_outs: hi.outs,
+        away_runs: awayTeam.innings[idx]?.runs ?? 0,
+        away_outs: awayTeam.innings[idx]?.outs ?? 0,
+      }));
+
+      const playersPayload = [
+        ...greenLineup.map((p, idx) => {
+          const numericId = parseInt(p.id);
+          const hasDbId = !isNaN(numericId) && p.id.length < 10;
+          return {
+            ...(hasDbId ? { id: numericId } : {}),
+            name: p.name,
+            group_name: p.group,
+            runs: p.runs ?? 0,
+            outs: p.outs ?? 0,
+            position: 1,
+            index_in_group: idx,
+          };
+        }),
+        ...orangeLineup.map((p, idx) => {
+          const numericId = parseInt(p.id);
+          const hasDbId = !isNaN(numericId) && p.id.length < 10;
+          return {
+            ...(hasDbId ? { id: numericId } : {}),
+            name: p.name,
+            group_name: p.group,
+            runs: p.runs ?? 0,
+            outs: p.outs ?? 0,
+            position: 2,
+            index_in_group: idx,
+          };
+        }),
+      ];
+
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -169,15 +217,17 @@ const GameTracker: React.FC = () => {
           runners: validRunners,
           last_green_index: lastGreenIndex,
           last_orange_index: lastOrangeIndex,
+          innings: inningsPayload,
+          players: playersPayload,
         }),
       })
         .then(() => {
-          lastSavedStateRef.current = gameState;
-          setIsSaving(false);
+          lastSavedStateRef.current = fingerprint;
+          isSavingRef.current = false;
           saveTimeoutRef.current = null;
         })
         .catch(() => {
-          setIsSaving(false);
+          isSavingRef.current = false;
           saveTimeoutRef.current = null;
         });
     }, 800);
@@ -189,16 +239,16 @@ const GameTracker: React.FC = () => {
     };
   }, [
     id,
-    isSaving,
     isInitialDataLoaded,
-    currentBatter,
-    onDeckBatter,
-    inTheHoleBatter,
     runnersOnBase,
     lastGreenIndex,
     lastOrangeIndex,
     currentInning,
     isHomeTeamBatting,
+    homeTeam,
+    awayTeam,
+    greenLineup,
+    orangeLineup,
   ]);
 
   const lineupReady = Array.isArray(greenLineup) && Array.isArray(orangeLineup);
