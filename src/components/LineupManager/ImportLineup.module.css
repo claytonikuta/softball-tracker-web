@@ -3,7 +3,7 @@
 }
 
 .importToggleButton {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -18,22 +18,22 @@
 }
 
 .importToggleButton:hover {
-  background-color: #5a6268;
+  background-color: var(--gray-hover);
 }
 
 .importLineup {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f8f9fa;
+  background-color: var(--gray-bg-alt);
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
 }
 
 .importLineup h3 {
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 16px;
-  color: #495057;
+  color: var(--text-secondary);
   text-align: center;
 }
 
@@ -46,9 +46,11 @@
 .gameSelect {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-input);
   border-radius: 4px;
   font-size: 14px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
 .buttonGroup {
@@ -58,16 +60,16 @@
 }
 
 .importButton {
-  background-color: #28a745;
+  background-color: var(--green-color);
 }
 
 .importButton:disabled {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
   cursor: not-allowed;
 }
 
 .cancelButton {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
 }
 
 @media (min-width: 768px) {

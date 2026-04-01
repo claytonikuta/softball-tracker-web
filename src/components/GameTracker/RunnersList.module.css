@@ -1,32 +1,32 @@
 .runners-list {
-  background-color: #f9f9f9;
+  background-color: var(--card-bg-alt);
   border-radius: 8px;
-  border: 2px solid #007bff;
-  padding: 10px; /* Reduced from 15px */
-  height: 100%; /* Fill parent height */
+  border: 2px solid var(--primary-color);
+  padding: 10px;
+  height: 100%;
 }
 
 .runners-list h3 {
   margin-top: 0;
-  margin-bottom: 8px; /* Smaller margin */
-  color: #007bff;
+  margin-bottom: 8px;
+  color: var(--primary-color);
   text-align: center;
-  font-size: 16px; /* Smaller heading */
+  font-size: 16px;
 }
 
 .runner-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 6px;
-  padding: 6px 6px; /* Smaller padding */
-  margin-bottom: 8px; /* Reduced spacing */
-  border: 1px solid #dee2e6;
+  padding: 6px 6px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .runner-item:active {
-  background-color: #f8f8f8;
+  background-color: var(--card-bg-alt);
 }
 
 .base-options,
@@ -37,37 +37,10 @@
   margin: 15px 0;
 }
 
-/* Stack all buttons for better mobile experience */
 .run-button {
   width: 100%;
-  min-height: 44px; /* Ensure good touch target size */
+  min-height: 44px;
   margin: 0;
-}
-
-.base-button {
-  width: 30px; /* Reduced from 36px */
-  height: 30px; /* Reduced from 36px */
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px; /* Smaller font */
-  font-weight: bold;
-  border-radius: 4px;
-}
-
-.out-button {
-  background-color: #dc3545;
-  width: auto;
-  min-width: 40px; /* Reduced from 50px */
-  height: 30px; /* Reduced from 36px */
-  font-size: 12px; /* Smaller font */
-}
-
-.runner-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
 }
 
 .base-button {
@@ -82,25 +55,31 @@
   border-radius: 4px;
 }
 
-.backward-button {
-  background-color: #6c757d;
-}
-
-.backward-button:disabled {
-  background-color: #adb5bd;
-  cursor: not-allowed;
-}
-
-.forward-button {
-  background-color: #17a2b8;
-}
-
 .out-button {
-  background-color: #dc3545;
+  background-color: var(--red-color);
   width: auto;
   min-width: 50px;
   height: 36px;
   font-size: 14px;
+}
+
+.runner-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.backward-button {
+  background-color: var(--gray-color);
+}
+
+.backward-button:disabled {
+  background-color: var(--gray-light);
+  cursor: not-allowed;
+}
+
+.forward-button {
+  background-color: var(--blue-color);
 }
 
 .runner-info {
@@ -108,9 +87,14 @@
   flex-direction: column;
 }
 
+.runner-name {
+  font-size: 14px;
+  color: var(--text-color);
+}
+
 .runner-base {
   font-size: 14px;
-  color: #6c757d;
+  color: var(--gray-color);
   margin-top: 4px;
 }
 
@@ -127,16 +111,11 @@
 }
 
 .yes-button {
-  background-color: #28a745;
+  background-color: var(--green-color);
 }
 
 .no-button {
-  background-color: #6c757d;
-}
-
-.runner-name,
-.runner-base {
-  font-size: 14px;
+  background-color: var(--gray-color);
 }
 
 @media (min-width: 768px) {

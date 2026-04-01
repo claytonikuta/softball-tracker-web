@@ -1,23 +1,22 @@
-/* Horizontal preview strip */
 .batting-order-preview {
   margin-top: 20px;
   margin-bottom: 10px;
   padding: 12px;
-  background: var(--card-bg, white);
-  border: 1px solid var(--border-color, #ddd);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
   transition: box-shadow 0.2s;
 }
 
 .batting-order-preview:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--card-shadow);
 }
 
 .preview-title {
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: #666;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -31,7 +30,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Hide scrollbar but keep scroll functionality */
 .horizontal-list::-webkit-scrollbar {
   height: 4px;
 }
@@ -41,11 +39,10 @@
 }
 
 .horizontal-list::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--border-input);
   border-radius: 2px;
 }
 
-/* Individual chip */
 .order-chip {
   display: flex;
   align-items: center;
@@ -71,43 +68,61 @@
   font-weight: 500;
 }
 
-/* Group colors */
 .green-player {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--green-bg-light);
+  color: var(--green-color);
 }
 
 .orange-player {
   background: #fff3e0;
-  color: #e65100;
+  color: var(--orange-color);
 }
 
-/* Active/current batter highlight */
+:global(.dark-mode) .orange-player {
+  background: #3a2a10;
+}
+
 .active-chip {
-  border-color: #333;
+  border-color: var(--text-color);
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
   transform: scale(1.08);
   font-weight: 600;
 }
 
+:global(.dark-mode) .active-chip {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
 .active-chip.green-player {
   background: #a5d6a7;
   border-color: #2e7d32;
+  color: #1b5e20;
+}
+
+:global(.dark-mode) .active-chip.green-player {
+  background: #2e7d32;
+  color: #e8f5e9;
 }
 
 .active-chip.orange-player {
   background: #ffcc80;
   border-color: #e65100;
+  color: #bf360c;
+}
+
+:global(.dark-mode) .active-chip.orange-player {
+  background: #e65100;
+  color: #fff3e0;
 }
 
 .tap-hint {
   text-align: center;
   font-size: 11px;
-  color: #999;
+  color: var(--text-faint);
   margin-top: 6px;
 }
 
-/* === Modal vertical list === */
+/* Modal vertical list */
 .modal-list {
   display: flex;
   flex-direction: column;
@@ -144,18 +159,20 @@
   letter-spacing: 0.3px;
 }
 
-/* Modal group colors */
 .modal-green {
-  background: #f1f8e9;
-  color: #2e7d32;
+  background: var(--green-bg-light);
+  color: var(--green-color);
 }
 
 .modal-orange {
   background: #fff8e1;
-  color: #e65100;
+  color: var(--orange-color);
 }
 
-/* Modal active batter */
+:global(.dark-mode) .modal-orange {
+  background: #3a2a10;
+}
+
 .modal-active {
   font-weight: 600;
   position: relative;
@@ -164,11 +181,23 @@
 .modal-active.modal-green {
   background: #a5d6a7;
   box-shadow: inset 4px 0 0 #2e7d32;
+  color: #1b5e20;
+}
+
+:global(.dark-mode) .modal-active.modal-green {
+  background: #2e7d32;
+  color: #e8f5e9;
 }
 
 .modal-active.modal-orange {
   background: #ffcc80;
   box-shadow: inset 4px 0 0 #e65100;
+  color: #bf360c;
+}
+
+:global(.dark-mode) .modal-active.modal-orange {
+  background: #e65100;
+  color: #fff3e0;
 }
 
 .modal-active .modal-number {

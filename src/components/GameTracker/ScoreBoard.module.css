@@ -1,10 +1,10 @@
 .scoreboard {
-  background: #f9f9f9;
+  background: var(--card-bg-alt);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 15px;
-  border: 2px solid #17a2b8;
-  overflow: hidden; /* Prevent overflow */
+  border: 2px solid var(--blue-color);
+  overflow: hidden;
 }
 
 .scoreboard-header {
@@ -12,13 +12,13 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
 }
 
 .scoreboard h3 {
   margin: 0;
-  color: #17a2b8;
+  color: var(--blue-color);
   text-align: center;
 }
 
@@ -35,41 +35,47 @@
   font-size: 18px;
   min-width: 25px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .current-inning-col {
-  background-color: rgba(23, 162, 184, 0.3);
+  background-color: var(--highlight-bg);
   font-weight: bold;
   position: relative;
 }
 
 .toggle-team-btn {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
   width: 100%;
   margin-top: 5px;
 }
 
 .innings-display {
   margin-bottom: 15px;
-  overflow-x: auto; /* Already good */
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  width: 100%; /* Make sure it doesn't push container wider */
-  max-width: 100%; /* Ensure it doesn't overflow */
+  width: 100%;
+  max-width: 100%;
 }
 
 .innings-display table {
   width: 100%;
-  min-width: 320px; /* Reduce to smallest common mobile width */
+  min-width: 320px;
   border-collapse: collapse;
   text-align: center;
 }
 
-/* Make cells as compact as possible on mobile */
 .innings-display th,
 .innings-display td {
-  padding: 2px; /* Even smaller padding on mobile */
-  border: 1px solid #ddd;
-  font-size: 10px; /* Smaller font on mobile */
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  font-size: 10px;
+  color: var(--text-color);
+}
+
+.innings-display th {
+  background-color: var(--gray-bg-alt);
+  color: var(--text-secondary);
 }
 
 .team-controls {
@@ -79,34 +85,32 @@
 }
 
 .team-section {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Update the score-control class to better use horizontal space */
 .score-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .score-control span {
   font-size: 16px;
-  min-width: 90px; /* Ensure consistent width for the labels */
+  min-width: 90px;
+  color: var(--text-color);
 }
 
-/* Update the score-buttons to always be horizontal */
 .score-buttons {
   display: flex;
   gap: 5px;
-  flex-direction: row; /* Always horizontal */
+  flex-direction: row;
 }
 
-/* Make buttons a bit bigger on mobile for better touch targets */
 .small-btn {
   width: 36px;
   height: 36px;

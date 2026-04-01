@@ -3,27 +3,27 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-color);
   padding: 20px;
 }
 
 .loginCard {
-  background: white;
+  background: var(--card-bg);
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   width: 100%;
   max-width: 400px;
 }
 
 .loginCard h1 {
-  color: #17a2b8;
+  color: var(--blue-color);
   text-align: center;
   margin-bottom: 10px;
 }
 
 .loginCard h2 {
-  color: #333;
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 25px;
   font-weight: normal;
@@ -43,18 +43,20 @@
 
 .formGroup label {
   font-weight: bold;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .formGroup input {
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
 .loginButton {
-  background-color: #17a2b8;
+  background-color: var(--blue-color);
   color: white;
   border: none;
   padding: 12px;
@@ -66,17 +68,17 @@
 }
 
 .loginButton:hover {
-  background-color: #138496;
+  background-color: var(--blue-hover);
 }
 
 .loginButton:disabled {
-  background-color: #94d3dd;
+  background-color: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--error-bg);
+  color: var(--error-text);
   padding: 10px;
   border-radius: 6px;
   margin-bottom: 15px;

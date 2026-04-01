@@ -1,8 +1,8 @@
 .current-batter {
-  background: #f9f9f9;
+  background: var(--card-bg-alt);
   border-radius: 8px;
   padding: 15px;
-  border: 2px solid #007bff;
+  border: 2px solid var(--primary-color);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -13,28 +13,37 @@
   margin-bottom: 5px;
   text-align: center;
   font-size: 18px;
+  color: var(--text-color);
 }
 
 .batter-name {
   font-weight: bold;
+  color: var(--text-color);
+}
+
+.batter-group {
+  color: var(--text-muted);
+}
+
+.batter-stats {
+  color: var(--text-secondary);
 }
 
 .current-batter:active {
-  background-color: #f0f7ff;
+  background-color: var(--highlight-bg);
 }
 
 .hit-options {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two buttons per row on mobile */
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin: 15px 0;
 }
 
 .out-button {
-  grid-column: 1 / -1; /* Make out button span full width */
+  grid-column: 1 / -1;
 }
 
-/* Tablet and up */
 @media (min-width: 768px) {
   .hit-options {
     display: flex;

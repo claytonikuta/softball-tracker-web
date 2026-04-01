@@ -8,7 +8,7 @@
 
 .app h1 {
   text-align: center;
-  color: #333;
+  color: var(--text-color);
   margin-bottom: 20px;
   font-size: clamp(1.5rem, 5vw, 2rem);
 }
@@ -31,4 +31,29 @@
   .appContainer {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+.container {
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 16px;
+}
+
+.themeToggle {
+  background: var(--card-bg-alt);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+}
+
+.themeToggle:hover {
+  background: var(--gray-bg);
 }

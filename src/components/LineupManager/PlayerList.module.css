@@ -1,5 +1,5 @@
 .player-form {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -16,15 +16,17 @@
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
 }
 
 .form-field input[type="text"] {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
 .radio-group {
@@ -56,18 +58,17 @@
   height: 24px;
   width: 24px;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 2px solid var(--border-input);
 }
 
 .green-group .radio-custom {
-  border-color: #28a745;
+  border-color: var(--green-color);
 }
 
 .orange-group .radio-custom {
-  border-color: #fd7e14;
+  border-color: var(--orange-color);
 }
 
-/* Radio button indicator */
 .radio-container input:checked ~ .radio-custom:after {
   content: "";
   position: absolute;
@@ -81,20 +82,20 @@
 }
 
 .green-group input:checked ~ .radio-custom:after {
-  background-color: #28a745;
+  background-color: var(--green-color);
 }
 
 .orange-group input:checked ~ .radio-custom:after {
-  background-color: #fd7e14;
+  background-color: var(--orange-color);
 }
 
 .green-group .radio-label {
-  color: #28a745;
+  color: var(--green-color);
   font-weight: bold;
 }
 
 .orange-group .radio-label {
-  color: #fd7e14;
+  color: var(--orange-color);
   font-weight: bold;
 }
 
@@ -105,11 +106,11 @@
 }
 
 .add-button {
-  background-color: #28a745;
+  background-color: var(--green-color);
 }
 
 .cancel-button {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
 }
 
 .players-container {

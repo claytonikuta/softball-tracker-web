@@ -13,11 +13,11 @@
 
 .header h1 {
   margin: 0;
-  color: #17a2b8;
+  color: var(--blue-color);
 }
 
 .logoutButton {
-  background-color: #6c757d;
+  background-color: var(--gray-color);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -27,7 +27,7 @@
 
 .newGameButton {
   display: inline-block;
-  background-color: #28a745;
+  background-color: var(--green-color);
   color: white;
   text-decoration: none;
   padding: 12px 20px;
@@ -44,13 +44,15 @@
 
 .gameCard {
   display: block;
-  background: white;
+  position: relative;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   text-decoration: none;
-  color: #333;
+  color: var(--text-color);
   transition: transform 0.2s;
+  border: 1px solid var(--border-color);
 }
 
 .gameCard:hover {
@@ -58,9 +60,16 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
+.gameLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
 .gameDate {
-  color: #6c757d;
+  color: var(--text-muted);
   margin-bottom: 10px;
+  margin-top: 8px;
   font-size: 14px;
 }
 
@@ -71,71 +80,47 @@
   margin-bottom: 15px;
   font-weight: bold;
   font-size: 18px;
+  color: var(--text-color);
 }
 
 .inning {
-  background-color: #f8f9fa;
+  background-color: var(--gray-bg-alt);
   padding: 8px;
   border-radius: 4px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .noGames {
   text-align: center;
-  color: #6c757d;
+  color: var(--gray-color);
   padding: 40px;
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   grid-column: 1 / -1;
 }
 
 .loading {
   text-align: center;
-  color: #17a2b8;
+  color: var(--blue-color);
   padding: 40px;
 }
 
 .error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--error-bg);
+  color: var(--error-text);
   padding: 15px;
   border-radius: 6px;
   margin-bottom: 20px;
   text-align: center;
 }
 
-.gameCard {
-  position: relative;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background-color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.gameLink {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.gameCard:hover {
-  transform: translateY(-2px);
-}
-
-.gameDate {
-  color: #666;
-  margin-top: 8px;
-}
-
 .deleteButton {
   position: absolute;
   top: 16px;
   right: 16px;
-  background-color: #dc3545;
+  background-color: var(--red-color);
   color: white;
   border: none;
   padding: 5px 10px;
@@ -145,7 +130,7 @@
 }
 
 .deleteButton:hover {
-  background-color: #c82333;
+  background-color: var(--red-hover);
 }
 
 .deleteConfirmation {
@@ -159,9 +144,8 @@
   margin-top: 20px;
 }
 
-/* Add these new classes */
 .modalDeleteButton {
-  background-color: #dc3545;
+  background-color: var(--red-color);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -171,7 +155,7 @@
 }
 
 .modalDeleteButton:hover {
-  background-color: #c82333;
+  background-color: var(--red-hover);
 }
 
 @media (min-width: 768px) {

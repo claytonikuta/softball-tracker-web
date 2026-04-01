@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: var(--card-bg);
   padding: 12px;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -22,23 +22,24 @@
 .player-name {
   font-weight: bold;
   font-size: 16px;
+  color: var(--text-color);
 }
 
 .player-group {
   font-size: 14px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .player-stats {
   display: flex;
   gap: 15px;
   margin-top: 4px;
+  color: var(--text-secondary);
 }
 
-/* Ensure buttons have space in mobile view */
 .edit-player-btn,
 .remove-player-btn {
-  width: 36px !important; /* Override inline styles */
+  width: 36px !important;
   height: 36px !important;
   font-size: 18px !important;
 }
@@ -47,16 +48,17 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px; /* Increased from 10px for more space between buttons and number */
-  justify-content: center; /* Center the controls for better alignment */
-  margin: 15px 0; /* Increased vertical margin */
+  gap: 16px;
+  justify-content: center;
+  margin: 15px 0;
 }
 
 .counter-value {
   font-size: 20px;
   font-weight: bold;
-  min-width: 40px; /* Increased from 30px to give the number more room */
+  min-width: 40px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .edit-player-form {
@@ -64,18 +66,20 @@
 }
 
 .edit-stat {
-  margin-bottom: 25px; /* Increased from 20px to add more space between stat controls */
+  margin-bottom: 25px;
 }
 
-.modal-actions {
-  margin-top: 30px; /* Increased top margin to separate from the last counter */
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
 .edit-stat h4 {
   margin-top: 0;
   margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.modal-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 @media (min-width: 768px) {

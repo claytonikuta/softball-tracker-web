@@ -2,24 +2,25 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px; /* Increased from 10px for more space between buttons and number */
-  justify-content: center; /* Center the controls for better alignment */
-  margin: 15px 0; /* Increased vertical margin */
+  gap: 16px;
+  justify-content: center;
+  margin: 15px 0;
 }
 
 .counter-value {
   font-size: 20px;
   font-weight: bold;
-  min-width: 40px; /* Increased from 30px to give the number more room */
+  min-width: 40px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .edit-stat {
-  margin-bottom: 25px; /* Increased from 20px to add more space between stat controls */
+  margin-bottom: 25px;
 }
 
 .modal-actions {
-  margin-top: 30px; /* Increased top margin to separate from the last counter */
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -41,25 +42,25 @@
   justify-content: center;
   align-items: center;
   width: 36px;
-  background-color: #f0f0f0;
+  background-color: var(--gray-bg);
   cursor: grab;
   gap: 5px;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
-  align-self: stretch; /* Make handle stretch to full height */
+  align-self: stretch;
 }
 
 .drag-handle:active {
   cursor: grabbing;
-  background-color: #e0e0e0;
+  background-color: var(--border-color);
 }
 
 .handle-line {
   width: 20px;
   height: 3px;
-  background-color: #888;
+  background-color: var(--handle-line);
   border-radius: 2px;
 }
 
@@ -69,27 +70,11 @@
 }
 
 .card-content .player-card {
-  border-radius: 0; /* Remove inner card border radius */
-  box-shadow: none; /* Remove shadow from inner card */
-  margin-bottom: 0; /* Remove margin from inner card */
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 0;
 }
 
-/* For dark mode support */
-@media (prefers-color-scheme: dark) {
-  .drag-handle {
-    background-color: #333;
-  }
-
-  .handle-line {
-    background-color: #aaa;
-  }
-
-  .drag-handle:active {
-    background-color: #444;
-  }
-}
-
-/* For larger screens */
 @media (min-width: 768px) {
   .modal-actions {
     flex-direction: row;
