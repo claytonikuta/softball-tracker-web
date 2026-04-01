@@ -32,12 +32,20 @@ const GameTracker: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedStateRef = useRef<string>("");
+  const hasFetchedRef = useRef(false);
+  const lineupsRef = useRef({ green: greenLineup, orange: orangeLineup });
   const { id } = useParams();
 
-  // Fetch game data on mount — loads indices and runners from DB
+  // Keep the lineups ref current so the polling callback can read fresh data
+  // without being a dependency of the fetch effect
+  lineupsRef.current = { green: greenLineup, orange: orangeLineup };
+
+  // Fetch game data ONCE on mount — loads indices and runners from DB
   useEffect(() => {
+    if (hasFetchedRef.current) return;
     const fetchGameData = async () => {
       if (!id) return;
+      hasFetchedRef.current = true;
 
       try {
         const gameId = Array.isArray(id) ? id[0] : id;
@@ -54,12 +62,13 @@ const GameTracker: React.FC = () => {
         const runnersFromDB = gameData.game?.runners ?? [];
 
         const processRunners = () => {
-          if (greenLineup.length === 0 && orangeLineup.length === 0) {
+          const { green, orange } = lineupsRef.current;
+          if (green.length === 0 && orange.length === 0) {
             setTimeout(processRunners, 500);
             return;
           }
 
-          const allPlayers = [...greenLineup, ...orangeLineup];
+          const allPlayers = [...green, ...orange];
           const loadedRunners = runnersFromDB
             .map((runner: { player_id: string; base_index: number }) => {
               const player = allPlayers.find(
@@ -76,6 +85,12 @@ const GameTracker: React.FC = () => {
             })
             .filter(Boolean) as RunnerOnBase[];
 
+          console.log("[GameTracker] Initial load from DB", {
+            loadedGreenIndex,
+            loadedOrangeIndex,
+            runners: loadedRunners.map((r) => `${r.name}@${r.baseIndex}`),
+          });
+
           dispatch({
             type: "LOAD_GAME_STATE",
             lastGreenIndex: loadedGreenIndex,
@@ -87,6 +102,10 @@ const GameTracker: React.FC = () => {
         if (runnersFromDB.length > 0) {
           processRunners();
         } else {
+          console.log("[GameTracker] Initial load from DB (no runners)", {
+            loadedGreenIndex,
+            loadedOrangeIndex,
+          });
           dispatch({
             type: "LOAD_GAME_STATE",
             lastGreenIndex: loadedGreenIndex,
@@ -101,7 +120,7 @@ const GameTracker: React.FC = () => {
     };
 
     fetchGameData();
-  }, [id, greenLineup, orangeLineup, dispatch]);
+  }, [id, dispatch]);
 
   // Auto-save game state (debounced)
   useEffect(() => {

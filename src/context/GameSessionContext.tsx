@@ -177,6 +177,44 @@ function gameSessionReducer(
   state: GameSessionState,
   action: GameSessionAction
 ): GameSessionState {
+  const prevBatter = getCurrentBatter(state);
+
+  const result = gameSessionReducerInner(state, action);
+
+  // Diagnostic logging for batting order changes
+  const newBatter = getCurrentBatter(result);
+  if (prevBatter?.id !== newBatter?.id) {
+    console.log(
+      `[GameSession] Batter changed: ${prevBatter?.name ?? "none"} → ${newBatter?.name ?? "none"} (action: ${action.type})`,
+      {
+        greenIdx: `${state.lastGreenIndex} → ${result.lastGreenIndex}`,
+        orangeIdx: `${state.lastOrangeIndex} → ${result.lastOrangeIndex}`,
+        turn: `${state.alternatingTurn} → ${result.alternatingTurn}`,
+        runners: `${state.runnersOnBase.length} → ${result.runnersOnBase.length}`,
+      }
+    );
+  }
+
+  if (action.type === "RUNNER_OUT" || action.type === "RUNNER_SCORED" || action.type === "LOAD_GAME_STATE") {
+    console.log(
+      `[GameSession] ${action.type}`,
+      {
+        greenIdx: result.lastGreenIndex,
+        orangeIdx: result.lastOrangeIndex,
+        turn: result.alternatingTurn,
+        runners: result.runnersOnBase.map((r) => `${r.name}@${r.baseIndex}`),
+        currentBatter: newBatter?.name ?? "none",
+      }
+    );
+  }
+
+  return result;
+}
+
+function gameSessionReducerInner(
+  state: GameSessionState,
+  action: GameSessionAction
+): GameSessionState {
   switch (action.type) {
     case "INIT_LINEUPS":
       return {
