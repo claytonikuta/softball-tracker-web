@@ -100,15 +100,11 @@
   .on-deck-container {
     grid-column: 2;
     grid-row: 1;
-    max-height: 110px;
-    height: 60%;
   }
 
   .in-the-hole-container {
     grid-column: 2;
     grid-row: 2;
-    max-height: 110px;
-    height: 60%;
   }
 
   .field-status-container {
