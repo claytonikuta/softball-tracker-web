@@ -179,34 +179,25 @@ const GameTracker: React.FC = () => {
         away_outs: awayTeam.innings[idx]?.outs ?? 0,
       }));
 
-      const playersPayload = [
-        ...greenLineup.map((p, idx) => {
-          const numericId = parseInt(p.id);
-          const hasDbId = !isNaN(numericId) && p.id.length < 10;
-          return {
-            ...(hasDbId ? { id: numericId } : {}),
-            name: p.name,
-            group_name: p.group,
-            runs: p.runs ?? 0,
-            outs: p.outs ?? 0,
-            position: 1,
-            index_in_group: idx,
-          };
-        }),
-        ...orangeLineup.map((p, idx) => {
-          const numericId = parseInt(p.id);
-          const hasDbId = !isNaN(numericId) && p.id.length < 10;
-          return {
-            ...(hasDbId ? { id: numericId } : {}),
-            name: p.name,
-            group_name: p.group,
-            runs: p.runs ?? 0,
-            outs: p.outs ?? 0,
-            position: 2,
-            index_in_group: idx,
-          };
-        }),
+      const allLineupPlayers = [
+        ...greenLineup.map((p, idx) => ({ p, idx, position: 1 })),
+        ...orangeLineup.map((p, idx) => ({ p, idx, position: 2 })),
       ];
+
+      const playersPayload = allLineupPlayers
+        .filter(({ p }) => {
+          const numericId = parseInt(p.id);
+          return !isNaN(numericId) && numericId > 0 && numericId <= 2147483647;
+        })
+        .map(({ p, idx, position }) => ({
+          id: parseInt(p.id),
+          name: p.name,
+          group_name: p.group,
+          runs: p.runs ?? 0,
+          outs: p.outs ?? 0,
+          position,
+          index_in_group: idx,
+        }));
 
       fetch(`/api/games/${gameId}`, {
         method: "PUT",
